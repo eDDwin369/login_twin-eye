@@ -6,10 +6,22 @@ import './AccountSettings.css';
 
 interface AccountSettingsProps {
   setCurrentView: (view: string) => void;
+  hasUnsavedChanges?: boolean;
+  setHasUnsavedChanges?: (value: boolean) => void;
 }
 
-export function AccountSettings({ setCurrentView }: AccountSettingsProps) {
+export function AccountSettings({ setCurrentView, hasUnsavedChanges, setHasUnsavedChanges }: AccountSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
+
+  const handleTabChange = (tab: string) => {
+    if (tab !== activeTab && hasUnsavedChanges) {
+      if (!window.confirm("You have unsaved changes. Are you sure you want to discard them?")) {
+        return;
+      }
+      if (setHasUnsavedChanges) setHasUnsavedChanges(false);
+    }
+    setActiveTab(tab);
+  };
 
   return (
     <div className="account-settings-container">
@@ -22,27 +34,29 @@ export function AccountSettings({ setCurrentView }: AccountSettingsProps) {
         <div className="account-tabs">
           <button 
             className={`account-tab ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
+            onClick={() => handleTabChange('profile')}
           >
-            <span className="tab-icon">👤</span> Profile
+            <span className="tab-icon"></span> Profile
           </button>
           <button 
             className={`account-tab ${activeTab === 'security' ? 'active' : ''}`}
-            onClick={() => setActiveTab('security')}
+            onClick={() => handleTabChange('security')}
           >
-            <span className="tab-icon">🛡️</span> Security & Sessions
+            <span className="tab-icon"></span> Security & Sessions
           </button>
           <button 
             className={`account-tab ${activeTab === 'preferences' ? 'active' : ''}`}
-            onClick={() => setActiveTab('preferences')}
+            onClick={() => handleTabChange('preferences')}
           >
-            <span className="tab-icon">⚙️</span> Preferences & Privacy
+            <span className="tab-icon"></span> Preferences & Privacy
           </button>
         </div>
       </div>
 
       <div className="account-tab-content">
-        {activeTab === 'profile' && <ProfileTab />}
+        {activeTab === 'profile' && (
+          <ProfileTab setHasUnsavedChanges={setHasUnsavedChanges} />
+        )}
         {activeTab === 'security' && <SecurityTab />}
         {activeTab === 'preferences' && <PreferencesTab />}
       </div>

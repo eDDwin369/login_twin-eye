@@ -194,26 +194,26 @@ function App() {
 
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+            <img src={logo} alt="Logo" style={{ maxWidth: '130px', height: 'auto' }} />
+          </div>
 
           {currentScreen === 'login' && (
             <div className="fade-in">
               <div className="form-header">
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-                  <img src={logo} alt="Logo" style={{ maxWidth: '180px', height: 'auto' }} />
-                </div>
                 <h1>Welcome back</h1>
                 <p>Enter your credentials to access the system.</p>
               </div>
               <form onSubmit={handleLoginSubmit}>
                 <div className="form-group">
                   <label htmlFor="login-email">Email Address</label>
-                  <div className="input-wrapper">
+                  <div className="input-wrapper" title="Enter your Email address">
                     <Mail className="input-icon" size={18} />
                     <input
                       type="email"
                       id="login-email"
                       className="form-input"
-                      placeholder="admin@oomnieye.net"
+                      placeholder=""
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -222,13 +222,13 @@ function App() {
                 </div>
                 <div className="form-group">
                   <label htmlFor="login-password">Password</label>
-                  <div className="input-wrapper">
+                  <div className="input-wrapper" title="Enter your password">
                     <Lock className="input-icon" size={18} />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       id="login-password"
                       className="form-input"
-                      placeholder="••••••••"
+                      placeholder=""
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -253,7 +253,7 @@ function App() {
                   </button>
                 </div>
                 <button type="submit" className="submit-btn">
-                  Authenticate <ArrowRight size={18} />
+                  Login <ArrowRight size={18} />
                 </button>
               </form>
             </div>
@@ -271,13 +271,13 @@ function App() {
               <form onSubmit={handleForgotPasswordSubmit}>
                 <div className="form-group">
                   <label htmlFor="forgot-email">Email Address</label>
-                  <div className="input-wrapper">
+                  <div className="input-wrapper" title="Enter your Email address">
                     <Mail className="input-icon" size={18} />
                     <input
                       type="email"
                       id="forgot-email"
                       className="form-input"
-                      placeholder="admin@oomnieye.net"
+                      placeholder=""
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -352,6 +352,9 @@ function App() {
 
           {currentScreen === 'new-password' && (
             <div className="fade-in">
+              <button className="back-btn" onClick={() => setCurrentScreen('login')}>
+                <ArrowLeft size={16} /> Back to login
+              </button>
               <div className="form-header">
                 <h1>Create a New Password</h1>
                 <p>Your new password must be unique and meet the security requirements.</p>
@@ -359,13 +362,13 @@ function App() {
               <form onSubmit={handleCreateNewPassword}>
                 <div className="form-group">
                   <label htmlFor="new-password">New Password</label>
-                  <div className="input-wrapper">
+                  <div className="input-wrapper" title="Enter your new password">
                     <Lock className="input-icon" size={18} />
                     <input
                       type={showNewPassword ? 'text' : 'password'}
                       id="new-password"
                       className="form-input"
-                      placeholder="••••••••"
+                      placeholder=""
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
@@ -399,13 +402,13 @@ function App() {
 
                 <div className="form-group">
                   <label htmlFor="confirm-password">Confirm Password</label>
-                  <div className="input-wrapper">
+                  <div className="input-wrapper" title="Confirm your new password">
                     <KeyRound className="input-icon" size={18} />
                     <input
                       type={showNewPassword ? 'text' : 'password'}
                       id="confirm-password"
                       className="form-input"
-                      placeholder="••••••••"
+                      placeholder=""
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
@@ -456,7 +459,7 @@ function App() {
               </div>
               <div className="form-header centered">
                 <h1>Password Updated Successfully</h1>
-                <p>Your password has been changed successfully. You can now sign in using your new password.</p>
+                {/* <p>Your password has been changed successfully. You can now sign in using your new password.</p> */}
               </div>
               <div className="success-actions">
                 <button

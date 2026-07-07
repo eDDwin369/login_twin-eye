@@ -77,9 +77,15 @@
 }
 
 .dashboard-container {
-  max-width: 1440px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 var(--spacing-5) var(--spacing-8);
+}
+
+@media (min-width: 1440px) {
+  .dashboard-container {
+    padding: 0 32px var(--spacing-8);
+  }
 }
 
 /* Sidebar */
@@ -104,7 +110,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  border-bottom: 1px solid var(--border-light);
 }
 
 .dash-sidebar.collapsed .sidebar-header {
@@ -132,6 +137,36 @@
 .sidebar-toggle:hover {
   background: var(--bg-dashboard);
   color: var(--text-main);
+}
+
+/* Custom Tooltip */
+.custom-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.custom-tooltip {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  background-color: #1a1a1a;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-tooltip-wrapper:hover .custom-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .sidebar-nav {

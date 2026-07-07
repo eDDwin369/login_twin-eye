@@ -1,0 +1,94 @@
+import type { NotificationItem } from './types';
+
+export const mockNotifications: NotificationItem[] = [
+  {
+    id: '1',
+    type: 'success',
+    category: 'Themes',
+    title: 'Corporate Theme published successfully',
+    description: 'The Corporate Theme is now live and available to all users.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 min ago
+    isRead: false,
+    actionRoute: 'theme-details'
+  },
+  {
+    id: '2',
+    type: 'success',
+    category: 'Themes',
+    title: 'Dark Theme draft saved',
+    description: 'Your changes to Dark Theme have been saved as a draft.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 min ago
+    isRead: false,
+    actionRoute: 'theme-editor'
+  },
+  {
+    id: '3',
+    type: 'info',
+    category: 'Team Activity',
+    title: 'Enterprise Theme shared by John Doe',
+    description: 'John Doe has shared the Enterprise Theme with you for review.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    isRead: false,
+    actionRoute: 'shared-theme'
+  },
+  {
+    id: '4',
+    type: 'success',
+    category: 'Themes',
+    title: 'Theme import completed',
+    description: 'The legacy theme package has been successfully imported.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
+    isRead: true,
+    actionRoute: 'imported-theme'
+  },
+  {
+    id: '5',
+    type: 'error',
+    category: 'Themes',
+    title: 'Theme publish failed due to missing design tokens',
+    description: 'Publish failed. Please add the required primary color tokens.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // Yesterday
+    isRead: false,
+    actionRoute: 'theme-validation'
+  },
+  {
+    id: '6',
+    type: 'system',
+    category: 'System',
+    title: 'New version of Theme Studio available',
+    description: 'Version 2.4 is now available with new spacing controls.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 days ago
+    isRead: true,
+    actionRoute: 'system-updates'
+  },
+  {
+    id: '7',
+    type: 'info',
+    category: 'System',
+    title: 'Organization branding updated',
+    description: 'Admin has updated the global organization branding.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 72), // 3 days ago
+    isRead: true,
+    actionRoute: 'org-branding'
+  },
+  {
+    id: '8',
+    type: 'info',
+    category: 'Team Activity',
+    title: 'New team member invited',
+    description: 'Sarah Smith has been invited to join the Design Team.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), // 5 days ago
+    isRead: true,
+    actionRoute: 'team-management'
+  },
+  {
+    id: '9',
+    type: 'success',
+    category: 'Themes',
+    title: 'Theme deleted successfully',
+    description: 'The deprecated theme has been permanently removed.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8), // 8 days ago
+    isRead: true,
+    actionRoute: 'theme-list'
+  }
+];

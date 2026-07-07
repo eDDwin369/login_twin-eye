@@ -1,17 +1,106 @@
-import { useState } from 'react';
-import { User, Mail, Phone, Building2, CheckCircle2, Camera, Calendar, Clock, Globe2, MapPin, ShieldCheck, Key, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Lock, Camera, Shield, Calendar, Clock, Globe2, MapPin, ShieldCheck, Key, Check } from 'lucide-react';
 import './ProfileStyles.css';
 
-export function ProfileTab() {
+interface ProfileTabProps {
+  setHasUnsavedChanges?: (value: boolean) => void;
+}
+
+export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
   const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  // Form State
+  const initialData = {
+    fullName: 'John Doe',
+    phone: '',
+    bio: ''
+  };
+  
+  const [formData, setFormData] = useState(initialData);
+  const [isDirty, setIsDirty] = useState(false);
+
+  // Dynamic Profile Completion
+  const getCompletionState = () => {
+    let score = 50; // Base score for Name and Email (read-only)
+    const checklist = [];
+    
+    if (formData.phone.trim().length > 0) {
+      score += 25;
+      checklist.push({ label: 'Add Phone Number', done: true });
+    } else {
+      checklist.push({ label: 'Add Phone Number', done: false });
+    }
+    
+    if (formData.bio.trim().length > 0) {
+      score += 25;
+      checklist.push({ label: 'Add Bio', done: true });
+    } else {
+      checklist.push({ label: 'Add Bio', done: false });
+    }
+
+    return { score, checklist };
+  };
+
+  const { score, checklist } = getCompletionState();
+
+  useEffect(() => {
+    const dirty = formData.fullName !== initialData.fullName ||
+                  formData.phone !== initialData.phone ||
+                  formData.bio !== initialData.bio;
+    setIsDirty(dirty);
+    if (setHasUnsavedChanges) {
+      setHasUnsavedChanges(dirty);
+    }
+  }, [formData]);
+
+  // Handle BeforeUnload
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleDiscard = () => {
+    if (window.confirm("Are you sure you want to discard your changes?")) {
+      setFormData(initialData);
+    }
+  };
 
   const handleSave = () => {
     setIsSaving(true);
-    setTimeout(() => setIsSaving(false), 800);
+    setTimeout(() => {
+      setIsSaving(false);
+      setIsDirty(false);
+      if (setHasUnsavedChanges) setHasUnsavedChanges(false);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      
+      // Update initialData in a real app here
+    }, 800);
   };
 
   return (
     <div className="settings-grid">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="toast-success">
+          <Check size={16} /> Changes saved successfully.
+        </div>
+      )}
+
       {/* Left Column - Profile Summary */}
       <div className="content-column">
         <div className="settings-card" style={{ padding: '32px 24px' }}>
@@ -23,54 +112,36 @@ export function ProfileTab() {
             </button>
           </div>
           
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>John Doe</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '12px' }}>Senior Analyst • Operations</p>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{formData.fullName || 'John Doe'}</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '16px' }}>Senior Analyst • Operations</p>
             
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
-              <span className="badge badge-primary">Admin</span>
-              <span className="badge badge-success" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <CheckCircle2 size={12} /> Verified
-              </span>
+            <div className="status-indicator-primary">
+              <div className="status-dot-online"></div>
+              Online
             </div>
 
-            <div className="status-indicator">
-              <div className="status-dot"></div>
-              Online
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '12px' }}>
+              <span className="badge badge-secondary-subtle">Admin</span>
+              <span className="badge badge-secondary-subtle">Verified</span>
             </div>
           </div>
 
           <div className="profile-completion">
             <div className="completion-header">
-              <span>Profile Completion</span>
-              <span style={{ color: 'var(--primary)' }}>85%</span>
+              <span style={{ fontWeight: 600 }}>Profile Completion</span>
+              <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{score}%</span>
             </div>
             <div className="completion-bar-bg">
-              <div className="completion-bar-fill"></div>
+              <div className="completion-bar-fill" style={{ width: `${score}%` }}></div>
             </div>
-          </div>
-
-          <div className="info-row-list">
-            <div className="info-row">
-              <div className="info-icon-box" style={{ color: 'var(--success)' }}><Mail size={16} /></div>
-              <div className="info-content">
-                <div className="info-label">Email</div>
-                <div className="info-value">test@gmail.com</div>
-              </div>
-            </div>
-            <div className="info-row">
-              <div className="info-icon-box" style={{ color: 'var(--warning)' }}><Phone size={16} /></div>
-              <div className="info-content">
-                <div className="info-label">Phone</div>
-                <div className="info-value" style={{ color: 'var(--text-muted)' }}>Not provided</div>
-              </div>
-            </div>
-            <div className="info-row">
-              <div className="info-icon-box" style={{ color: 'var(--primary)' }}><Building2 size={16} /></div>
-              <div className="info-content">
-                <div className="info-label">Organization</div>
-                <div className="info-value">Acme Corp</div>
-              </div>
+            <div className="completion-checklist">
+              {checklist.map((item, idx) => (
+                <div key={idx} className={`checklist-item ${item.done ? 'done' : ''}`}>
+                  <div className="checklist-icon">{item.done ? <Check size={12} /> : <div className="circle-empty" />}</div>
+                  <span>{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -114,13 +185,13 @@ export function ProfileTab() {
       {/* Right Column - Form */}
       <div className="content-column">
         <div className="settings-card" style={{ position: 'relative', overflow: 'hidden', padding: '32px' }}>
-          <div className="settings-card-header" style={{ marginBottom: '32px' }}>
+          <div className="settings-card-header" style={{ marginBottom: '40px' }}>
             <div className="settings-info-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
               <User size={16} />
             </div>
             <div>
-              <div className="settings-card-title">Personal Information</div>
-              <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>Update your personal details and public profile</div>
+              <div className="settings-card-title" style={{ fontSize: '1.2rem' }}>Personal Information</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>Update your personal details and public profile</div>
             </div>
           </div>
 
@@ -129,56 +200,85 @@ export function ProfileTab() {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Full Name</label>
-              <input type="text" className="form-input" defaultValue="John Doe" placeholder="e.g. Jane Doe" />
+              <input type="text" name="fullName" className="form-input" value={formData.fullName} onChange={handleChange} placeholder="e.g. Jane Doe" />
             </div>
             <div className="form-group">
               <label className="form-label">Email Address</label>
-              <input type="email" className="form-input" defaultValue="test@gmail.com" readOnly />
-              <div className="form-hint">Email cannot be changed. Contact support if needed.</div>
+              <div className="input-with-icon readonly">
+                <input type="email" className="form-input" defaultValue="test@gmail.com" readOnly disabled />
+                <Lock size={16} className="input-icon-right" />
+              </div>
+              <div className="form-hint">Managed by administrator</div>
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Phone Number</label>
-              <input type="tel" className="form-input" placeholder="+1 (555) 000-0000" />
+              <input type="tel" name="phone" className="form-input" value={formData.phone} onChange={handleChange} placeholder="Add phone number" />
             </div>
           </div>
 
-          <div className="form-group-title" style={{ marginTop: '32px' }}>Work Information</div>
+          <div className="form-group-title" style={{ marginTop: '40px' }}>Work Information</div>
 
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Organization</label>
-              <input type="text" className="form-input" defaultValue="Acme Corp" placeholder="e.g. Acme Corp" />
+              <div className="input-with-icon readonly">
+                <input type="text" className="form-input" defaultValue="Acme Corp" readOnly disabled />
+                <Lock size={16} className="input-icon-right" />
+              </div>
             </div>
             <div className="form-group">
               <label className="form-label">Department</label>
-              <input type="text" className="form-input" defaultValue="Operations" placeholder="e.g. Engineering" />
+              <div className="input-with-icon readonly">
+                <input type="text" className="form-input" defaultValue="Operations" readOnly disabled />
+                <Lock size={16} className="input-icon-right" />
+              </div>
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Job Title</label>
-              <input type="text" className="form-input" defaultValue="Senior Analyst" placeholder="e.g. Product Manager" />
+              <div className="input-with-icon readonly">
+                <input type="text" className="form-input" defaultValue="Senior Analyst" readOnly disabled />
+                <Lock size={16} className="input-icon-right" />
+              </div>
             </div>
           </div>
 
-          <div className="form-group-title" style={{ marginTop: '32px' }}>Public Profile</div>
+          <div className="form-group-title" style={{ marginTop: '40px' }}>Public Profile</div>
 
           <div className="form-group">
             <label className="form-label">Bio</label>
-            <textarea className="form-input" placeholder="Write a short bio about yourself..." defaultValue=""></textarea>
-            <div className="form-hint" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Brief description for your profile.</span>
-              <span>0 / 200</span>
+            <div className="textarea-wrapper">
+              <textarea 
+                className="form-input" 
+                name="bio"
+                placeholder="Write a short bio about yourself..." 
+                value={formData.bio}
+                onChange={handleChange}
+                maxLength={200}
+                rows={3}
+              ></textarea>
+              <div className="char-counter">
+                {formData.bio.length} / 200
+              </div>
             </div>
           </div>
 
-          <div className="sticky-footer">
-            <button className="btn btn-secondary">Discard</button>
-            <button className="btn btn-primary" onClick={handleSave} disabled={isSaving} style={{ minWidth: '120px', justifyContent: 'center' }}>
+          <div className="sticky-footer" style={{ marginTop: '48px', paddingTop: '24px' }}>
+            {isDirty && (
+              <button className="btn btn-secondary" onClick={handleDiscard}>Discard</button>
+            )}
+            {!isDirty && <div style={{ flex: 1 }}></div>}
+            <button 
+              className="btn btn-primary" 
+              onClick={handleSave} 
+              disabled={isSaving || !isDirty} 
+              style={{ minWidth: '120px', justifyContent: 'center', opacity: (!isDirty && !isSaving) ? 0.6 : 1 }}
+            >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>

@@ -1,5 +1,5 @@
 .account-settings-container {
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: var(--spacing-6) 0;
   animation: dashboardFadeIn 0.3s ease-out;
@@ -82,7 +82,7 @@
 /* Common Layout for Tabs */
 .settings-grid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: minmax(300px, 1fr) 2.5fr;
   gap: var(--spacing-5);
 }
 
@@ -145,6 +145,7 @@
 
 .account-settings-container .form-input {
   width: 100%;
+  max-width: 800px;
   padding: 10px 12px;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);

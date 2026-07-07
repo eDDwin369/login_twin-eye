@@ -236,6 +236,154 @@
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 12px;
   z-index: 10;
 }
+
+/* Toast Notification */
+.toast-success {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--success);
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  animation: slideInDown 0.3s ease forwards;
+}
+
+@keyframes slideInDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Status Indicator Primary */
+.status-indicator-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--success);
+  background: var(--success-light);
+  padding: 4px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-dot-online {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+/* Badges */
+.badge-secondary-subtle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-dashboard);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-light);
+}
+
+/* Completion Checklist */
+.completion-checklist {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.checklist-item.done {
+  color: var(--success);
+}
+
+.checklist-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle-empty {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+}
+
+/* Inputs with Icons */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 800px;
+}
+
+.input-with-icon input {
+  padding-right: 36px;
+  width: 100%;
+}
+
+.input-icon-right {
+  position: absolute;
+  right: 12px;
+  color: var(--text-muted);
+}
+
+.input-with-icon.readonly input {
+  background-color: var(--bg-dashboard);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  border-color: var(--border-light);
+  box-shadow: none;
+}
+
+/* Textarea Wrapper */
+.textarea-wrapper {
+  position: relative;
+  max-width: 800px;
+}
+
+.textarea-wrapper textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Enhancing Readability for labels */
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
