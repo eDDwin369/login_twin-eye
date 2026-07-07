@@ -82,12 +82,11 @@ body {
   }
 }
 
-/* Left side - Visual */
 .visual-panel {
   flex: 7;
   position: relative;
   display: none;
-  background: url('./assets/login-bg.png') center/cover no-repeat;
+  background: url('./assets/login-bg.jpg') center/cover no-repeat;
   border-right: 1px solid var(--border-subtle);
   overflow: hidden;
 }
