@@ -1,0 +1,211 @@
+.account-settings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--spacing-6) 0;
+  animation: dashboardFadeIn 0.3s ease-out;
+}
+
+.account-header-wrapper {
+  margin-bottom: var(--spacing-6);
+}
+
+.breadcrumb {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: var(--spacing-3);
+  transition: color 0.2s;
+}
+.breadcrumb:hover {
+  color: var(--text-main);
+}
+.back-arrow {
+  font-size: 14px;
+}
+
+.account-page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: -1px;
+  margin-bottom: var(--spacing-5);
+}
+
+.account-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+  gap: var(--spacing-5);
+}
+
+.account-tab {
+  background: none;
+  border: none;
+  padding: var(--spacing-3) 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.account-tab:hover {
+  color: var(--text-main);
+}
+
+.account-tab.active {
+  color: var(--text-main);
+  font-weight: 600;
+  border-bottom-color: var(--primary);
+}
+
+.tab-icon {
+  color: var(--text-muted);
+}
+.account-tab.active .tab-icon {
+  color: var(--primary);
+}
+
+.account-tab-content {
+  padding-top: var(--spacing-4);
+}
+
+/* Common Layout for Tabs */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--spacing-5);
+}
+
+@media (max-width: 900px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.settings-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--spacing-5);
+}
+
+.settings-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.settings-info-icon {
+  color: var(--text-muted);
+  background: var(--bg-dashboard);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* Forms */
+.account-settings-container .form-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.account-settings-container .form-row {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+.account-settings-container .form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.account-settings-container .form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.account-settings-container .form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-dashboard);
+  color: var(--text-main);
+  font-size: 14px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.account-settings-container .form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  background: var(--bg-card);
+}
+
+.account-settings-container .form-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.account-settings-container textarea.form-input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.account-settings-container .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-5);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-light);
+}
+
+@media (max-width: 768px) {
+  .account-settings-container .form-row {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .account-settings-container .form-row .form-group {
+    margin-bottom: var(--spacing-3);
+  }
+  .account-tabs {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  .account-page-title {
+    font-size: 24px;
+  }
+  .sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: var(--sidebar-collapsed-width);
+    right: 0;
+    margin: 0;
+    width: auto;
+    border-radius: 0;
+  }
+}
