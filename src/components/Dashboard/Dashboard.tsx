@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
-import { HeroSection } from './HeroSection';
-import { QuickActions } from './QuickActions';
-import { GettingStarted } from './GettingStarted';
-import { MainContent } from './MainContent';
+import { TemplateWelcome } from './TemplateWelcome';
 import { AccountSettings } from '../AccountSettings/AccountSettings';
 import { NotificationsPage } from '../Notifications/NotificationsPage';
 import { mockNotifications } from '../Notifications/mockData';
@@ -69,12 +66,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
         <div className="dashboard-content-scrollable">
           <div className="dashboard-container">
             {currentView === 'overview' ? (
-              <>
-                <HeroSection />
-                <QuickActions />
-                <GettingStarted />
-                <MainContent />
-              </>
+              <TemplateWelcome onNavigate={handleSetCurrentView} />
             ) : currentView === 'notifications' ? (
               <NotificationsPage 
                 notifications={notifications}

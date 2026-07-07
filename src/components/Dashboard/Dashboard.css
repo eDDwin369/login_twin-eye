@@ -796,3 +796,302 @@
     padding: var(--spacing-3);
   }
 }
+
+/* =========================================================
+   TEMPLATE WELCOME REDESIGN (Premium Enterprise SaaS UI)
+   ========================================================= */
+
+.template-welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+  color: var(--text-main);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.tw-header {
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1rem;
+}
+
+.tw-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.tw-brand {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.tw-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tw-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+}
+
+.tw-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.tw-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.tw-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.tw-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+.tw-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.tw-card-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.tw-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Remove colored icons, standardize to enterprise blue/slate */
+.icon-blue, .icon-green, .icon-orange {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.tw-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.tw-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.tw-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  color: var(--primary);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.tw-cta-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary-hover);
+}
+
+.tw-tag {
+  align-self: center;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background: var(--bg-dashboard);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.blue-tag, .green-tag, .orange-tag {
+  background: var(--bg-dashboard);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.tw-feature-box {
+  /* Parent container styling removed in favor of individual feature cards */
+}
+
+.tw-feature-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.tw-feature-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.tw-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.tw-feature-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  padding: 1.75rem;
+  border-radius: 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.tw-feature-item:hover {
+  background-color: var(--bg-dashboard);
+  border-color: var(--border-hover);
+}
+
+.tw-feature-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.tw-feature-item h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  margin-top: 0;
+  color: var(--text-main);
+}
+
+.tw-feature-item p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.tw-nav-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tw-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.tw-pill:hover {
+  background-color: var(--bg-dashboard);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.tw-footer-box {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.tw-footer-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary);
+}
+
+.tw-footer-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.tw-footer-box p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

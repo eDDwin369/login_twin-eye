@@ -194,9 +194,10 @@ function App() {
 
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
             <img src={logo} alt="Logo" style={{ maxWidth: '130px', height: 'auto' }} />
           </div>
+          <div className="outer-auth-card">
 
           {currentScreen === 'login' && (
             <div className="fade-in">
@@ -300,7 +301,6 @@ function App() {
                 <h1>Verify your email</h1>
                 <p>We've sent a 6-digit verification code to <strong>{maskEmail(email)}</strong></p>
               </div>
-
               <div className="otp-container">
                 <div className="otp-inputs" onPaste={handleOtpPaste}>
                   {otp.map((digit, index) => (
@@ -478,6 +478,11 @@ function App() {
             </div>
           )}
 
+          {/* Optional Footer */}
+          <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+            Powered by OmniEye &copy; {new Date().getFullYear()}
+          </div>
+          </div>
         </div>
       </div>
     </>
