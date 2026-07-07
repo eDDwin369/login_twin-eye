@@ -17,9 +17,10 @@ interface SidebarProps {
   currentView: string;
   setCurrentView: (view: string) => void;
   onLogout?: () => void;
+  isThemeStudioOpen?: boolean;
 }
 
-export function Sidebar({ currentView, setCurrentView, onLogout }: SidebarProps) {
+export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(true);
 
   const handleSidebarClick = () => {
@@ -102,7 +103,14 @@ export function Sidebar({ currentView, setCurrentView, onLogout }: SidebarProps)
           {!collapsed && <div className="nav-section-title">SYSTEM</div>}
           {collapsed && <div className="nav-divider"></div>}
 
-          <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
+          <a 
+            href="#theme-studio"
+            className={`nav-item ${isThemeStudioOpen ? 'active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setCurrentView('theme-studio');
+            }}
+          >
             <Palette size={20} className="nav-icon" />
             {!collapsed && <span className="nav-label">Theme Studio</span>}
           </a>

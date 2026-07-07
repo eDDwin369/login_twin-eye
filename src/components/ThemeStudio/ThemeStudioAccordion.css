@@ -1,0 +1,70 @@
+
+/* Accordion Styles */
+.ts-accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+}
+
+.ts-accordion-item {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: #FFFFFF;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.ts-accordion-item:hover {
+  border-color: var(--border-hover);
+}
+
+.ts-accordion-item.expanded {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.ts-accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ts-accordion-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ts-accordion-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.ts-accordion-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ts-accordion-icon {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.ts-accordion-item.expanded .ts-accordion-icon {
+  transform: rotate(180deg);
+}
+
+.ts-accordion-content {
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 8px;
+  padding-top: 16px;
+}

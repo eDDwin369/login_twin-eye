@@ -5,7 +5,7 @@
   position: relative;
   width: 100px;
   height: 100px;
-  margin: 0 auto 16px;
+  margin: 0 auto var(--spacing-4);
   border-radius: 50%;
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: var(--text-4xl);
   font-weight: 600;
   border: 3px solid white;
 }
@@ -63,7 +63,7 @@
   font-weight: 500;
   color: var(--text-secondary);
   background: var(--bg-dashboard);
-  padding: 4px 12px;
+  padding: var(--spacing-1) var(--spacing-3);
   border-radius: 999px;
   border: 1px solid var(--border-light);
 }
@@ -88,15 +88,15 @@
   background: var(--bg-dashboard);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  padding: 12px;
-  margin-bottom: 24px;
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
 }
 
 .completion-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-main);
@@ -121,14 +121,14 @@
 .info-row-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   transition: background 0.2s;
 }
@@ -140,7 +140,7 @@
 .info-icon-box {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,7 +194,7 @@
   color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .kv-val {
@@ -218,11 +218,11 @@
 }
 
 .form-group-title {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-main);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -230,14 +230,14 @@
   position: sticky;
   bottom: -24px;
   background: var(--bg-card);
-  padding: 16px 24px;
-  margin: 32px -24px -24px;
+  padding: var(--spacing-4) var(--spacing-5);
+  margin: var(--spacing-6) -24px -24px;
   border-top: 1px solid var(--border-light);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   z-index: 10;
 }
 
@@ -248,11 +248,11 @@
   right: 16px;
   background: var(--success);
   color: white;
-  padding: 12px 24px;
+  padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   box-shadow: var(--shadow-lg);
   z-index: 100;
   animation: slideInDown 0.3s ease forwards;
@@ -268,11 +268,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--success);
   background: var(--success-light);
-  padding: 4px 16px;
+  padding: var(--spacing-1) var(--spacing-4);
   border-radius: 999px;
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
@@ -290,23 +290,23 @@
   font-weight: 500;
   color: var(--text-secondary);
   background: var(--bg-dashboard);
-  padding: 2px 8px;
+  padding: 2px var(--spacing-2);
   border-radius: 999px;
   border: 1px solid var(--border-light);
 }
 
 /* Completion Checklist */
 .completion-checklist {
-  margin-top: 16px;
+  margin-top: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .checklist-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   font-size: 13px;
   color: var(--text-secondary);
   transition: color 0.2s;
@@ -377,12 +377,12 @@
   color: var(--text-muted);
   background: var(--bg-card);
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 /* Enhancing Readability for labels */
 .form-label {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-main);
 }

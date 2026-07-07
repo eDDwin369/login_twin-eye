@@ -7,7 +7,7 @@
   right: 0;
   width: 380px;
   max-height: 550px;
-  margin-top: 8px;
+  margin-top: var(--spacing-2);
   background-color: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
@@ -34,17 +34,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: var(--spacing-4);
   border-bottom: 1px solid var(--border-light);
 }
 
 .notification-header h3 {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-main);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .notification-count-badge {
@@ -53,7 +53,7 @@
   font-size: 11px;
   font-weight: bold;
   padding: 2px 6px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 
 .notification-mark-read-btn {
@@ -63,7 +63,7 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
 }
 .notification-mark-read-btn:hover {
   text-decoration: underline;
@@ -83,8 +83,8 @@
 .notification-card {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   border: none;
   border-bottom: 1px solid var(--border-light);
   background: var(--bg-card);
@@ -149,14 +149,14 @@
 }
 
 .notification-title {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text-main);
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--spacing-2);
   text-align: left;
 }
 
@@ -175,12 +175,12 @@
 }
 
 .notification-time {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   white-space: nowrap;
   font-weight: 400;
   text-align: left;
-  margin-top: 4px;
+  margin-top: var(--spacing-1);
 }
 
 .notification-unread-dot {
@@ -189,12 +189,12 @@
   background-color: var(--primary);
   border-radius: 50%;
   flex-shrink: 0;
-  margin-top: 4px;
+  margin-top: var(--spacing-1);
 }
 
 /* Footer View All */
 .notification-footer {
-  padding: 12px;
+  padding: var(--spacing-3);
   border-top: 1px solid var(--border-light);
   text-align: center;
   background: var(--bg-card);
@@ -204,10 +204,10 @@
   background: none;
   border: none;
   color: var(--primary);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--spacing-2);
   width: 100%;
 }
 .notification-view-all:hover {
@@ -220,22 +220,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: var(--spacing-8) var(--spacing-5);
   text-align: center;
   color: var(--text-muted);
 }
 .notification-empty svg {
   color: var(--border-hover);
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 .notification-empty h4 {
-  font-size: 16px;
+  font-size: var(--text-base);
   color: var(--text-main);
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 .notification-empty p {
-  font-size: 14px;
+  font-size: var(--text-sm);
 }
 
 /* Notifications Page Styles */
@@ -262,7 +262,7 @@
 
 .notifications-actions {
   display: flex;
-  gap: 16px;
+  gap: var(--spacing-4);
   align-items: center;
 }
 
@@ -277,18 +277,18 @@
 
 .notifications-tabs {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: var(--spacing-1);
 }
 
 .notification-tab-btn {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   color: var(--text-secondary);
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border-radius: 20px;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
@@ -312,10 +312,10 @@
 }
 .notifications-search input {
   width: 100%;
-  padding: 8px 12px 8px 36px;
+  padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) 36px;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  font-size: 14px;
+  font-size: var(--text-sm);
   background: var(--bg-card);
 }
 .notifications-search svg {
@@ -327,7 +327,7 @@
 }
 
 .notifications-group-title {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
