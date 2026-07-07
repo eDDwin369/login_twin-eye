@@ -10,10 +10,6 @@ import {
   PanelLeftClose,
   LogOut,
   ChevronRight,
-  Sparkles,
-  History,
-  User,
-  Settings as SettingsIcon,
   LifeBuoy
 } from 'lucide-react';
 import './Dashboard.css';
