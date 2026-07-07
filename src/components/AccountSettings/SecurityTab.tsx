@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Shield, Lock, Smartphone, Key, Monitor, Smartphone as PhoneIcon } from 'lucide-react';
 
 export function SecurityTab() {

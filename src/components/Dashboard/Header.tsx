@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Sparkles, Bell, HelpCircle, Sun, Settings, LogOut } from 'lucide-react';
 import './Dashboard.css';
 

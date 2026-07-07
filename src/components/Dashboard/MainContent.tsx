@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowRight, FileText, BarChart2, ShieldAlert, Sparkles, FolderOpen, MoreHorizontal } from 'lucide-react';
+import { FileText, BarChart2, ShieldAlert, Sparkles, MoreHorizontal } from 'lucide-react';
 import './Dashboard.css';
 
 export function MainContent() {

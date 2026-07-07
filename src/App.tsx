@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, Shield, ArrowRight, ArrowLeft, CheckCircle2, XCircle, KeyRound, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle2, XCircle, KeyRound, Check } from 'lucide-react';
 import './index.css';
 import logo from './assets/logo.png';
 import { Dashboard } from './components/Dashboard/Dashboard';

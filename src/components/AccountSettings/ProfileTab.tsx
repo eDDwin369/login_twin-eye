@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { User, Mail, Phone, Building2, CheckCircle2, Camera, Calendar, Clock, Globe2, MapPin, ShieldCheck, Key, Shield } from 'lucide-react';
 import './ProfileStyles.css';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Settings, Globe, Download, Info, Cookie, Palette } from 'lucide-react';
 
 export function PreferencesTab() {

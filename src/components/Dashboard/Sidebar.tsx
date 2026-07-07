@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   LayoutGrid, 
   Grid, 
@@ -8,7 +8,6 @@ import {
   Palette, 
   UserCircle,
   ChevronLeft,
-  X,
   Menu
 } from 'lucide-react';
 import './Dashboard.css';
