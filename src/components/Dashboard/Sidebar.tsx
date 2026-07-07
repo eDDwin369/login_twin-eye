@@ -13,6 +13,7 @@ import {
   LifeBuoy
 } from 'lucide-react';
 import './Dashboard.css';
+import logo from '../../assets/logo.png';
 
 interface SidebarProps {
   currentView: string;
@@ -39,7 +40,7 @@ export function Sidebar({ currentView, setCurrentView, onLogout }: SidebarProps)
       <div className="sidebar-header" style={{ justifyContent: collapsed ? 'center' : 'space-between', padding: collapsed ? '1rem 0' : '1.5rem 1.5rem 1rem' }}>
         <div className="sidebar-brand">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start' }}>
-            <div style={{ background: 'var(--primary)', color: 'white', width: '28px', height: '28px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px' }}>M</div>
+            <img src={logo} alt="OmniEye Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
           </div>
         </div>
         
