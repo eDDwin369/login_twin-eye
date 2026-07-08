@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Lock, Camera, Shield, Calendar, Clock, Globe2, MapPin, ShieldCheck, Key, Check } from 'lucide-react';
+import { User, Lock, Camera, Shield, Calendar, Clock, MapPin, Check } from 'lucide-react';
 import './ProfileStyles.css';
 
 interface ProfileTabProps {
@@ -147,7 +147,7 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
         </div>
         
         {/* Account Information Card */}
-        <div className="settings-card">
+        <div className="settings-card" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div className="settings-card-header">
             <div className="settings-info-icon"><Shield size={16} /></div>
             <div className="settings-card-title">Account Information</div>
@@ -163,20 +163,8 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
               <div className="kv-val">Just now</div>
             </div>
             <div className="kv-item">
-              <div className="kv-key"><Globe2 size={14} /> Timezone</div>
-              <div className="kv-val">UTC</div>
-            </div>
-            <div className="kv-item">
               <div className="kv-key"><MapPin size={14} /> Region</div>
               <div className="kv-val">United States</div>
-            </div>
-            <div className="kv-item">
-              <div className="kv-key"><ShieldCheck size={14} /> Account Status</div>
-              <div className="kv-val" style={{ color: 'var(--success)' }}>Active</div>
-            </div>
-            <div className="kv-item">
-              <div className="kv-key"><Key size={14} /> 2FA Status</div>
-              <div className="kv-val" style={{ color: 'var(--text-muted)' }}>Disabled</div>
             </div>
           </div>
         </div>
@@ -184,8 +172,8 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
 
       {/* Right Column - Form */}
       <div className="content-column">
-        <div className="settings-card" style={{ position: 'relative', overflow: 'hidden', padding: '32px' }}>
-          <div className="settings-card-header" style={{ marginBottom: '40px' }}>
+        <div className="settings-card" style={{ position: 'relative', overflow: 'hidden', padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div className="settings-card-header" style={{ marginBottom: '24px' }}>
             <div className="settings-info-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
               <User size={16} />
             </div>
@@ -208,18 +196,14 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
                 <input type="email" className="form-input" defaultValue="test@gmail.com" readOnly disabled />
                 <Lock size={16} className="input-icon-right" />
               </div>
-              <div className="form-hint">Managed by administrator</div>
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-group">
               <label className="form-label">Phone Number</label>
               <input type="tel" name="phone" className="form-input" value={formData.phone} onChange={handleChange} placeholder="Add phone number" />
             </div>
           </div>
 
-          <div className="form-group-title" style={{ marginTop: '40px' }}>Work Information</div>
+          <div className="form-group-title" style={{ marginTop: '24px' }}>Work Information</div>
 
           <div className="form-row">
             <div className="form-group">
@@ -236,9 +220,6 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
                 <Lock size={16} className="input-icon-right" />
               </div>
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-group">
               <label className="form-label">Job Title</label>
               <div className="input-with-icon readonly">
@@ -248,7 +229,7 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
             </div>
           </div>
 
-          <div className="form-group-title" style={{ marginTop: '40px' }}>Public Profile</div>
+          <div className="form-group-title" style={{ marginTop: '24px' }}>Public Profile</div>
 
           <div className="form-group">
             <label className="form-label">Bio</label>
@@ -268,7 +249,7 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
             </div>
           </div>
 
-          <div className="sticky-footer" style={{ marginTop: '48px', paddingTop: '24px' }}>
+          <div className="sticky-footer" style={{ marginTop: 'auto', paddingTop: '16px' }}>
             {isDirty && (
               <button className="btn btn-secondary" onClick={handleDiscard}>Discard</button>
             )}

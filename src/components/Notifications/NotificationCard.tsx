@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertTriangle, XCircle, Info, Settings } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, Info, Settings, Save, Users, Download } from 'lucide-react';
 import type { NotificationItem } from './types';
 import './Notifications.css';
 
@@ -10,13 +10,16 @@ interface NotificationCardProps {
 export function NotificationCard({ notification, onClick }: NotificationCardProps) {
   const getIcon = () => {
     switch (notification.type) {
-      case 'success': return <CheckCircle2 size={16} />;
-      case 'error': return <XCircle size={16} />;
-      case 'warning': return <AlertTriangle size={16} />;
-      case 'system': return <Settings size={16} />;
+      case 'success': return <CheckCircle2 size={16} strokeWidth={2.5} />;
+      case 'save': return <Save size={16} strokeWidth={2.5} />;
+      case 'share': return <Users size={16} strokeWidth={2.5} />;
+      case 'import': return <Download size={16} strokeWidth={2.5} />;
+      case 'error': return <XCircle size={16} strokeWidth={2.5} />;
+      case 'warning': return <AlertTriangle size={16} strokeWidth={2.5} />;
+      case 'system': return <Settings size={16} strokeWidth={2.5} />;
       case 'info':
       default:
-        return <Info size={16} />;
+        return <Info size={16} strokeWidth={2.5} />;
     }
   };
 

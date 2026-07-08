@@ -26,6 +26,7 @@ function App() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
 
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -153,13 +154,6 @@ function App() {
   };
   const isPasswordValid = Object.values(passwordReqs).every(Boolean) && newPassword === confirmPassword;
 
-  const getPasswordStrength = () => {
-    const reqsMet = Object.values(passwordReqs).filter(Boolean).length;
-    if (newPassword.length === 0) return { width: '0%', color: 'transparent', text: '' };
-    if (reqsMet <= 2) return { width: '33%', color: '#ef4444', text: 'Weak' }; // red-500
-    if (reqsMet <= 4) return { width: '66%', color: '#eab308', text: 'Medium' }; // yellow-500
-    return { width: '100%', color: '#22c55e', text: 'Strong' }; // green-500
-  };
 
   const handleCreateNewPassword = (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,289 +193,283 @@ function App() {
           </div>
           <div className="outer-auth-card">
 
-          {currentScreen === 'login' && (
-            <div className="fade-in">
-              <div className="form-header">
-                <h1>Welcome back</h1>
-                <p>Enter your credentials to access the system.</p>
-              </div>
-              <form onSubmit={handleLoginSubmit}>
-                <div className="form-group">
-                  <label htmlFor="login-email">Email Address</label>
-                  <div className="input-wrapper" title="Enter your Email address">
-                    <Mail className="input-icon" size={18} />
-                    <input
-                      type="email"
-                      id="login-email"
-                      className="form-input"
-                      placeholder=""
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
+            {currentScreen === 'login' && (
+              <div className="fade-in">
+                <div className="form-header centered">
+                  <h1>Welcome back</h1>
+                  <p>Sign in to continue</p>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="login-password">Password</label>
-                  <div className="input-wrapper" title="Enter your password">
-                    <Lock className="input-icon" size={18} />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="login-password"
-                      className="form-input"
-                      placeholder=""
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-                <div className="form-options">
-                  <label className="checkbox-wrapper">
-                    <input type="checkbox" defaultChecked />
-                    <span>Remember me</span>
-                  </label>
-                  <button type="button" className="text-btn forgot-password" onClick={() => setCurrentScreen('forgot-password')}>
-                    Forgot password?
-                  </button>
-                </div>
-                <button type="submit" className="submit-btn">
-                  Login <ArrowRight size={18} />
-                </button>
-              </form>
-            </div>
-          )}
-
-          {currentScreen === 'forgot-password' && (
-            <div className="fade-in">
-              <button className="back-btn" onClick={() => setCurrentScreen('login')}>
-                <ArrowLeft size={16} /> Back to login
-              </button>
-              <div className="form-header">
-                <h1>Forgot Password?</h1>
-                <p>Enter the email address associated with your account. We'll send a 6-digit verification code.</p>
-              </div>
-              <form onSubmit={handleForgotPasswordSubmit}>
-                <div className="form-group">
-                  <label htmlFor="forgot-email">Email Address</label>
-                  <div className="input-wrapper" title="Enter your Email address">
-                    <Mail className="input-icon" size={18} />
-                    <input
-                      type="email"
-                      id="forgot-email"
-                      className="form-input"
-                      placeholder=""
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email}>
-                  {isLoading ? 'Sending...' : 'Send OTP'} <ArrowRight size={18} />
-                </button>
-              </form>
-            </div>
-          )}
-
-          {currentScreen === 'otp' && (
-            <div className="fade-in">
-              <button className="back-btn" onClick={() => setCurrentScreen('forgot-password')}>
-                <ArrowLeft size={16} /> Back
-              </button>
-              <div className="form-header">
-                <h1>Verify your email</h1>
-                <p>We've sent a 6-digit verification code to <strong>{maskEmail(email)}</strong></p>
-              </div>
-              <div className="otp-container">
-                <div className="otp-inputs" onPaste={handleOtpPaste}>
-                  {otp.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => { otpRefs.current[index] = el; }}
-                      type="text"
-                      className={`otp-input ${otpError ? 'error' : ''}`}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      maxLength={1}
-                      autoComplete="off"
-                    />
-                  ))}
-                </div>
-                {otpError && (
-                  <div className="error-message">
-                    <XCircle size={14} /> {otpError}
-                  </div>
-                )}
-                <div className="timer-section">
-                  {timeLeft > 0 ? (
-                    <span className="timer">Resend code in {timeLeft}s</span>
-                  ) : (
-                    <button type="button" className="text-btn resend-btn" onClick={handleResendOtp} disabled={isLoading}>
-                      Resend OTP
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="form-options">
-                <button type="button" className="text-btn change-email" onClick={() => setCurrentScreen('forgot-password')}>
-                  Change Email
-                </button>
-              </div>
-
-              <button
-                type="button"
-                className={`submit-btn ${isLoading ? 'loading' : ''}`}
-                onClick={handleVerifyOtp}
-                disabled={isLoading || otp.join('').length !== 6 || timeLeft === 0}
-              >
-                {isLoading ? 'Verifying...' : 'Verify OTP'} <ArrowRight size={18} />
-              </button>
-            </div>
-          )}
-
-          {currentScreen === 'new-password' && (
-            <div className="fade-in">
-              <button className="back-btn" onClick={() => setCurrentScreen('login')}>
-                <ArrowLeft size={16} /> Back to login
-              </button>
-              <div className="form-header">
-                <h1>Create a New Password</h1>
-                <p>Your new password must be unique and meet the security requirements.</p>
-              </div>
-              <form onSubmit={handleCreateNewPassword}>
-                <div className="form-group">
-                  <label htmlFor="new-password">New Password</label>
-                  <div className="input-wrapper" title="Enter your new password">
-                    <Lock className="input-icon" size={18} />
-                    <input
-                      type={showNewPassword ? 'text' : 'password'}
-                      id="new-password"
-                      className="form-input"
-                      placeholder=""
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                    >
-                      {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                  {/* Strength Meter */}
-                  <div className="strength-meter-container">
-                    <div className="strength-bar">
-                      <div
-                        className="strength-fill"
-                        style={{
-                          width: getPasswordStrength().width,
-                          backgroundColor: getPasswordStrength().color
-                        }}
-                      ></div>
+                <form onSubmit={handleLoginSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="login-email">Email Address</label>
+                    <div className="input-wrapper" title="Enter your Email address">
+                      <Mail className="input-icon" size={18} />
+                      <input
+                        type="email"
+                        id="login-email"
+                        className="form-input"
+                        placeholder=""
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
                     </div>
-                    {newPassword.length > 0 && (
-                      <span className="strength-text" style={{ color: getPasswordStrength().color }}>
-                        {getPasswordStrength().text}
-                      </span>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="login-password">Password</label>
+                    <div className="input-wrapper" title="Enter your password">
+                      <Lock className="input-icon" size={18} />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="login-password"
+                        className="form-input"
+                        placeholder=""
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="form-options">
+                    <label className="checkbox-wrapper">
+                      <input type="checkbox" defaultChecked />
+                      <span>Remember me</span>
+                    </label>
+                    <button type="button" className="text-btn forgot-password" onClick={() => setCurrentScreen('forgot-password')}>
+                      Forgot password?
+                    </button>
+                  </div>
+                  <button type="submit" className="submit-btn">
+                    Login <ArrowRight size={18} />
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {currentScreen === 'forgot-password' && (
+              <div className="fade-in">
+                <button className="back-btn" onClick={() => setCurrentScreen('login')}>
+                  <ArrowLeft size={16} /> Back to login
+                </button>
+                <div className="form-header">
+                  <h1>Enter your Email Address</h1><br />
+                  {/* <p>Enter the email address associated with your account. We'll send a 6-digit verification code.</p> */}
+                </div>
+                <form onSubmit={handleForgotPasswordSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="forgot-email">Email Address</label>
+                    <div className="input-wrapper" title="Enter your Email address">
+                      <Mail className="input-icon" size={18} />
+                      <input
+                        type="email"
+                        id="forgot-email"
+                        className="form-input"
+                        placeholder=""
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email}>
+                    {isLoading ? 'Sending...' : 'Send OTP'} <ArrowRight size={18} />
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {currentScreen === 'otp' && (
+              <div className="fade-in">
+                <button className="back-btn" onClick={() => setCurrentScreen('forgot-password')}>
+                  <ArrowLeft size={16} /> Back
+                </button>
+                <div className="form-header">
+                  <h1>Verify your email</h1>
+                  <p>We've sent a 6-digit verification code to <strong>{maskEmail(email)}</strong></p>
+                </div>
+                <div className="otp-container">
+                  <div className="otp-inputs" onPaste={handleOtpPaste}>
+                    {otp.map((digit, index) => (
+                      <input
+                        key={index}
+                        ref={(el) => { otpRefs.current[index] = el; }}
+                        type="text"
+                        className={`otp-input ${otpError ? 'error' : ''}`}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(index, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                        maxLength={1}
+                        autoComplete="off"
+                      />
+                    ))}
+                  </div>
+                  {otpError && (
+                    <div className="error-message">
+                      <XCircle size={14} /> {otpError}
+                    </div>
+                  )}
+                  <div className="timer-section">
+                    {timeLeft > 0 ? (
+                      <span className="timer">Resend code in {timeLeft}s</span>
+                    ) : (
+                      <button type="button" className="text-btn resend-btn" onClick={handleResendOtp} disabled={isLoading}>
+                        Resend OTP
+                      </button>
                     )}
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="confirm-password">Confirm Password</label>
-                  <div className="input-wrapper" title="Confirm your new password">
-                    <KeyRound className="input-icon" size={18} />
-                    <input
-                      type={showNewPassword ? 'text' : 'password'}
-                      id="confirm-password"
-                      className="form-input"
-                      placeholder=""
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  {confirmPassword && newPassword !== confirmPassword && (
-                    <div className="error-message">
-                      <XCircle size={14} /> Passwords do not match
-                    </div>
-                  )}
+                <div className="form-options">
+                  <button type="button" className="text-btn change-email" onClick={() => setCurrentScreen('forgot-password')}>
+                    Change Email
+                  </button>
                 </div>
 
-                <div className="validation-checklist">
-                  <div className={`checklist-item ${passwordReqs.length ? 'met' : ''}`}>
-                    <CheckCircle2 size={16} /> Minimum 8 characters
-                  </div>
-                  <div className={`checklist-item ${passwordReqs.uppercase ? 'met' : ''}`}>
-                    <CheckCircle2 size={16} /> One uppercase letter
-                  </div>
-                  <div className={`checklist-item ${passwordReqs.lowercase ? 'met' : ''}`}>
-                    <CheckCircle2 size={16} /> One lowercase letter
-                  </div>
-                  <div className={`checklist-item ${passwordReqs.number ? 'met' : ''}`}>
-                    <CheckCircle2 size={16} /> One number
-                  </div>
-                  <div className={`checklist-item ${passwordReqs.special ? 'met' : ''}`}>
-                    <CheckCircle2 size={16} /> One special character
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className={`submit-btn ${isLoading ? 'loading' : ''}`}
-                  disabled={isLoading || !isPasswordValid}
-                  style={{ marginTop: '2rem' }}
-                >
-                  {isLoading ? 'Updating...' : 'Reset Password'} <Check size={18} />
-                </button>
-              </form>
-            </div>
-          )}
-
-          {currentScreen === 'success' && (
-            <div className="fade-in success-screen">
-              <div className="success-icon-wrapper">
-                <div className="success-pulse"></div>
-                <CheckCircle2 className="success-icon" size={64} />
-              </div>
-              <div className="form-header centered">
-                <h1>Password Updated Successfully</h1>
-                {/* <p>Your password has been changed successfully. You can now sign in using your new password.</p> */}
-              </div>
-              <div className="success-actions">
                 <button
                   type="button"
-                  className="submit-btn"
-                  onClick={() => {
-                    setCurrentScreen('login');
-                    setPassword('');
-                    setNewPassword('');
-                    setConfirmPassword('');
-                  }}
+                  className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                  onClick={handleVerifyOtp}
+                  disabled={isLoading || otp.join('').length !== 6 || timeLeft === 0}
                 >
-                  Back to Login
+                  {isLoading ? 'Verifying...' : 'Verify OTP'} <ArrowRight size={18} />
                 </button>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Optional Footer */}
-          <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-            Powered by OmniEye &copy; {new Date().getFullYear()}
-          </div>
+            {currentScreen === 'new-password' && (
+              <div className="fade-in">
+                <button className="back-btn" onClick={() => setCurrentScreen('login')}>
+                  <ArrowLeft size={16} /> Back to login
+                </button>
+                <div className="form-header">
+                  <h1>Create a New Password</h1>
+                </div>
+                <form onSubmit={handleCreateNewPassword}>
+                  <div className="form-group">
+                    <label htmlFor="new-password">New Password</label>
+                    <div className="input-wrapper" title="Enter your new password">
+                      <Lock className="input-icon" size={18} />
+                      <input
+                        type={showNewPassword ? 'text' : 'password'}
+                        id="new-password"
+                        className="form-input"
+                        placeholder=""
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        onFocus={() => setIsNewPasswordFocused(true)}
+                        onBlur={() => setIsNewPasswordFocused(false)}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                      >
+                        {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    
+                    <div className={`validation-checklist-wrapper ${isNewPasswordFocused || newPassword.length > 0 ? 'visible' : ''}`}>
+                      {Object.values(passwordReqs).every(Boolean) ? (
+                        <div className="success-message">
+                          <CheckCircle2 size={16} /> Strong password
+                        </div>
+                      ) : (
+                        <div className="validation-checklist">
+                          <div className={`checklist-item ${passwordReqs.length ? 'met' : ''}`}>
+                            <CheckCircle2 size={16} /> Minimum 8 characters
+                          </div>
+                          <div className={`checklist-item ${passwordReqs.uppercase ? 'met' : ''}`}>
+                            <CheckCircle2 size={16} /> One uppercase letter
+                          </div>
+                          <div className={`checklist-item ${passwordReqs.lowercase ? 'met' : ''}`}>
+                            <CheckCircle2 size={16} /> One lowercase letter
+                          </div>
+                          <div className={`checklist-item ${passwordReqs.number ? 'met' : ''}`}>
+                            <CheckCircle2 size={16} /> One number
+                          </div>
+                          <div className={`checklist-item ${passwordReqs.special ? 'met' : ''}`}>
+                            <CheckCircle2 size={16} /> One special character
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="confirm-password">Confirm Password</label>
+                    <div className="input-wrapper" title="Confirm your new password">
+                      <KeyRound className="input-icon" size={18} />
+                      <input
+                        type={showNewPassword ? 'text' : 'password'}
+                        id="confirm-password"
+                        className="form-input"
+                        placeholder=""
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    {confirmPassword && newPassword !== confirmPassword && (
+                      <div className="error-message">
+                        <XCircle size={14} /> Passwords do not match
+                      </div>
+                    )}
+                  </div>
+
+
+
+                  <button
+                    type="submit"
+                    className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                    disabled={isLoading || !isPasswordValid}
+                    style={{ marginTop: '2rem' }}
+                  >
+                    {isLoading ? 'Updating...' : 'Reset Password'} <Check size={18} />
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {currentScreen === 'success' && (
+              <div className="fade-in success-screen">
+                <div className="success-icon-wrapper">
+                  <div className="success-pulse"></div>
+                  <CheckCircle2 className="success-icon" size={64} />
+                </div>
+                <div className="form-header centered">
+                  <h1>Password Updated Successfully</h1>
+                  {/* <p>Your password has been changed successfully. You can now sign in using your new password.</p> */}
+                </div>
+                <div className="success-actions">
+                  <button
+                    type="button"
+                    className="submit-btn"
+                    onClick={() => {
+                      setCurrentScreen('login');
+                      setPassword('');
+                      setNewPassword('');
+                      setConfirmPassword('');
+                    }}
+                  >
+                    Back to Login
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Optional Footer */}
+            <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+              Powered by OmniEye &copy; {new Date().getFullYear()}
+            </div>
           </div>
         </div>
       </div>

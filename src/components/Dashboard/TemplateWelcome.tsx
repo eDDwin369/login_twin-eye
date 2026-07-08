@@ -21,6 +21,7 @@ interface TemplateWelcomeProps {
 export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
   return (
     <div className="template-welcome dashboard-fade-in">
+      <div className="tw-parent-card">
       {/* Hero Header */}
       <div className="tw-header">
         <div className="tw-title-row">
@@ -104,28 +105,44 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
             <div className="tw-feature-icon-wrapper"><Settings2 size={20} /></div>
             <div>
               <h4>Authentication</h4>
-              <p>Login page · Forgot password (5-step OTP flow) · Mock auth with real API hooks</p>
+              <ul className="tw-feature-list">
+                <li>Login page</li>
+                <li>Forgot password (5-step OTP flow)</li>
+                <li>Mock auth with real API hooks</li>
+              </ul>
             </div>
           </div>
           <div className="tw-feature-item">
             <div className="tw-feature-icon-wrapper"><LayoutDashboard size={20} /></div>
             <div>
               <h4>Layout Shell</h4>
-              <p>Header · Collapsible sidebar · Footer · Notification dropdown · User menu</p>
+              <ul className="tw-feature-list">
+                <li>Header and Collapsible sidebar</li>
+                <li>Footer and User menu</li>
+                <li>Notification dropdown</li>
+              </ul>
             </div>
           </div>
           <div className="tw-feature-item">
             <div className="tw-feature-icon-wrapper"><Settings size={20} /></div>
             <div>
               <h4>Settings System</h4>
-              <p>Global Settings dialog (6 tabs) · IndexedDB persistence · Export/Import · Live preview</p>
+              <ul className="tw-feature-list">
+                <li>Global Settings dialog (6 tabs)</li>
+                <li>IndexedDB persistence</li>
+                <li>Export/Import & Live preview</li>
+              </ul>
             </div>
           </div>
           <div className="tw-feature-item">
             <div className="tw-feature-icon-wrapper"><Palette size={20} /></div>
             <div>
               <h4>Theme Engine</h4>
-              <p>4 OmniEye brand themes · @nithishdts001/theme-engine · Token-based colours · Full ThemeStudio</p>
+              <ul className="tw-feature-list">
+                <li>4 OmniEye brand themes</li>
+                <li>@nithishdts001/theme-engine</li>
+                <li>Token-based colours</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -136,19 +153,19 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
         <h2 className="tw-section-title" style={{ fontSize: '1.1rem' }}>Quick navigation</h2>
         <div className="tw-nav-pills">
           <button className="tw-pill" onClick={() => onNavigate?.('overview')}>
-            <LayoutDashboard size={16} /> DASHBOARD
+            <LayoutDashboard size={16} /> Dashboard
           </button>
           <button className="tw-pill" onClick={() => onNavigate?.('account')}>
-            <Settings size={16} /> SETTINGS
+            <Settings size={16} /> Settings
           </button>
           <button className="tw-pill">
-            <User size={16} /> PROFILE
+            <User size={16} /> Profile
           </button>
           <button className="tw-pill" onClick={() => onNavigate?.('notifications')}>
-            <Bell size={16} /> NOTIFICATIONS
+            <Bell size={16} /> Notifications
           </button>
           <button className="tw-pill">
-            <Wand2 size={16} /> THEME STUDIO
+            <Wand2 size={16} /> Theme Studio
           </button>
         </div>
       </div>
@@ -164,6 +181,7 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
         </p>
       </div>
 
+      </div>
     </div>
   );
 }

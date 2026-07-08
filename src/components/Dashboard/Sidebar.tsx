@@ -22,6 +22,7 @@ interface SidebarProps {
 
 export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(true);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     if (isThemeStudioOpen) {
@@ -43,7 +44,13 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
     >
       <div className="sidebar-header" style={{ justifyContent: collapsed ? 'center' : 'space-between', padding: collapsed ? '1rem 0' : '1.5rem 1.5rem 1rem' }}>
         <div className="sidebar-brand">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start' }}>
+          <div 
+            style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start', cursor: 'pointer' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentView('overview');
+            }}
+          >
             <img src={logo} alt="OmniEye Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
           </div>
         </div>
@@ -128,20 +135,55 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
             <UserCircle size={20} className="nav-icon" />
             {!collapsed && <span className="nav-label">My Account</span>}
           </a>
-          <a 
-            href="#" 
-            className="nav-item" 
-            onClick={(e) => { e.preventDefault(); if (onLogout) onLogout(); }}
-          >
-            <LogOut size={20} className="nav-icon" />
-            {!collapsed && <span className="nav-label">Log out</span>}
-          </a>
         </div>
       </div>
 
       <div className="sidebar-footer" style={{ padding: collapsed ? '16px 8px' : '16px', position: 'relative', display: 'flex', justifyContent: 'center' }}>
+        
+        {showProfileMenu && (
+          <div style={{
+            position: 'absolute',
+            bottom: '100%',
+            left: collapsed ? '50%' : '16px',
+            transform: collapsed ? 'translateX(-50%)' : 'none',
+            marginBottom: '8px',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-light)',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: 'var(--shadow-md)',
+            padding: '4px',
+            minWidth: collapsed ? '120px' : 'calc(100% - 32px)',
+            zIndex: 200
+          }}>
+            <button 
+              onClick={() => { setShowProfileMenu(false); if (onLogout) onLogout(); }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                padding: '8px 12px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--danger)',
+                cursor: 'pointer',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '14px',
+                fontWeight: '500',
+                textAlign: 'left'
+              }}
+            >
+              <LogOut size={16} />
+              Log out
+            </button>
+          </div>
+        )}
+
         <div 
-          style={{ display: 'flex', alignItems: 'center', gap: collapsed ? '0' : '12px', padding: '8px', borderRadius: '8px', width: '100%', justifyContent: collapsed ? 'center' : 'flex-start' }}
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+          style={{ display: 'flex', alignItems: 'center', gap: collapsed ? '0' : '12px', padding: '8px', borderRadius: '8px', width: '100%', justifyContent: collapsed ? 'center' : 'flex-start', cursor: 'pointer', transition: 'background 0.2s' }}
+          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
         >
           <div style={{ background: '#22c55e', color: 'white', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', flexShrink: 0 }}>
             EA

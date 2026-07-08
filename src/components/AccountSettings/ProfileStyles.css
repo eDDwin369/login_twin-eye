@@ -348,6 +348,7 @@
   position: absolute;
   right: 12px;
   color: var(--text-muted);
+  pointer-events: none;
 }
 
 .input-with-icon.readonly input {
@@ -358,10 +359,10 @@
   box-shadow: none;
 }
 
-/* Textarea Wrapper */
 .textarea-wrapper {
   position: relative;
   max-width: 800px;
+  padding-bottom: 24px; /* Space for the counter below it */
 }
 
 .textarea-wrapper textarea {
@@ -371,13 +372,11 @@
 
 .char-counter {
   position: absolute;
-  bottom: 8px;
-  right: 12px;
+  bottom: 0;
+  right: 0;
   font-size: 11px;
   color: var(--text-muted);
-  background: var(--bg-card);
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
+  padding: 2px 0;
 }
 
 /* Enhancing Readability for labels */

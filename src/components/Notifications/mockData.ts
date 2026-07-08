@@ -7,38 +7,38 @@ export const mockNotifications: NotificationItem[] = [
     category: 'Themes',
     title: 'Corporate Theme published successfully',
     description: 'The Corporate Theme is now live and available to all users.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 min ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 45), // 45 min ago
     isRead: false,
     actionRoute: 'theme-details'
   },
   {
     id: '2',
-    type: 'success',
+    type: 'save',
     category: 'Themes',
     title: 'Dark Theme draft saved',
-    description: 'Your changes to Dark Theme have been saved as a draft.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 min ago
+    description: 'Your changes to Dark Theme have been saved successfully.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 1), // 1 hour ago
     isRead: false,
     actionRoute: 'theme-editor'
   },
   {
     id: '3',
-    type: 'info',
+    type: 'share',
     category: 'Team Activity',
     title: 'Enterprise Theme shared by John Doe',
-    description: 'John Doe has shared the Enterprise Theme with you for review.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    description: 'John Doe has shared the Enterprise Theme with you.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3), // 3 hours ago
     isRead: false,
     actionRoute: 'shared-theme'
   },
   {
     id: '4',
-    type: 'success',
+    type: 'import',
     category: 'Themes',
     title: 'Theme import completed',
-    description: 'The legacy theme package has been successfully imported.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
-    isRead: true,
+    description: 'The legacy theme package has been imported successfully.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6), // 6 hours ago
+    isRead: false,
     actionRoute: 'imported-theme'
   },
   {
@@ -46,8 +46,8 @@ export const mockNotifications: NotificationItem[] = [
     type: 'error',
     category: 'Themes',
     title: 'Theme publish failed due to missing design tokens',
-    description: 'Publish failed. Please add the required primary color tokens.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // Yesterday
+    description: 'Please check the design tokens and try again.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 7), // 7 hours ago
     isRead: false,
     actionRoute: 'theme-validation'
   },

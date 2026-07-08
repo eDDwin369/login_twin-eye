@@ -47,6 +47,16 @@
   overflow: hidden;
 }
 
+.tw-parent-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-6);
+  margin-top: var(--spacing-4);
+  /* The card contains the rest of the template welcome screen */
+}
+
 .dashboard-main {
   flex: 1;
   display: flex;
@@ -61,7 +71,7 @@
 }
 
 .dashboard-container {
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 var(--spacing-5) var(--spacing-8);
 }
@@ -796,8 +806,12 @@
 }
 
 .tw-header {
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: var(--spacing-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-5);
 }
 
 .tw-title-row {
@@ -950,8 +964,9 @@
   border: 1px solid var(--border-light);
 }
 
-.tw-feature-box {
-  /* Parent container styling removed in favor of individual feature cards */
+.tw-section, .tw-feature-box {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .tw-feature-header {
@@ -1016,6 +1031,22 @@
   font-size: 0.95rem;
   color: var(--text-secondary);
   line-height: 1.6;
+}
+
+.tw-feature-list {
+  margin: 0;
+  padding: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.tw-feature-list li {
+  margin-bottom: 4px;
+}
+.tw-feature-list li:last-child {
+  margin-bottom: 0;
 }
 
 .tw-nav-pills {

@@ -25,7 +25,8 @@ export function AccountSettings({ setCurrentView, hasUnsavedChanges, setHasUnsav
 
   return (
     <div className="account-settings-container">
-      <div className="account-header-wrapper">
+      <div className="tw-parent-card">
+        <div className="account-header-wrapper">
         <div className="breadcrumb" onClick={() => setCurrentView('overview')}>
           <span className="back-arrow">←</span> BACK TO DASHBOARD
         </div>
@@ -59,6 +60,7 @@ export function AccountSettings({ setCurrentView, hasUnsavedChanges, setHasUnsav
         )}
         {activeTab === 'security' && <SecurityTab />}
         {activeTab === 'preferences' && <PreferencesTab />}
+        </div>
       </div>
     </div>
   );

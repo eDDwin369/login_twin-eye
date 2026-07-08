@@ -1,4 +1,4 @@
-export type NotificationType = 'success' | 'warning' | 'error' | 'info' | 'system';
+export type NotificationType = 'success' | 'warning' | 'error' | 'info' | 'system' | 'save' | 'share' | 'import';
 export type NotificationCategory = 'Themes' | 'Team Activity' | 'System';
 
 export interface NotificationItem {

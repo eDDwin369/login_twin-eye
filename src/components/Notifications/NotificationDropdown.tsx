@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, ChevronRight } from 'lucide-react';
 import type { NotificationItem } from './types';
 import { NotificationCard } from './NotificationCard';
 import './Notifications.css';
@@ -69,7 +69,7 @@ export function NotificationDropdown({
 
       <div className="notification-footer">
         <button className="notification-view-all" onClick={onViewAllClick}>
-          View All Notifications
+          View All Notifications <ChevronRight size={16} strokeWidth={2.5} />
         </button>
       </div>
     </div>
