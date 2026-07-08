@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   X, RotateCcw, Upload, Download, Check, Sun, Moon,
-  Palette, ChevronDown
+  Palette, ChevronDown, Settings, ArrowUpFromLine
 } from 'lucide-react';
 import './ThemeStudio.css';
 import './ThemeStudioAccordion.css';
@@ -37,6 +37,21 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
   const [activeTheme, setActiveTheme] = useState<ThemeName>('amber');
   const [mode, setMode] = useState<Mode>('light');
   const [expandedAccordion, setExpandedAccordion] = useState<string | null>('theme-mode');
+
+  // Brand & Logo State
+  const [appName, setAppName] = useState('Nexus ERP');
+  const [tagline, setTagline] = useState('Run your whole business in one');
+  const [logoType, setLogoType] = useState<'icon' | 'upload' | 'initials'>('initials');
+  const [showBrandAdvanced, setShowBrandAdvanced] = useState(false);
+  const [contrastText, setContrastText] = useState<'auto' | 'light' | 'dark'>('auto');
+
+  // Typography State
+  const [primaryFont, setPrimaryFont] = useState('Roboto');
+  const [headingFont, setHeadingFont] = useState('Body');
+  const [textSize, setTextSize] = useState<'small' | 'medium' | 'default' | 'large'>('default');
+  const [typeScale, setTypeScale] = useState<'compact' | 'default' | 'airy'>('default');
+  const [showTypeAdvanced, setShowTypeAdvanced] = useState(false);
+  const [uppercaseButtons, setUppercaseButtons] = useState(true);
 
   // Map dashboard route to screen name for the UI
   const getScreenFromView = (view: string) => {
@@ -210,6 +225,140 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                   </div>
                   <ChevronDown size={16} className="ts-accordion-icon" />
                 </button>
+                {expandedAccordion === 'brand-logo' && (
+                  <div className="ts-accordion-content">
+                    <div className="ts-form-group">
+                      <label className="ts-form-label">APP NAME</label>
+                      <input 
+                        type="text" 
+                        className="ts-input-field" 
+                        value={appName}
+                        onChange={(e) => setAppName(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className="ts-form-group">
+                      <label className="ts-form-label">TAGLINE</label>
+                      <input 
+                        type="text" 
+                        className="ts-input-field" 
+                        value={tagline}
+                        onChange={(e) => setTagline(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className="ts-form-group">
+                      <label className="ts-form-label">LOGO</label>
+                      <div className="ts-segmented-control" style={{ marginBottom: '8px' }}>
+                        <button 
+                          className={`ts-segment-btn ${logoType === 'icon' ? 'active' : ''}`}
+                          onClick={() => setLogoType('icon')}
+                        >
+                          Icon mark
+                        </button>
+                        <button 
+                          className={`ts-segment-btn ${logoType === 'upload' ? 'active' : ''}`}
+                          onClick={() => setLogoType('upload')}
+                        >
+                          Upload image
+                        </button>
+                      </div>
+                      
+                      <button 
+                        className={`ts-logo-tile ${logoType === 'initials' ? 'active' : ''}`}
+                        onClick={() => setLogoType('initials')}
+                      >
+                        <div className="ts-logo-tile-icon">
+                          {appName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                        </div>
+                        <div className="ts-logo-tile-text">
+                          <div className="ts-logo-tile-title">Auto initials</div>
+                          <div className="ts-logo-tile-desc">Click the tile to set its color</div>
+                        </div>
+                      </button>
+                    </div>
+
+                    <div className="ts-form-group ts-flex-between">
+                      <div>
+                        <label className="ts-form-label">BRAND COLOR</label>
+                        <div className="ts-wcag-badge">WCAG AA · 5.7:1</div>
+                      </div>
+                      <div className="ts-color-swatch-lg bg-primary"></div>
+                    </div>
+
+                    <button 
+                      className="ts-advanced-toggle"
+                      onClick={() => setShowBrandAdvanced(!showBrandAdvanced)}
+                    >
+                      {showBrandAdvanced ? '- Hide advanced' : <><Settings size={14} /> Advanced</>}
+                    </button>
+
+                    {showBrandAdvanced && (
+                      <div className="ts-advanced-content">
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">SECONDARY / ACCENT</label>
+                          <div className="ts-color-row">
+                            <div className="ts-color-swatch-lg bg-emerald" style={{ width: '100%', height: '36px' }}></div>
+                          </div>
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">PRIMARY LIGHT / DARK (AUTO IF UNSET)</label>
+                          <div className="ts-color-row">
+                            <div className="ts-color-column">
+                              <div className="ts-color-swatch-lg bg-primary-light" style={{ width: '100%', height: '36px' }}></div>
+                              <span className="ts-color-label">Light</span>
+                            </div>
+                            <div className="ts-color-column">
+                              <div className="ts-color-swatch-lg bg-primary-dark" style={{ width: '100%', height: '36px' }}></div>
+                              <span className="ts-color-label">Dark</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">CONTRAST TEXT ON PRIMARY</label>
+                          <div className="ts-segmented-control">
+                            <button 
+                              className={`ts-segment-btn ${contrastText === 'auto' ? 'active' : ''}`}
+                              onClick={() => setContrastText('auto')}
+                            >Auto</button>
+                            <button 
+                              className={`ts-segment-btn ${contrastText === 'light' ? 'active' : ''}`}
+                              onClick={() => setContrastText('light')}
+                            >Light</button>
+                            <button 
+                              className={`ts-segment-btn ${contrastText === 'dark' ? 'active' : ''}`}
+                              onClick={() => setContrastText('dark')}
+                            >Dark</button>
+                          </div>
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">STATUS COLORS</label>
+                          <div className="ts-status-colors-grid">
+                            <div className="ts-color-column">
+                              <div className="ts-color-swatch-lg" style={{ background: '#34A853' }}></div>
+                              <span className="ts-color-label">Success</span>
+                            </div>
+                            <div className="ts-color-column">
+                              <div className="ts-color-swatch-lg" style={{ background: '#F57C00' }}></div>
+                              <span className="ts-color-label">Warning</span>
+                            </div>
+                            <div className="ts-color-column">
+                              <div className="ts-color-swatch-lg" style={{ background: '#0288D1' }}></div>
+                              <span className="ts-color-label">Info</span>
+                            </div>
+                            <div className="ts-color-column">
+                              <div className="ts-color-swatch-lg" style={{ background: '#D32F2F' }}></div>
+                              <span className="ts-color-label">Error</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Accordion 3: Typography */}
@@ -224,6 +373,162 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                   </div>
                   <ChevronDown size={16} className="ts-accordion-icon" />
                 </button>
+                {expandedAccordion === 'typography' && (
+                  <div className="ts-accordion-content">
+                    <div className="ts-form-group">
+                      <label className="ts-form-label">FONT FAMILY</label>
+                      <div className="ts-font-grid">
+                        {['Roboto', 'Public Sans', 'IBM Plex', 'Manrope', 'Lexend', 'Nunito Sans'].map(font => (
+                          <button 
+                            key={font}
+                            className={`ts-font-btn ${primaryFont === font ? 'active' : ''}`}
+                            onClick={() => setPrimaryFont(font)}
+                          >
+                            {font}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      <div className="ts-upload-box">
+                        <ArrowUpFromLine size={16} />
+                        <div className="ts-upload-text">Upload custom font</div>
+                        <div className="ts-upload-meta">.woff2 / .ttf / .otf</div>
+                      </div>
+                    </div>
+
+                    <div className="ts-form-group">
+                      <label className="ts-form-label">TEXT SIZE</label>
+                      <div className="ts-segmented-control">
+                        {['Small', 'Medium', 'Default', 'Large'].map(size => (
+                          <button 
+                            key={size}
+                            className={`ts-segment-btn ${textSize === size.toLowerCase() ? 'active' : ''}`}
+                            onClick={() => setTextSize(size.toLowerCase() as any)}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="ts-form-group">
+                      <label className="ts-form-label">TYPE SCALE</label>
+                      <div className="ts-segmented-control">
+                        {['Compact', 'Default', 'Airy'].map(scale => (
+                          <button 
+                            key={scale}
+                            className={`ts-segment-btn ${typeScale === scale.toLowerCase() ? 'active' : ''}`}
+                            onClick={() => setTypeScale(scale.toLowerCase() as any)}
+                          >
+                            {scale}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button 
+                      className="ts-advanced-toggle"
+                      onClick={() => setShowTypeAdvanced(!showTypeAdvanced)}
+                    >
+                      {showTypeAdvanced ? '- Hide advanced' : <><Settings size={14} /> Advanced</>}
+                    </button>
+
+                    {showTypeAdvanced && (
+                      <div className="ts-advanced-content">
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">HEADING FONT</label>
+                          <div className="ts-font-grid">
+                            {['Body', 'Roboto', 'Public Sans', 'IBM Plex', 'Manrope', 'Lexend', 'Nunito Sans'].map(font => (
+                              <button 
+                                key={font}
+                                className={`ts-font-btn ${headingFont === font ? 'active' : ''}`}
+                                onClick={() => setHeadingFont(font)}
+                              >
+                                {font}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-slider-label">Heading weight: 700</label>
+                          <input type="range" className="ts-slider" min="400" max="900" step="100" defaultValue="700" />
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-slider-label">BASE FONT SIZE: AUTO</label>
+                          <input type="range" className="ts-slider" min="12" max="18" defaultValue="14" />
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-slider-label">BODY LINE HEIGHT: AUTO</label>
+                          <input type="range" className="ts-slider" min="1.2" max="2.0" step="0.1" defaultValue="1.5" />
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-slider-label">H1 · PAGE TITLE — SIZE AUTO · WEIGHT AUTO</label>
+                          <input type="range" className="ts-slider" style={{ marginBottom: '8px' }} />
+                          <input type="range" className="ts-slider" />
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-slider-label">H2 · STAT / METRIC — SIZE AUTO · WEIGHT AUTO</label>
+                          <input type="range" className="ts-slider" style={{ marginBottom: '8px' }} />
+                          <input type="range" className="ts-slider" />
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-slider-label">H3 · CARD TITLE — SIZE AUTO · WEIGHT AUTO</label>
+                          <input type="range" className="ts-slider" style={{ marginBottom: '8px' }} />
+                          <input type="range" className="ts-slider" />
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">HEADING TEXT COLORS</label>
+                          <div className="ts-color-list">
+                            <div className="ts-color-list-item">
+                              <div className="ts-color-swatch-sm" style={{ background: '#1e293b' }}></div>
+                              <span>H1 · Page Title</span>
+                            </div>
+                            <div className="ts-color-list-item">
+                              <div className="ts-color-swatch-sm" style={{ background: '#1e293b' }}></div>
+                              <span>H2 · Stat / Metric</span>
+                            </div>
+                            <div className="ts-color-list-item">
+                              <div className="ts-color-swatch-sm" style={{ background: '#1e293b' }}></div>
+                              <span>H3 · Card Title</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="ts-form-group">
+                          <label className="ts-form-label">BODY TEXT COLORS</label>
+                          <div className="ts-color-list">
+                            <div className="ts-color-list-item">
+                              <div className="ts-color-swatch-sm" style={{ background: '#1e293b' }}></div>
+                              <span>Primary Text</span>
+                            </div>
+                            <div className="ts-color-list-item">
+                              <div className="ts-color-swatch-sm" style={{ background: '#64748b' }}></div>
+                              <span>Secondary Text</span>
+                            </div>
+                            <div className="ts-color-list-item">
+                              <div className="ts-color-swatch-sm" style={{ background: '#e2e8f0', border: '1px solid #cbd5e1' }}></div>
+                              <span>Divider</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="ts-form-group ts-flex-between" style={{ marginTop: '24px' }}>
+                          <label className="ts-form-label" style={{ marginBottom: 0 }}>Uppercase buttons</label>
+                          <div className={`ts-toggle ${uppercaseButtons ? 'active' : ''}`} onClick={() => setUppercaseButtons(!uppercaseButtons)}>
+                            <div className="ts-toggle-thumb"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Accordion 4: Surface, Cards & Shape */}

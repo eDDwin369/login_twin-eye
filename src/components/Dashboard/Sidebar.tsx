@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   LayoutGrid, 
   Grid, 
@@ -22,6 +22,12 @@ interface SidebarProps {
 
 export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(true);
+
+  useEffect(() => {
+    if (isThemeStudioOpen) {
+      setCollapsed(true);
+    }
+  }, [isThemeStudioOpen]);
 
   const handleSidebarClick = () => {
     if (collapsed) {
