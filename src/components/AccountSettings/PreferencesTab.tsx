@@ -14,10 +14,10 @@ export function PreferencesTab() {
             <div className="settings-card-title">Preferences</div>
           </div>
           
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>Configure your application preferences</p>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Configure your application preferences</p>
 
-          <div style={{ padding: '20px', border: '1px solid var(--border-light)', borderRadius: '12px', marginBottom: '16px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', marginBottom: '12px', background: 'var(--bg-dashboard)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ background: '#DBEAFE', color: '#2563EB', padding: '8px', borderRadius: '8px' }}>
                 <Palette size={18} />
               </div>
@@ -34,8 +34,8 @@ export function PreferencesTab() {
             </div>
           </div>
 
-          <div style={{ padding: '20px', border: '1px solid var(--border-light)', borderRadius: '12px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', background: 'var(--bg-dashboard)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ background: '#CCFBF1', color: '#0D9488', padding: '8px', borderRadius: '8px' }}>
                 <Globe size={18} />
               </div>
@@ -73,10 +73,10 @@ export function PreferencesTab() {
             <div className="settings-card-title">Privacy Settings</div>
           </div>
           
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>Control your privacy settings and data sharing preferences</p>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Control your privacy settings and data sharing preferences</p>
 
-          <div style={{ padding: '20px', border: '1px solid var(--border-light)', borderRadius: '12px', marginBottom: '16px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', marginBottom: '12px', background: 'var(--bg-dashboard)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ background: '#E0F2FE', color: '#0284C7', padding: '8px', borderRadius: '8px' }}>
                 <Download size={18} />
               </div>
@@ -86,17 +86,17 @@ export function PreferencesTab() {
             <button className="content-card-action" style={{ fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}><Download size={14} /> EXPORT DATA</button>
           </div>
 
-          <div style={{ padding: '20px', border: '1px solid var(--border-light)', borderRadius: '12px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', background: 'var(--bg-dashboard)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ background: '#FFEDD5', color: '#EA580C', padding: '8px', borderRadius: '8px' }}>
                 <Cookie size={18} />
               </div>
               <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Cookie Preferences</div>
             </div>
             
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>Manage how we use cookies and similar technologies</p>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Manage how we use cookies and similar technologies</p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'not-allowed' }}>
                 <input type="checkbox" checked readOnly style={{ marginTop: '2px', accentColor: 'var(--primary)' }} />
                 <div>

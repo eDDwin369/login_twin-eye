@@ -108,7 +108,6 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 />
               ) : currentView === 'account' ? (
                 <AccountSettings 
-                  setCurrentView={handleSetCurrentView} 
                   hasUnsavedChanges={hasUnsavedChanges}
                   setHasUnsavedChanges={setHasUnsavedChanges}
                 />

@@ -71,67 +71,77 @@ export function NotificationsPage({
   const hasNotifications = filteredNotifications.length > 0;
 
   return (
-    <div className="notifications-page-container">
-      <div className="notifications-page-header">
-        <h1 className="notifications-page-title">Notifications</h1>
-        <div className="notifications-actions">
-          <button className="notification-mark-read-btn" onClick={onMarkAllRead}>
-            Mark all as read
-          </button>
-          <button className="notification-mark-read-btn" onClick={onClearRead}>
-            Clear read
-          </button>
-        </div>
-      </div>
+    <div className="notifications-page-container dashboard-fade-in">
+      <div className="tw-parent-card" style={{ background: 'var(--bg-dashboard)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        
+        {/* Top inner card */}
+        <div className="settings-card" style={{ padding: '24px' }}>
+          <div className="notifications-page-header" style={{ marginBottom: '20px' }}>
+            <h1 className="notifications-page-title">Notifications</h1>
+            <div className="notifications-actions">
+              <button className="notification-mark-read-btn" onClick={onMarkAllRead}>
+                Mark all as read
+              </button>
+              <button className="notification-mark-read-btn" onClick={onClearRead}>
+                Clear read
+              </button>
+            </div>
+          </div>
 
-      <div className="notifications-toolbar">
-        <div className="notifications-tabs">
-          {tabs.map(tab => (
-            <button 
-              key={tab}
-              className={`notification-tab-btn ${activeTab === tab ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
+          <div className="notifications-toolbar" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: 0 }}>
+            <div className="notifications-tabs">
+              {tabs.map(tab => (
+                <button 
+                  key={tab}
+                  className={`notification-tab-btn ${activeTab === tab ? 'active' : ''}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+            <div className="notifications-search">
+              <Search size={16} />
+              <input 
+                type="text" 
+                placeholder="Search notifications..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-        <div className="notifications-search">
-          <Search size={16} />
-          <input 
-            type="text" 
-            placeholder="Search notifications..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
 
-      {!hasNotifications ? (
-        <div className="notification-empty" style={{ marginTop: '64px' }}>
-          <Bell size={64} strokeWidth={1.5} />
-          <h4 style={{ fontSize: '18px', marginTop: '16px' }}>You're all caught up</h4>
-          <p style={{ fontSize: '15px' }}>No notifications found for this view.</p>
+        {/* Bottom inner card */}
+        <div className="settings-card" style={{ padding: '24px' }}>
+          {!hasNotifications ? (
+            <div className="notification-empty" style={{ marginTop: '32px', marginBottom: '32px' }}>
+              <Bell size={64} strokeWidth={1.5} />
+              <h4 style={{ fontSize: '18px', marginTop: '16px' }}>You're all caught up</h4>
+              <p style={{ fontSize: '15px' }}>No notifications found for this view.</p>
+            </div>
+          ) : (
+            <div className="notifications-page-list">
+              {Object.entries(groupedNotifications).map(([groupName, items]) => {
+                if (items.length === 0) return null;
+                return (
+                  <div key={groupName}>
+                    <div className="notifications-group-title">{groupName}</div>
+                    {items.map(notification => (
+                      <NotificationCard 
+                        key={notification.id} 
+                        notification={notification} 
+                        onClick={onNotificationClick} 
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="notifications-page-list">
-          {Object.entries(groupedNotifications).map(([groupName, items]) => {
-            if (items.length === 0) return null;
-            return (
-              <div key={groupName}>
-                <div className="notifications-group-title">{groupName}</div>
-                {items.map(notification => (
-                  <NotificationCard 
-                    key={notification.id} 
-                    notification={notification} 
-                    onClick={onNotificationClick} 
-                  />
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      )}
+
+      </div>
     </div>
   );
 }

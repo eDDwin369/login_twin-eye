@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bell, Sun, Settings } from 'lucide-react';
+import { Bell, Sun, Settings, Info } from 'lucide-react';
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
 import type { NotificationItem } from '../Notifications/types';
 import './Dashboard.css';
@@ -33,6 +33,9 @@ export function Header({
       <div className="header-right">
         <button className="header-icon-btn" title="Toggle Theme">
           <Sun size={18} />
+        </button>
+        <button className="header-icon-btn" title="Information">
+          <Info size={18} />
         </button>
         <button className="header-icon-btn" title="Settings">
           <Settings size={18} />

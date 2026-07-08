@@ -47,7 +47,6 @@ export function ThemeStudioLayout({
     );
     if (currentView === 'account') return (
       <AccountSettings 
-        setCurrentView={onNavigate} 
         hasUnsavedChanges={hasUnsavedChanges}
         setHasUnsavedChanges={setHasUnsavedChanges}
       />

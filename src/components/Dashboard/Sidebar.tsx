@@ -88,15 +88,15 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
           className={`nav-item ${currentView === 'overview' ? 'active' : ''}`} 
           onClick={(e) => { e.preventDefault(); setCurrentView('overview'); }}
         >
-          <LayoutGrid size={20} className="nav-icon" />
+          <LayoutGrid size={20} className="nav-icon" color="#3b82f6" />
           {!collapsed && <span className="nav-label">Dashboard</span>}
         </a>
         <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
-          <Grid size={20} className="nav-icon" />
+          <Grid size={20} className="nav-icon" color="#10b981" />
           {!collapsed && <span className="nav-label">Menu Item 1</span>}
         </a>
         <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
-          <Store size={20} className="nav-icon" />
+          <Store size={20} className="nav-icon" color="#f59e0b" />
           {!collapsed && <span className="nav-label">Menu Item 2</span>}
         </a>
 
@@ -104,11 +104,11 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
         {collapsed && <div className="nav-divider"></div>}
         
         <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
-          <BarChart2 size={20} className="nav-icon" />
+          <BarChart2 size={20} className="nav-icon" color="#8b5cf6" />
           {!collapsed && <span className="nav-label">Report Builder</span>}
         </a>
         <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
-          <FlaskConical size={20} className="nav-icon" />
+          <FlaskConical size={20} className="nav-icon" color="#ec4899" />
           {!collapsed && <span className="nav-label">Testing Reports</span>}
         </a>
 
@@ -124,7 +124,7 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
               setCurrentView('theme-studio');
             }}
           >
-            <Palette size={20} className="nav-icon" />
+            <Palette size={20} className="nav-icon" color="#14b8a6" />
             {!collapsed && <span className="nav-label">Theme Studio</span>}
           </a>
           <a 
@@ -132,7 +132,7 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
             className={`nav-item ${currentView === 'account' ? 'active' : ''}`} 
             onClick={(e) => { e.preventDefault(); setCurrentView('account'); }}
           >
-            <UserCircle size={20} className="nav-icon" />
+            <UserCircle size={20} className="nav-icon" color="#6366f1" />
             {!collapsed && <span className="nav-label">My Account</span>}
           </a>
         </div>

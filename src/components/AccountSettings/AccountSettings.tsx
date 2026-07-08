@@ -5,12 +5,11 @@ import { PreferencesTab } from './PreferencesTab';
 import './AccountSettings.css';
 
 interface AccountSettingsProps {
-  setCurrentView: (view: string) => void;
   hasUnsavedChanges?: boolean;
   setHasUnsavedChanges?: (value: boolean) => void;
 }
 
-export function AccountSettings({ setCurrentView, hasUnsavedChanges, setHasUnsavedChanges }: AccountSettingsProps) {
+export function AccountSettings({ hasUnsavedChanges, setHasUnsavedChanges }: AccountSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
 
   const handleTabChange = (tab: string) => {
@@ -25,11 +24,9 @@ export function AccountSettings({ setCurrentView, hasUnsavedChanges, setHasUnsav
 
   return (
     <div className="account-settings-container">
-      <div className="tw-parent-card">
+      <div className="tw-parent-card" style={{ padding: '12px 16px', marginTop: '16px' }}>
         <div className="account-header-wrapper">
-        <div className="breadcrumb" onClick={() => setCurrentView('overview')}>
-          <span className="back-arrow">←</span> BACK TO DASHBOARD
-        </div>
+
         <h1 className="account-page-title">Account Settings</h1>
         
         <div className="account-tabs">
