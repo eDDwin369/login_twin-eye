@@ -143,10 +143,10 @@ export function Sidebar({ currentView, setCurrentView, onLogout, isThemeStudioOp
         {showProfileMenu && (
           <div style={{
             position: 'absolute',
-            bottom: '100%',
-            left: collapsed ? '50%' : '16px',
-            transform: collapsed ? 'translateX(-50%)' : 'none',
-            marginBottom: '8px',
+            bottom: collapsed ? '10px' : '100%',
+            left: collapsed ? '100%' : '16px',
+            marginLeft: collapsed ? '12px' : '0',
+            marginBottom: collapsed ? '0' : '8px',
             background: 'var(--bg-card)',
             border: '1px solid var(--border-light)',
             borderRadius: 'var(--radius-md)',

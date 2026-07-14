@@ -1,19 +1,35 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle2, XCircle, KeyRound, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle2, XCircle, KeyRound, Check, HelpCircle, User, Info } from 'lucide-react';
 import './index.css';
 import logo from './assets/logo.png';
+import gmailBg from './assets/gmail-bg.jpg';
 import { Dashboard } from './components/Dashboard/Dashboard';
 
-type Screen = 'login' | 'forgot-password' | 'otp' | 'new-password' | 'success' | 'dashboard';
+type Screen = 'login' | 'forgot-password' | 'otp' | 'new-password' | 'success' | 'dashboard' | 'forgot-username';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
+  const [showLanding, setShowLanding] = useState(true);
 
   // Shared state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [forgotEmailError, setForgotEmailError] = useState('');
+
+  // Load saved credentials on mount
+  useEffect(() => {
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+    setRememberMe(savedRememberMe);
+    if (savedRememberMe) {
+      const savedEmail = localStorage.getItem('email') || '';
+      const savedPassword = localStorage.getItem('password') || '';
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+    }
+  }, []);
 
   // OTP State
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -32,6 +48,17 @@ function App() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Login attempt', { email, password });
+    
+    if (rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+      localStorage.setItem('email', email);
+      localStorage.setItem('password', password);
+    } else {
+      localStorage.removeItem('rememberMe');
+      localStorage.removeItem('email');
+      localStorage.removeItem('password');
+    }
+
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -42,15 +69,28 @@ function App() {
   const handleForgotPasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+    
+    // Mock database check
+    const savedEmail = localStorage.getItem('email');
+    const mockDb = ['john.doe@acme.com', 'admin@company.com', 'test@example.com'];
+    if (savedEmail) {
+      mockDb.push(savedEmail.toLowerCase().trim());
+    }
+
     setIsLoading(true);
-    // Simulate API call
+    setForgotEmailError('');
+
     setTimeout(() => {
       setIsLoading(false);
-      setCurrentScreen('otp');
-      setTimeLeft(60);
-      setOtp(['', '', '', '', '', '']);
-      setOtpError('');
-    }, 1500);
+      if (mockDb.includes(email.toLowerCase().trim())) {
+        setCurrentScreen('otp');
+        setTimeLeft(60);
+        setOtp(['', '', '', '', '', '']);
+        setOtpError('');
+      } else {
+        setForgotEmailError('This email address is not registered in our database.');
+      }
+    }, 1200);
   };
 
   // OTP Timer
@@ -173,8 +213,54 @@ function App() {
     return `${maskedName}@${domain}`;
   };
 
+  if (showLanding) {
+    return (
+      <div 
+        className="landing-screen-container" 
+        style={{ 
+          background: '#f4f6f8',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer',
+          overflow: 'hidden',
+        }}
+        onClick={() => setShowLanding(false)}
+      >
+        <img 
+          src={gmailBg} 
+          alt="Welcome Email" 
+          style={{ 
+            maxWidth: '100vw', 
+            maxHeight: '100vh', 
+            objectFit: 'contain',
+            transform: 'scale(1.25) translateZ(0)',
+            backfaceVisibility: 'hidden',
+            imageRendering: '-webkit-optimize-contrast',
+            transition: 'transform 0.3s ease',
+          }} 
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'scale(1.28) translateZ(0)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'scale(1.25) translateZ(0)';
+          }}
+        />
+      </div>
+    );
+  }
+
+  const handleLogout = () => {
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+    if (!savedRememberMe) {
+      setEmail('');
+      setPassword('');
+    }
+    setCurrentScreen('login');
+  };
+
   if (currentScreen === 'dashboard') {
-    return <Dashboard onLogout={() => setCurrentScreen('login')} />;
+    return <Dashboard onLogout={handleLogout} />;
   }
 
   return (
@@ -201,7 +287,13 @@ function App() {
                 </div>
                 <form onSubmit={handleLoginSubmit}>
                   <div className="form-group">
-                    <label htmlFor="login-email">Email Address</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                      <label htmlFor="login-email" style={{ margin: 0, display: 'inline-block' }}>Email Address</label>
+                      <div className="tooltip-container">
+                        <Info size={13} style={{ opacity: 0.6 }} />
+                        <span className="tooltip-text">Enter your registered email address to sign in.</span>
+                      </div>
+                    </div>
                     <div className="input-wrapper" title="Enter your Email address">
                       <Mail className="input-icon" size={18} />
                       <input
@@ -216,7 +308,13 @@ function App() {
                     </div>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="login-password">Password</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                      <label htmlFor="login-password" style={{ margin: 0, display: 'inline-block' }}>Password</label>
+                      <div className="tooltip-container">
+                        <Info size={13} style={{ opacity: 0.6 }} />
+                        <span className="tooltip-text">Enter your account password.</span>
+                      </div>
+                    </div>
                     <div className="input-wrapper" title="Enter your password">
                       <Lock className="input-icon" size={18} />
                       <input
@@ -238,25 +336,102 @@ function App() {
                       </button>
                     </div>
                   </div>
-                  <div className="form-options">
+                  <div className="form-options" style={{ marginBottom: '1.5rem' }}>
                     <label className="checkbox-wrapper">
-                      <input type="checkbox" defaultChecked />
+                      <input 
+                        type="checkbox" 
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                      />
                       <span>Remember me</span>
                     </label>
-                    <button type="button" className="text-btn forgot-password" onClick={() => setCurrentScreen('forgot-password')}>
-                      Forgot password?
+                  </div>
+                  <button type="submit" className="submit-btn" style={{ width: '100%', marginBottom: '1.5rem' }}>
+                    Sign in <ArrowRight size={18} />
+                  </button>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '1.5rem 0',
+                    color: 'var(--text-secondary)',
+                    fontSize: 'var(--text-xs)',
+                  }}>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
+                    <span style={{ padding: '0 10px', fontSize: '0.8rem' }}>or</span>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', width: '100%', marginTop: '1rem' }}>
+                    <button
+                      type="button"
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        background: 'rgba(255,255,255,0.02)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        padding: '0.6rem var(--spacing-2)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                      }}
+                      onClick={() => setCurrentScreen('forgot-password')}
+                    >
+                      <Lock size={14} style={{ color: '#3b82f6' }} />
+                      <span>Forgot password?</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        background: 'rgba(255,255,255,0.02)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        padding: '0.6rem var(--spacing-2)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(139, 92, 246, 0.08)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                      }}
+                      onClick={() => setCurrentScreen('forgot-username')}
+                    >
+                      <User size={14} style={{ color: '#8b5cf6' }} />
+                      <span>Forgot username?</span>
                     </button>
                   </div>
-                  <button type="submit" className="submit-btn">
-                    Login <ArrowRight size={18} />
-                  </button>
                 </form>
               </div>
             )}
 
             {currentScreen === 'forgot-password' && (
               <div className="fade-in">
-                <button className="back-btn" onClick={() => setCurrentScreen('login')}>
+                <button className="back-btn" onClick={() => {
+                  setCurrentScreen('login');
+                  setForgotEmailError('');
+                }}>
                   <ArrowLeft size={16} /> Back to login
                 </button>
                 <div className="form-header">
@@ -265,7 +440,13 @@ function App() {
                 </div>
                 <form onSubmit={handleForgotPasswordSubmit}>
                   <div className="form-group">
-                    <label htmlFor="forgot-email">Email Address</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                      <label htmlFor="forgot-email" style={{ margin: 0, display: 'inline-block' }}>Email Address</label>
+                      <div className="tooltip-container">
+                        <Info size={13} style={{ opacity: 0.6 }} />
+                        <span className="tooltip-text">Enter your registered email to receive a recovery code.</span>
+                      </div>
+                    </div>
                     <div className="input-wrapper" title="Enter your Email address">
                       <Mail className="input-icon" size={18} />
                       <input
@@ -274,15 +455,67 @@ function App() {
                         className="form-input"
                         placeholder=""
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setForgotEmailError('');
+                        }}
                         required
                       />
                     </div>
+                    {forgotEmailError && (
+                      <div className="error-message">
+                        <XCircle size={14} /> {forgotEmailError}
+                      </div>
+                    )}
                   </div>
                   <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email}>
                     {isLoading ? 'Sending...' : 'Send OTP'} <ArrowRight size={18} />
                   </button>
                 </form>
+              </div>
+            )}
+
+            {currentScreen === 'forgot-username' && (
+              <div className="fade-in">
+                <button className="back-btn" onClick={() => setCurrentScreen('login')}>
+                  <ArrowLeft size={16} /> Back to login
+                </button>
+                <div className="form-header" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                  <HelpCircle className="brand-text" size={24} />
+                  <h1 style={{ margin: 0 }}>Forgot Username</h1>
+                </div>
+                <div style={{ 
+                  background: 'var(--input-bg)', 
+                  border: '1px solid var(--border-subtle)', 
+                  borderRadius: 'var(--radius-lg)', 
+                  padding: '1.5rem', 
+                  marginBottom: '2rem',
+                  lineHeight: '1.6',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.9rem'
+                }}>
+                  Contact your administrator or email{' '}
+                  <a 
+                    href="mailto:support@company.com" 
+                    style={{ 
+                      color: 'var(--accent)', 
+                      textDecoration: 'none', 
+                      fontWeight: '500',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.color = 'var(--accent-hover)')}
+                    onMouseOut={(e) => (e.currentTarget.style.color = 'var(--accent)')}
+                  >
+                    support@company.com
+                  </a>.
+                </div>
+                <button 
+                  type="button" 
+                  className="submit-btn" 
+                  onClick={() => setCurrentScreen('login')}
+                >
+                  <ArrowLeft size={18} /> Back to Login
+                </button>
               </div>
             )}
 
@@ -354,7 +587,13 @@ function App() {
                 </div>
                 <form onSubmit={handleCreateNewPassword}>
                   <div className="form-group">
-                    <label htmlFor="new-password">New Password</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                      <label htmlFor="new-password" style={{ margin: 0, display: 'inline-block' }}>New Password</label>
+                      <div className="tooltip-container">
+                        <Info size={13} style={{ opacity: 0.6 }} />
+                        <span className="tooltip-text">Create a secure new password.</span>
+                      </div>
+                    </div>
                     <div className="input-wrapper" title="Enter your new password">
                       <Lock className="input-icon" size={18} />
                       <input
@@ -405,7 +644,13 @@ function App() {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="confirm-password">Confirm Password</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                      <label htmlFor="confirm-password" style={{ margin: 0, display: 'inline-block' }}>Confirm Password</label>
+                      <div className="tooltip-container">
+                        <Info size={13} style={{ opacity: 0.6 }} />
+                        <span className="tooltip-text">Verify your new password.</span>
+                      </div>
+                    </div>
                     <div className="input-wrapper" title="Confirm your new password">
                       <KeyRound className="input-icon" size={18} />
                       <input
