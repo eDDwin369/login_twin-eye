@@ -39,6 +39,14 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
     <button 
       className={`notification-card ${notification.type} ${!notification.isRead ? 'unread' : ''}`}
       onClick={() => onClick(notification)}
+      title={
+        `Type: ${notification.type.toUpperCase()} | Category: ${notification.category}\n` +
+        `Notification: ${notification.title}\n` +
+        `Description: ${notification.description}\n` +
+        `Time: ${getRelativeTime(notification.timestamp)}` +
+        `${notification.subtext ? ` (${notification.subtext})` : ''}` +
+        `${notification.attachment ? `\nAttachment: ${notification.attachment.name} (${notification.attachment.size})` : ''}`
+      }
       aria-label={`${notification.title}, ${getRelativeTime(notification.timestamp)}${!notification.isRead ? ', unread' : ''}`}
     >
       <div className="notification-icon-wrapper">

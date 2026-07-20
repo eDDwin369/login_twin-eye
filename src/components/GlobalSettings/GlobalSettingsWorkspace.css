@@ -33,7 +33,7 @@
   overflow: hidden;
   transform: scale(0.98) translateY(10px);
   animation: gsModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Roboto', -apple-system, sans-serif;
 }
 
 @keyframes gsModalIn {

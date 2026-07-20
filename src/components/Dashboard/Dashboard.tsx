@@ -9,6 +9,7 @@ import { OrdersView } from './OrdersView';
 import { PlaceholderView } from './PlaceholderView';
 import { PreviewLogin } from './PreviewLogin';
 import { FormView } from './FormView';
+import { ReportsPage } from './ReportsPage';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
 import './Dashboard.css';
@@ -69,7 +70,6 @@ export function Dashboard({ onLogout }: DashboardProps) {
       <Sidebar 
         currentView={currentView} 
         setCurrentView={handleSetCurrentView} 
-        onLogout={handleLogout} 
         isThemeStudioOpen={isThemeStudioOpen}
       />
       <div className="dashboard-main">
@@ -78,6 +78,8 @@ export function Dashboard({ onLogout }: DashboardProps) {
           onMarkAllRead={handleMarkAllRead}
           onNotificationClick={handleNotificationClick}
           onViewAllClick={() => handleSetCurrentView('notifications')}
+          onLogout={handleLogout}
+          onNavigate={handleSetCurrentView}
         />
         <div className="dashboard-content-scrollable">
           {isThemeStudioOpen ? (
@@ -117,7 +119,9 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 <PreviewLogin />
               ) : currentView === 'form' ? (
                 <FormView />
-              ) : ['operations', 'cameras', 'reports', 'settings', 'components'].includes(currentView) ? (
+              ) : currentView === 'reports' ? (
+                <ReportsPage />
+              ) : ['operations', 'cameras', 'settings', 'components'].includes(currentView) ? (
                 <PlaceholderView title={currentView.charAt(0).toUpperCase() + currentView.slice(1)} />
               ) : (
                 <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>

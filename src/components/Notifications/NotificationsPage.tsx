@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Bell } from 'lucide-react';
 import type { NotificationItem } from './types';
 import { NotificationCard } from './NotificationCard';
@@ -19,6 +19,8 @@ export function NotificationsPage({
 }: NotificationsPageProps) {
   const [activeTab, setActiveTab] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const tabs = ['All', 'Unread', 'Themes', 'Team Activity', 'System'];
 
@@ -33,6 +35,17 @@ export function NotificationsPage({
     }
     return true;
   });
+
+  // Reset to first page when tabs or search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery]);
+
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+  const paginatedNotifications = filteredNotifications.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const groupNotificationsByDate = (notifs: NotificationItem[]) => {
     const groups: { [key: string]: NotificationItem[] } = {
@@ -67,7 +80,7 @@ export function NotificationsPage({
     return groups;
   };
 
-  const groupedNotifications = groupNotificationsByDate(filteredNotifications);
+  const groupedNotifications = groupNotificationsByDate(paginatedNotifications);
   const hasNotifications = filteredNotifications.length > 0;
 
   return (
@@ -113,31 +126,121 @@ export function NotificationsPage({
         </div>
 
         {/* Bottom inner card */}
-        <div className="settings-card" style={{ padding: '24px' }}>
+        <div className="settings-card" style={{ padding: '24px', minHeight: '620px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           {!hasNotifications ? (
-            <div className="notification-empty" style={{ marginTop: '32px', marginBottom: '32px' }}>
+            <div className="notification-empty" style={{ margin: 'auto' }}>
               <Bell size={64} strokeWidth={1.5} />
               <h4 style={{ fontSize: '18px', marginTop: '16px' }}>You're all caught up</h4>
               <p style={{ fontSize: '15px' }}>No notifications found for this view.</p>
             </div>
           ) : (
-            <div className="notifications-page-list">
-              {Object.entries(groupedNotifications).map(([groupName, items]) => {
-                if (items.length === 0) return null;
-                return (
-                  <div key={groupName}>
-                    <div className="notifications-group-title">{groupName}</div>
-                    {items.map(notification => (
-                      <NotificationCard 
-                        key={notification.id} 
-                        notification={notification} 
-                        onClick={onNotificationClick} 
-                      />
-                    ))}
+            <>
+              <div className="notifications-page-list">
+                {Object.entries(groupedNotifications).map(([groupName, items]) => {
+                  if (items.length === 0) return null;
+                  return (
+                    <div key={groupName}>
+                      <div className="notifications-group-title">{groupName}</div>
+                      {items.map(notification => (
+                        <NotificationCard 
+                          key={notification.id} 
+                          notification={notification} 
+                          onClick={onNotificationClick} 
+                        />
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingTop: '20px',
+                  borderTop: '1px solid var(--border-light, #e2e8f0)',
+                  marginTop: '20px',
+                  flexWrap: 'wrap',
+                  gap: '12px'
+                }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary, #64748b)' }}>
+                    Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredNotifications.length)} to {Math.min(currentPage * itemsPerPage, filteredNotifications.length)} of {filteredNotifications.length} notifications
                   </div>
-                );
-              })}
-            </div>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-light, #e2e8f0)',
+                        backgroundColor: '#ffffff',
+                        color: currentPage === 1 ? 'var(--text-muted, #94a3b8)' : 'var(--text-main, #0f172a)',
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (currentPage !== 1) e.currentTarget.style.backgroundColor = '#f8fafc';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#ffffff';
+                      }}
+                    >
+                      Previous
+                    </button>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '6px',
+                          border: '1px solid ' + (currentPage === pageNum ? 'var(--primary)' : 'var(--border-light)'),
+                          backgroundColor: currentPage === pageNum ? 'var(--primary-light)' : '#ffffff',
+                          color: currentPage === pageNum ? 'var(--primary)' : 'var(--text-secondary)',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-light, #e2e8f0)',
+                        backgroundColor: '#ffffff',
+                        color: currentPage === totalPages ? 'var(--text-muted, #94a3b8)' : 'var(--text-main, #0f172a)',
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = '#f8fafc';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#ffffff';
+                      }}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 

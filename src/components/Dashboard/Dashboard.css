@@ -43,7 +43,7 @@
   width: 100vw;
   background-color: var(--bg-dashboard);
   color: var(--text-main);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Roboto', sans-serif;
   overflow: hidden;
 }
 
@@ -1109,4 +1109,23 @@
   font-size: 0.95rem;
   color: var(--text-secondary);
   line-height: 1.6;
+}
+
+/* Custom Apple-Style Dropdown Menu */
+.profile-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: background-color 0.15s ease;
+}
+
+.profile-dropdown-item:hover {
+  background-color: #f1f5f9;
+}
+
+.profile-dropdown-item.danger:hover {
+  background-color: rgba(239, 68, 68, 0.05);
 }

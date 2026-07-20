@@ -1,128 +1,341 @@
-
-import { Settings, Globe, Download, Info, Cookie, Palette } from 'lucide-react';
+import { useState } from 'react';
+import { 
+  Palette, Globe, Download, Cookie, FileText, Trash2, 
+  AlertTriangle, ChevronRight 
+} from 'lucide-react';
 
 export function PreferencesTab() {
+  const [activeMenu, setActiveMenu] = useState<'appearance' | 'localization' | 'export' | 'cookies' | 'legal' | 'delete'>('appearance');
+  
+  // Local state for interactive elements
+  const [theme, setTheme] = useState('corporate-blue');
+  const [language, setLanguage] = useState('en');
+  const [timezone, setTimezone] = useState('utc');
+  const [analyticsCookies, setAnalyticsCookies] = useState(true);
+  const [marketingCookies, setMarketingCookies] = useState(false);
+
   return (
-    <div className="settings-grid">
-      {/* Left Column */}
-      <div className="content-column">
-        <div className="settings-card">
-          <div className="settings-card-header">
-            <div className="settings-info-icon" style={{ background: '#F3E8FF', color: '#9333EA' }}>
-              <Settings size={16} />
+    <div className="security-page-grid">
+      {/* LEFT SIDEBAR PANEL */}
+      <div className="security-sidebar">
+        <div className="security-menu-card">
+          <button 
+            className={`security-menu-item ${activeMenu === 'appearance' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('appearance')}
+          >
+            <div className="security-menu-item-left">
+              <Palette size={16} />
+              <span>Appearance</span>
             </div>
-            <div className="settings-card-title">Preferences</div>
-          </div>
-          
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Configure your application preferences</p>
+            {activeMenu === 'appearance' && <span className="security-menu-dot" />}
+          </button>
 
-          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', marginBottom: '12px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{ background: '#DBEAFE', color: '#2563EB', padding: '8px', borderRadius: '8px' }}>
-                <Palette size={18} />
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Appearance</div>
+          <button 
+            className={`security-menu-item ${activeMenu === 'localization' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('localization')}
+          >
+            <div className="security-menu-item-left">
+              <Globe size={16} />
+              <span>Localization</span>
             </div>
-            
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '11px', background: 'var(--bg-dashboard)', display: 'inline-block', padding: '0 4px', marginBottom: '-8px', marginLeft: '8px', position: 'relative', zIndex: 1 }}>Theme</label>
-              <select className="form-input" style={{ appearance: 'none', background: 'transparent' }} defaultValue="system">
-                <option value="system">System Default</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-            </div>
-          </div>
+            {activeMenu === 'localization' && <span className="security-menu-dot" />}
+          </button>
 
-          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{ background: '#CCFBF1', color: '#0D9488', padding: '8px', borderRadius: '8px' }}>
-                <Globe size={18} />
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Localization</div>
+          <button 
+            className={`security-menu-item ${activeMenu === 'export' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('export')}
+          >
+            <div className="security-menu-item-left">
+              <Download size={16} />
+              <span>Export Personal Data</span>
             </div>
-            
-            <div className="form-group" style={{ marginBottom: '16px' }}>
-              <label className="form-label" style={{ fontSize: '11px', background: 'var(--bg-dashboard)', display: 'inline-block', padding: '0 4px', marginBottom: '-8px', marginLeft: '8px', position: 'relative', zIndex: 1 }}>Language</label>
-              <select className="form-input" style={{ appearance: 'none', background: 'transparent' }} defaultValue="en">
-                <option value="en">English (US)</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-              </select>
+            {activeMenu === 'export' && <span className="security-menu-dot" />}
+          </button>
+
+          <button 
+            className={`security-menu-item ${activeMenu === 'cookies' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('cookies')}
+          >
+            <div className="security-menu-item-left">
+              <Cookie size={16} />
+              <span>Cookie Preferences</span>
             </div>
-            
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '11px', background: 'var(--bg-dashboard)', display: 'inline-block', padding: '0 4px', marginBottom: '-8px', marginLeft: '8px', position: 'relative', zIndex: 1 }}>Timezone</label>
-              <select className="form-input" style={{ appearance: 'none', background: 'transparent' }} defaultValue="utc">
-                <option value="utc">UTC</option>
-                <option value="pst">Pacific Time (US & Canada)</option>
-                <option value="est">Eastern Time (US & Canada)</option>
-              </select>
+            {activeMenu === 'cookies' && <span className="security-menu-dot" />}
+          </button>
+
+          <button 
+            className={`security-menu-item ${activeMenu === 'legal' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('legal')}
+          >
+            <div className="security-menu-item-left">
+              <FileText size={16} />
+              <span>Legal Documents</span>
             </div>
-          </div>
+            {activeMenu === 'legal' && <span className="security-menu-dot" />}
+          </button>
+
+          <button 
+            className={`security-menu-item ${activeMenu === 'delete' ? 'active' : ''}`}
+            onClick={() => setActiveMenu('delete')}
+          >
+            <div className="security-menu-item-left" style={{ color: '#ef4444' }}>
+              <Trash2 size={16} />
+              <span>Delete Account</span>
+            </div>
+            {activeMenu === 'delete' && <span className="security-menu-dot" style={{ background: '#ef4444' }} />}
+          </button>
         </div>
       </div>
 
-      {/* Right Column */}
-      <div className="content-column">
-        <div className="settings-card">
-          <div className="settings-card-header">
-            <div className="settings-info-icon" style={{ background: '#CFFAFE', color: '#0891B2' }}>
-              <Info size={16} />
-            </div>
-            <div className="settings-card-title">Privacy Settings</div>
-          </div>
-          
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Control your privacy settings and data sharing preferences</p>
-
-          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', marginBottom: '12px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{ background: '#E0F2FE', color: '#0284C7', padding: '8px', borderRadius: '8px' }}>
-                <Download size={18} />
+      {/* RIGHT CONTENT STACK */}
+      <div className="security-content-stack">
+        
+        {/* VIEW 1: APPEARANCE */}
+        {activeMenu === 'appearance' && (
+          <div className="security-main-card">
+            <div className="security-card-title-row">
+              <div className="security-card-title-left">
+                <div className="security-card-icon-wrapper blue" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+                  <Palette size={20} />
+                </div>
+                <div>
+                  <h2 className="security-card-title">Appearance Settings</h2>
+                  <p className="security-card-subtitle">Configure your visual interface layout and theme mode</p>
+                </div>
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Export Personal Data</div>
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>Download a copy of your personal data in JSON format</p>
-            <button className="content-card-action" style={{ fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}><Download size={14} /> EXPORT DATA</button>
-          </div>
 
-          <div style={{ padding: '16px', border: '1px solid var(--border-light)', borderRadius: '12px', background: 'var(--bg-dashboard)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{ background: '#FFEDD5', color: '#EA580C', padding: '8px', borderRadius: '8px' }}>
-                <Cookie size={18} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '400px', marginTop: '16px' }}>
+              <div className="edit-form-group">
+                <label className="edit-form-label">Theme</label>
+                <select 
+                  className="edit-form-input" 
+                  value={theme} 
+                  onChange={(e) => setTheme(e.target.value)}
+                  style={{ background: '#ffffff', border: '1px solid #cbd5e1' }}
+                >
+                  <option value="corporate-blue">Corporate Blue</option>
+                  <option value="light">Light Mode</option>
+                  <option value="dark">Dark Mode</option>
+                  <option value="system">System Default</option>
+                </select>
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Cookie Preferences</div>
-            </div>
-            
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Manage how we use cookies and similar technologies</p>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'not-allowed' }}>
-                <input type="checkbox" checked readOnly style={{ marginTop: '2px', accentColor: 'var(--primary)' }} />
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)' }}>Essential Cookies</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Required for the application to function (cannot be disabled)</div>
-                </div>
-              </label>
-              
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
-                <input type="checkbox" defaultChecked style={{ marginTop: '2px', accentColor: 'var(--primary)' }} />
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)' }}>Analytics Cookies</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Help us improve the application</div>
-                </div>
-              </label>
-              
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
-                <input type="checkbox" style={{ marginTop: '2px', accentColor: 'var(--primary)' }} />
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)' }}>Marketing Cookies</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Used for personalized content</div>
-                </div>
-              </label>
+              <button className="btn-save" style={{ width: 'fit-content', marginTop: '4px' }}>Save Changes</button>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* VIEW 2: LOCALIZATION */}
+        {activeMenu === 'localization' && (
+          <div className="security-main-card">
+            <div className="security-card-title-row">
+              <div className="security-card-title-left">
+                <div className="security-card-icon-wrapper cyan" style={{ background: '#f0fdfa', color: '#0d9488' }}>
+                  <Globe size={20} />
+                </div>
+                <div>
+                  <h2 className="security-card-title">Localization Preferences</h2>
+                  <p className="security-card-subtitle">Set your regional language and timezone configuration</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px', marginTop: '16px' }}>
+              <div className="edit-form-group">
+                <label className="edit-form-label">Language</label>
+                <select 
+                  className="edit-form-input" 
+                  value={language} 
+                  onChange={(e) => setLanguage(e.target.value)}
+                  style={{ background: '#ffffff', border: '1px solid #cbd5e1' }}
+                >
+                  <option value="en">English (US)</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                </select>
+              </div>
+
+              <div className="edit-form-group">
+                <label className="edit-form-label">Timezone</label>
+                <select 
+                  className="edit-form-input" 
+                  value={timezone} 
+                  onChange={(e) => setTimezone(e.target.value)}
+                  style={{ background: '#ffffff', border: '1px solid #cbd5e1' }}
+                >
+                  <option value="utc">UTC</option>
+                  <option value="pst">Pacific Time (US & Canada)</option>
+                  <option value="est">Eastern Time (US & Canada)</option>
+                  <option value="ist">Indian Standard Time (IST)</option>
+                </select>
+              </div>
+              <button className="btn-save" style={{ width: 'fit-content', marginTop: '8px' }}>Save Changes</button>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 3: EXPORT DATA */}
+        {activeMenu === 'export' && (
+          <div className="security-main-card">
+            <div className="security-card-title-row">
+              <div className="security-card-title-left">
+                <div className="security-card-icon-wrapper" style={{ background: '#f0f9ff', color: '#0284c7' }}>
+                  <Download size={20} />
+                </div>
+                <div>
+                  <h2 className="security-card-title">Export Personal Data</h2>
+                  <p className="security-card-subtitle">Request a backup download of your profile data history</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '12px' }}>
+              <p style={{ fontSize: '13.5px', color: '#64748b', lineHeight: '1.6', marginBottom: '20px' }}>
+                Download a copy of your personal data in JSON format. This archive contains your complete profile settings, notification logs, security events, and preferences configurations.
+              </p>
+              <button className="security-signout-btn" style={{ borderColor: '#0284c7', color: '#0284c7', padding: '10px 18px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <Download size={15} /> Export Data
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 4: COOKIE PREFERENCES */}
+        {activeMenu === 'cookies' && (
+          <div className="security-main-card">
+            <div className="security-card-title-row">
+              <div className="security-card-title-left">
+                <div className="security-card-icon-wrapper" style={{ background: '#fff7ed', color: '#ea580c' }}>
+                  <Cookie size={20} />
+                </div>
+                <div>
+                  <h2 className="security-card-title">Cookie Preferences</h2>
+                  <p className="security-card-subtitle">Manage how we use cookies and tracking technologies</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', border: '1px solid #f1f5f9', borderRadius: '8px', cursor: 'not-allowed', background: '#f8fafc' }}>
+                <input type="checkbox" checked readOnly style={{ marginTop: '3px', accentColor: '#ea580c' }} />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>Essential Cookies</div>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Required for the application to function (cannot be disabled)</div>
+                </div>
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }}>
+                <input 
+                  type="checkbox" 
+                  checked={analyticsCookies} 
+                  onChange={(e) => setAnalyticsCookies(e.target.checked)} 
+                  style={{ marginTop: '3px', accentColor: '#ea580c' }} 
+                />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>Analytics Cookies</div>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Help us improve the application performance and usage feedback</div>
+                </div>
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }}>
+                <input 
+                  type="checkbox" 
+                  checked={marketingCookies} 
+                  onChange={(e) => setMarketingCookies(e.target.checked)} 
+                  style={{ marginTop: '3px', accentColor: '#ea580c' }} 
+                />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>Marketing Cookies</div>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Used for personalized content, promotions, and tailored features</div>
+                </div>
+              </label>
+
+              <button className="btn-save" style={{ width: 'fit-content', background: '#ea580c', marginTop: '8px' }}>Save Cookie Preferences</button>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 5: LEGAL DOCUMENTS */}
+        {activeMenu === 'legal' && (
+          <div className="security-main-card">
+            <div className="security-card-title-row">
+              <div className="security-card-title-left">
+                <div className="security-card-icon-wrapper cyan" style={{ background: '#ecfdf5', color: '#10b981' }}>
+                  <FileText size={20} />
+                </div>
+                <div>
+                  <h2 className="security-card-title">Legal Documents</h2>
+                  <p className="security-card-subtitle">Review our standard terms, compliance, and user policies</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '20px' }}>
+              {[
+                { name: 'Privacy Policy', path: '#privacy' },
+                { name: 'Terms of Service', path: '#terms' },
+                { name: 'Data Retention Policy', path: '#retention' }
+              ].map((doc, idx) => (
+                <a 
+                  key={idx} 
+                  href={doc.path} 
+                  onClick={(e) => e.preventDefault()}
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between', 
+                    padding: '12px 16px', 
+                    borderRadius: '8px', 
+                    border: '1px solid #e2e8f0', 
+                    color: '#0f172a',
+                    fontWeight: '500', 
+                    fontSize: '13.5px',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s'
+                  }}
+                  className="legal-doc-link-row"
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <FileText size={16} style={{ color: '#64748b' }} />
+                    {doc.name}
+                  </span>
+                  <ChevronRight size={16} style={{ color: '#94a3b8' }} />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 6: DELETE ACCOUNT */}
+        {activeMenu === 'delete' && (
+          <div className="security-main-card" style={{ border: '1px solid #fee2e2' }}>
+            <div className="security-card-title-row">
+              <div className="security-card-title-left">
+                <div className="security-card-icon-wrapper" style={{ background: '#fef2f2', color: '#ef4444' }}>
+                  <Trash2 size={20} />
+                </div>
+                <div>
+                  <h2 className="security-card-title" style={{ color: '#ef4444' }}>Delete Account</h2>
+                  <p className="security-card-subtitle">Permanently delete your profile data and account settings</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '16px', border: '1px solid #fca5a5', borderRadius: '12px', background: '#fef2f2', color: '#b91c1c' }}>
+                <AlertTriangle size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ fontSize: '13.5px', lineHeight: '1.5', fontWeight: '500' }}>
+                  This action is permanent and cannot be undone. All your data will be permanently deleted, including active session configurations, profile setups, preferences history, and file associations.
+                </div>
+              </div>
+
+              <button className="security-signout-btn" style={{ borderColor: '#ef4444', color: '#ef4444', background: '#ffffff', width: 'fit-content', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Trash2 size={16} /> Delete My Account
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
