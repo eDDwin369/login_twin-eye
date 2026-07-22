@@ -1,19 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { 
-  LayoutGrid, 
-  Grid, 
-  Store, 
-  BarChart2, 
-  FlaskConical, 
-  Palette, 
+import {
+  LayoutGrid,
+  Grid,
+  Store,
+  BarChart2,
+  FlaskConical,
+  Palette,
   UserCircle,
   PanelLeftClose,
-  PanelLeftOpen,
-  Pin,
-  PinOff
+  PanelLeftOpen
 } from 'lucide-react';
 import './Dashboard.css';
-import logo from '../../assets/logo.png';
 
 interface SidebarProps {
   currentView: string;
@@ -27,11 +24,11 @@ interface SidebarProps {
   setIsVisible: (visible: boolean) => void;
 }
 
-export function Sidebar({ 
-  currentView, 
-  setCurrentView, 
-  isThemeStudioOpen, 
-  isLocked, 
+export function Sidebar({
+  currentView,
+  setCurrentView,
+  isThemeStudioOpen,
+  isLocked,
   setIsLocked,
   collapsed,
   setCollapsed,
@@ -42,17 +39,7 @@ export function Sidebar({
   // Hover state specifically for logo in collapsed state
   const [isLogoHovered, setIsLogoHovered] = useState(false);
 
-  // Context menu state
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
-
   const hideTimeoutRef = useRef<any>(null);
-
-  // Close context menu on any global click
-  useEffect(() => {
-    const closeMenu = () => setContextMenu(null);
-    window.addEventListener('click', closeMenu);
-    return () => window.removeEventListener('click', closeMenu);
-  }, []);
 
   // Reset visibility when lock state changes
   useEffect(() => {
@@ -100,10 +87,10 @@ export function Sidebar({
     <>
       {/* Invisible Hover Zone on the left viewport edge (only when unlocked & hidden) */}
       {!isLocked && !isVisible && (
-        <div 
+        <div
           onMouseEnter={handleMouseEnter}
           style={{
-            position: 'fixed',
+            position: 'absolute',
             left: 0,
             top: 0,
             bottom: 0,
@@ -114,158 +101,124 @@ export function Sidebar({
         />
       )}
 
-      <aside 
+      <aside
         className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${!isLocked && isVisible ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
         onClick={handleSidebarClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          setContextMenu({ x: e.clientX, y: e.clientY });
-        }}
         style={{ cursor: isSidebarCollapsed ? 'pointer' : 'default' }}
       >
-        <div 
-          className="sidebar-header" 
-          style={{ 
-            height: isSidebarCollapsed ? '64px' : '110px',
-            justifyContent: isSidebarCollapsed ? 'center' : 'space-between', 
-            padding: isSidebarCollapsed ? '0' : '12px 16px 12px 24px',
-            alignItems: 'center',
-            transition: 'height 0.25s ease'
-          }}
-        >
-          {/* Logo Brand / Hover Icon Toggle Section */}
-          <div 
-            className="sidebar-brand" 
-            style={{ 
-              display: 'flex', 
-              flex: 1, 
-              justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-              alignItems: 'center' 
+        {isSidebarCollapsed && (
+          <div
+            className="sidebar-header"
+            style={{
+              height: '52px',
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '0',
+              alignItems: 'center',
+              transition: 'all 0.25s ease',
+              borderBottom: '1px solid var(--border-light, #e2e8f0)'
             }}
-            onMouseEnter={() => setIsLogoHovered(true)}
-            onMouseLeave={() => setIsLogoHovered(false)}
           >
-            {isSidebarCollapsed && isLogoHovered ? (
-              /* Hover Panel Open Icon - ChatGPT visual reference matching */
-              <div 
+            <div
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}
+            >
+              <button
                 title="Open sidebar"
                 style={{
-                  width: '52px',
-                  height: '52px',
+                  width: '44px',
+                  height: '44px',
                   borderRadius: '8px',
-                  backgroundColor: '#f1f5f9',
+                  backgroundColor: isLogoHovered ? '#f1f5f9' : 'transparent',
+                  border: 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  color: '#475569',
+                  color: isLogoHovered ? '#1a73e8' : '#64748b',
                   transition: 'all 0.15s ease'
                 }}
+                onMouseEnter={() => setIsLogoHovered(true)}
+                onMouseLeave={() => setIsLogoHovered(false)}
                 onClick={(e) => {
                   e.stopPropagation();
                   setCollapsed(false);
                 }}
               >
-                <PanelLeftOpen size={24} />
-              </div>
-            ) : (
-              /* Logo display element */
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', 
-                  cursor: 'pointer',
-                  flex: 1
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (isSidebarCollapsed) {
-                    setCollapsed(false);
-                  } else {
-                    setCurrentView('overview');
-                  }
-                }}
-              >
-                {/* Dynamic Scaling Logo */}
-                <img 
-                  src={logo} 
-                  alt="OmniEye Logo" 
-                  style={{ 
-                    height: isSidebarCollapsed ? '52px' : '80px', 
-                    width: isSidebarCollapsed ? '52px' : 'auto', 
-                    objectFit: isSidebarCollapsed ? 'cover' : 'contain',
-                    objectPosition: isSidebarCollapsed ? 'top center' : 'center',
-                    transition: 'all 0.25s ease',
-                    borderRadius: isSidebarCollapsed ? '8px' : '0'
-                  }} 
-                />
-              </div>
-            )}
-          </div>
-          
-          <div className="sidebar-header-actions">
-            {/* Pin/Lock Button */}
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsLocked(!isLocked);
-              }}
-              title={isLocked ? "Unlock sidebar (auto-hide)" : "Lock sidebar in place"}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: isLocked ? '#2563eb' : '#94a3b8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '4px',
-                borderRadius: '6px',
-                transition: 'background-color 0.15s ease'
-              }}
-              className="sidebar-toggle"
-            >
-              {isLocked ? <Pin size={16} /> : <PinOff size={16} />}
-            </button>
-
-            {/* Close/Collapse Button (only when locked) */}
-            {isLocked && (
-              <button 
-                className="sidebar-toggle" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCollapsed(true);
-                }}
-                title="Collapse sidebar"
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#94a3b8',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '4px',
-                  borderRadius: '6px'
-                }}
-              >
-                <PanelLeftClose size={16} />
+                <PanelLeftOpen size={20} />
               </button>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="sidebar-nav">
-          <a 
-            href="#" 
-            className={`nav-item ${currentView === 'overview' ? 'active' : ''}`} 
+        <div
+          className="sidebar-nav"
+          style={{ paddingTop: isSidebarCollapsed ? '0' : '16px' }}
+        >
+          <a
+            href="#"
+            className={`nav-item ${currentView === 'overview' ? 'active' : ''}`}
             onClick={(e) => { e.preventDefault(); setCurrentView('overview'); }}
+            style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}
           >
             <LayoutGrid size={20} className="nav-icon" color="#3b82f6" />
-            <span className="nav-label">Dashboard</span>
+            <span className="nav-label" style={{ flex: 1 }}>Dashboard</span>
+            {!isSidebarCollapsed && (
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingRight: '8px' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setIsLocked(!isLocked)}
+                  title={isLocked ? "Unlock sidebar" : "Lock sidebar"}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: isLocked ? '#2563eb' : '#94a3b8',
+                    padding: '4px',
+                    borderRadius: '4px',
+                    transition: 'all 0.15s ease'
+                  }}
+                  className="sidebar-toggle"
+                >
+                  {isLocked ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="17" x2="12" y2="22" />
+                      <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.78-3.5A2 2 0 0 1 15 9.26V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4.26a2 2 0 0 1-.78 1.24l-2.78 3.5a2 2 0 0 0-.44 1.24Z" />
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(-45deg)' }}>
+                      <line x1="12" y1="17" x2="12" y2="22" />
+                      <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.78-3.5A2 2 0 0 1 15 9.26V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4.26a2 2 0 0 1-.78 1.24l-2.78 3.5a2 2 0 0 0-.44 1.24Z" />
+                    </svg>
+                  )}
+                </button>
+                <button
+                  className="sidebar-toggle"
+                  onClick={() => setCollapsed(true)}
+                  title="Collapse sidebar"
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#94a3b8',
+                    padding: '4px',
+                    borderRadius: '4px',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <PanelLeftClose size={14} />
+                </button>
+              </div>
+            )}
           </a>
           <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
             <Grid size={20} className="nav-icon" color="#10b981" />
@@ -278,18 +231,18 @@ export function Sidebar({
 
           <div className="nav-section-title">REPORTS</div>
           <div className="nav-divider"></div>
-          
-          <a 
-            href="#reports" 
-            className={`nav-item ${currentView === 'reports' ? 'active' : ''}`} 
+
+          <a
+            href="#reports"
+            className={`nav-item ${currentView === 'reports' ? 'active' : ''}`}
             onClick={(e) => { e.preventDefault(); setCurrentView('reports'); }}
           >
             <BarChart2 size={20} className="nav-icon" color="#8b5cf6" />
             <span className="nav-label">Report Builder</span>
           </a>
-          <a 
-            href="#reports" 
-            className={`nav-item ${currentView === 'reports' ? 'active' : ''}`} 
+          <a
+            href="#reports"
+            className={`nav-item ${currentView === 'reports' ? 'active' : ''}`}
             onClick={(e) => { e.preventDefault(); setCurrentView('reports'); }}
           >
             <FlaskConical size={20} className="nav-icon" color="#ec4899" />
@@ -299,7 +252,7 @@ export function Sidebar({
           <div className="nav-section-title">SYSTEM</div>
           <div className="nav-divider"></div>
 
-          <a 
+          <a
             href="#theme-studio"
             className={`nav-item ${isThemeStudioOpen ? 'active' : ''}`}
             onClick={(e) => {
@@ -310,61 +263,17 @@ export function Sidebar({
             <Palette size={20} className="nav-icon" color="#14b8a6" />
             <span className="nav-label">Theme Studio</span>
           </a>
-          <a 
-            href="#" 
-            className={`nav-item ${currentView === 'account' ? 'active' : ''}`} 
+          <a
+            href="#"
+            className={`nav-item ${currentView === 'account' ? 'active' : ''}`}
             onClick={(e) => { e.preventDefault(); setCurrentView('account'); }}
           >
             <UserCircle size={20} className="nav-icon" color="#6366f1" />
-            <span className="nav-label">My Account</span>
+            <span className="nav-label">Account Settings</span>
           </a>
         </div>
 
       </aside>
-
-      {/* Sleek context menu (Windows taskbar style) */}
-      {contextMenu && (
-        <div 
-          style={{
-            position: 'fixed',
-            left: `${contextMenu.x}px`,
-            top: `${contextMenu.y}px`,
-            backgroundColor: '#1e293b',
-            border: '1px solid #475569',
-            borderRadius: '8px',
-            padding: '8px 12px',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
-            zIndex: 100000,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            cursor: 'pointer',
-            userSelect: 'none',
-            transition: 'background-color 0.15s ease'
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsLocked(!isLocked); // Toggle locked/unlocked state (Locked = !autohide)
-            setContextMenu(null);
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={!isLocked}
-            readOnly
-            style={{
-              width: '14px',
-              height: '14px',
-              accentColor: '#3b82f6',
-              cursor: 'pointer',
-              margin: 0
-            }}
-          />
-          <span style={{ fontSize: '12px', color: '#f8fafc', fontWeight: 500 }}>
-            Automatically hide the sidebar
-          </span>
-        </div>
-      )}
     </>
   );
 }

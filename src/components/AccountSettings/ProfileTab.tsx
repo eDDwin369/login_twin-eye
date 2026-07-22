@@ -8,9 +8,15 @@ import './ProfileStyles.css';
 
 interface ProfileTabProps {
   setHasUnsavedChanges?: (value: boolean) => void;
+  editProfileOnLoad?: boolean;
+  setEditProfileOnLoad?: (value: boolean) => void;
 }
 
-export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
+export function ProfileTab({ 
+  setHasUnsavedChanges,
+  editProfileOnLoad,
+  setEditProfileOnLoad
+}: ProfileTabProps) {
   // 1. Initial State (Prefilled to match the screenshot exactly)
   const initialData = {
     fullName: 'Edwin Antony',
@@ -27,6 +33,14 @@ export function ProfileTab({ setHasUnsavedChanges }: ProfileTabProps) {
   const [formData, setFormData] = useState(initialData);
   const [tempFormData, setTempFormData] = useState(initialData);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Trigger editing mode automatically if editProfileOnLoad is passed from the Header profile action
+  useEffect(() => {
+    if (editProfileOnLoad) {
+      setIsEditing(true);
+      if (setEditProfileOnLoad) setEditProfileOnLoad(false); // Clear transition signal
+    }
+  }, [editProfileOnLoad, setEditProfileOnLoad]);
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isAvatarHovered, setIsAvatarHovered] = useState(false);

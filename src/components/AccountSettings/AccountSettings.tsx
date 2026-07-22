@@ -7,9 +7,16 @@ import './AccountSettings.css';
 interface AccountSettingsProps {
   hasUnsavedChanges?: boolean;
   setHasUnsavedChanges?: (value: boolean) => void;
+  editProfileOnLoad?: boolean;
+  setEditProfileOnLoad?: (value: boolean) => void;
 }
 
-export function AccountSettings({ hasUnsavedChanges, setHasUnsavedChanges }: AccountSettingsProps) {
+export function AccountSettings({ 
+  hasUnsavedChanges, 
+  setHasUnsavedChanges,
+  editProfileOnLoad,
+  setEditProfileOnLoad
+}: AccountSettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
 
   const handleTabChange = (tab: string) => {
@@ -53,6 +60,8 @@ export function AccountSettings({ hasUnsavedChanges, setHasUnsavedChanges }: Acc
         {activeTab === 'profile' && (
           <ProfileTab 
             setHasUnsavedChanges={setHasUnsavedChanges}
+            editProfileOnLoad={editProfileOnLoad}
+            setEditProfileOnLoad={setEditProfileOnLoad}
           />
         )}
         {activeTab === 'security' && <SecurityTab />}

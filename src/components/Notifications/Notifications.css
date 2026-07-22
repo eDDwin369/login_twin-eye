@@ -303,40 +303,53 @@
 .notifications-toolbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: var(--spacing-5);
   gap: var(--spacing-4);
   flex-wrap: wrap;
+  border-bottom: 1px solid #e2e8f0;
+  height: 48px;
 }
 
 .notifications-tabs {
   display: flex;
-  gap: 20px;
+  gap: 4px;
   overflow-x: auto;
-  padding-bottom: var(--spacing-1);
-  align-items: center;
+  align-items: stretch;
+  height: 100%;
 }
 
 .notification-tab-btn {
   background: transparent;
   border: none;
-  color: var(--text-secondary, #64748b);
-  padding: 6px 0;
+  color: #5f6368;
+  padding: 0 16px;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-bottom: 3px solid transparent;
+  border-radius: 4px 4px 0 0;
 }
 
 .notification-tab-btn:hover {
-  color: var(--text-main, #0f172a);
+  background-color: #f1f3f4;
+  color: #202124;
+}
+
+.notification-tab-btn.active:hover {
+  color: #1a73e8;
 }
 
 .notification-tab-btn.active {
-  background: transparent;
-  color: var(--text-main, #0f172a);
-  font-weight: 700;
+  background-color: transparent;
+  color: #1a73e8;
+  font-weight: 600;
+  border-bottom: 3px solid #1a73e8;
 }
 
 .notification-action-icon-btn:hover {
@@ -505,12 +518,13 @@
 .new-notification-tabs-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
+  align-items: stretch;
+  padding: 0 20px;
   border-bottom: 1px solid #f1f5f9;
   background: #ffffff;
   position: relative;
   z-index: 2;
+  height: 48px;
 }
 
 .new-tabs-pill-container {
@@ -518,30 +532,41 @@
   background: transparent;
   padding: 0;
   border-radius: 0;
-  gap: 16px;
-  align-items: center;
+  gap: 4px;
+  align-items: stretch;
+  height: 100%;
 }
 
 .new-tab-pill-btn {
-  background: none;
+  background: transparent;
   border: none;
   font-size: 13px;
   font-weight: 500;
-  color: #64748b;
-  padding: 6px 0;
+  color: #5f6368;
+  padding: 0 16px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-bottom: 3px solid transparent;
+  border-radius: 4px 4px 0 0;
 }
 
 .new-tab-pill-btn:hover {
-  color: #0f172a;
+  background-color: #f1f3f4;
+  color: #202124;
+}
+
+.new-tab-pill-btn.active:hover {
+  color: #1a73e8;
 }
 
 .new-tab-pill-btn.active {
-  background: transparent;
-  color: #0f172a;
-  font-weight: 700;
-  box-shadow: none;
+  background-color: transparent;
+  color: #1a73e8;
+  font-weight: 600;
+  border-bottom: 3px solid #1a73e8;
 }
 
 .new-mark-all-read-icon-btn {

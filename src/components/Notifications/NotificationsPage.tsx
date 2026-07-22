@@ -134,7 +134,7 @@ export function NotificationsPage({
             </div>
           </div>
 
-          <div className="notifications-toolbar" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: 0 }}>
+          <div className="notifications-toolbar">
             <div className="notifications-tabs">
               {tabs.map(tab => {
                 const count = tab === 'Unread' ? ` (${unreadCount})` : '';
