@@ -21,6 +21,9 @@ interface HeaderProps {
   onViewAllClick: () => void;
   onLogout?: () => void;
   onNavigate?: (view: string) => void;
+  onSettingsClick?: () => void;
+  headerConfig?: any;
+  leftPadding?: string;
 }
 
 export function Header({ 
@@ -29,7 +32,10 @@ export function Header({
   onNotificationClick,
   onViewAllClick,
   onLogout,
-  onNavigate
+  onNavigate,
+  onSettingsClick,
+  headerConfig,
+  leftPadding
 }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -83,12 +89,57 @@ export function Header({
 
   return (
     <header className="dash-header">
-      <div className="header-left" style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text-main)' }}>
-        OomniEye Digital Twin Solutions
+      <div 
+        className="header-left" 
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'flex-start', 
+          justifyContent: 'center',
+          paddingLeft: leftPadding || '0px',
+          transition: 'padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      >
+        {(!headerConfig || headerConfig.showCompanyName) && (
+          <div 
+            style={{ 
+              fontWeight: 'bold', 
+              fontSize: '1.05rem', 
+              lineHeight: '1.2',
+              color: (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name')) 
+                ? headerConfig.textColor 
+                : 'var(--text-main)' 
+            }}
+          >
+            {headerConfig?.companyName || 'OomniEye'}
+          </div>
+        )}
+        {(!headerConfig || headerConfig.showCompanyCaption) && (
+          <div 
+            style={{ 
+              fontSize: '0.65rem', 
+              lineHeight: '1.2',
+              color: (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption')) 
+                ? headerConfig.textColor 
+                : 'var(--text-muted, #64748b)',
+              marginTop: '2px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}
+          >
+            {headerConfig?.companyCaption || 'Digital Twin Solutions'}
+          </div>
+        )}
       </div>
       
       <div className="header-center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <img src={logo} alt="OmniEye Logo" style={{ height: '80px', width: 'auto', objectFit: 'contain', padding: '8px 0' }} />
+        {(!headerConfig || headerConfig.showLogo) && (
+          <img 
+            src={headerConfig?.logo || logo} 
+            alt="OmniEye Logo" 
+            style={{ height: '80px', width: 'auto', objectFit: 'contain', padding: '8px 0' }} 
+          />
+        )}
       </div>
       
       <div className="header-right">
@@ -125,7 +176,7 @@ export function Header({
             />
           </svg>
         </button>
-        <button className="header-icon-btn" title="Settings">
+        <button className="header-icon-btn" title="Settings" onClick={onSettingsClick}>
           <Settings size={18} />
         </button>
         <div className="header-bell-wrapper">

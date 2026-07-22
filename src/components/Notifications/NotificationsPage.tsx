@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Bell } from 'lucide-react';
+import { Search, Bell, MailOpen, Trash2 } from 'lucide-react';
 import type { NotificationItem } from './types';
 import { NotificationCard } from './NotificationCard';
 import './Notifications.css';
@@ -23,6 +23,7 @@ export function NotificationsPage({
   const itemsPerPage = 5;
 
   const tabs = ['All', 'Unread', 'Themes', 'Team Activity', 'System'];
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const filteredNotifications = notifications.filter(n => {
     // Tab filter
@@ -91,27 +92,62 @@ export function NotificationsPage({
         <div className="settings-card" style={{ padding: '24px' }}>
           <div className="notifications-page-header" style={{ marginBottom: '20px' }}>
             <h1 className="notifications-page-title">Notifications</h1>
-            <div className="notifications-actions">
-              <button className="notification-mark-read-btn" onClick={onMarkAllRead}>
-                Mark all as read
+            <div className="notifications-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button 
+                className="notification-action-icon-btn" 
+                onClick={onMarkAllRead} 
+                title="Mark all as read"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#2563eb',
+                  cursor: 'pointer',
+                  padding: '6px',
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                <MailOpen size={18} />
               </button>
-              <button className="notification-mark-read-btn" onClick={onClearRead}>
-                Clear read
+              <button 
+                className="notification-action-icon-btn" 
+                onClick={onClearRead} 
+                title="Clear read notifications"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#64748b',
+                  cursor: 'pointer',
+                  padding: '6px',
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                <Trash2 size={18} />
               </button>
             </div>
           </div>
 
           <div className="notifications-toolbar" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: 0 }}>
             <div className="notifications-tabs">
-              {tabs.map(tab => (
-                <button 
-                  key={tab}
-                  className={`notification-tab-btn ${activeTab === tab ? 'active' : ''}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
+              {tabs.map(tab => {
+                const count = tab === 'Unread' ? ` (${unreadCount})` : '';
+                return (
+                  <button 
+                    key={tab}
+                    className={`notification-tab-btn ${activeTab === tab ? 'active' : ''}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}{count}
+                  </button>
+                );
+              })}
             </div>
             <div className="notifications-search">
               <Search size={16} />

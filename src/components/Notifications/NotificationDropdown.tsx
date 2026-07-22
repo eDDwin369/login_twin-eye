@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2 } from 'lucide-react';
+import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen } from 'lucide-react';
 import type { NotificationItem } from './types';
 import './Notifications.css';
 
@@ -15,8 +15,10 @@ interface NotificationDropdownProps {
 export function NotificationDropdown(props: NotificationDropdownProps) {
   const { notifications, onClose, onMarkAllRead, onNotificationClick } = props;
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'mentions' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isModalMode, setIsModalMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
@@ -66,34 +68,116 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
   const renderInnerContent = () => (
     <>
       {/* 1. Header Section */}
-      <div className="new-notification-header" style={{ flexShrink: 0 }}>
-        <h2 className="new-notification-title">Notification</h2>
-        <div className="new-notification-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <button className="new-header-action-btn" title="Notification Settings">
-            <Settings size={18} />
-          </button>
-          <button 
-            className="new-header-action-btn" 
-            onClick={() => setIsModalMode(!isModalMode)}
-            title={isModalMode ? "Shrink notification list" : "Expand notification list"}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#475569',
-              padding: '4px',
-              borderRadius: '4px'
+      <div className="new-notification-header" style={{ flexShrink: 0, height: '48px', minHeight: '48px', display: 'flex', alignItems: 'center' }}>
+        {isSearchExpanded ? (
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              width: '100%', 
+              gap: '8px', 
+              background: '#f1f5f9', 
+              padding: '4px 12px', 
+              borderRadius: '20px',
+              height: '34px',
+              transition: 'all 0.25s ease'
             }}
           >
-            {isModalMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-          </button>
-          <button className="new-header-action-btn close" onClick={onClose} title="Close">
-            <X size={18} />
-          </button>
-        </div>
+            <Search size={16} style={{ color: '#64748b', flexShrink: 0 }} />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search notifications..."
+              value={searchQuery}
+              onChange={(e) => {
+                e.stopPropagation();
+                setSearchQuery(e.target.value);
+              }}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '13px',
+                color: '#0f172a',
+                background: 'transparent',
+                width: '100%'
+              }}
+            />
+            <button 
+              onClick={() => {
+                setIsSearchExpanded(false);
+                setSearchQuery('');
+              }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#64748b',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                flexShrink: 0
+              }}
+              title="Close search"
+              className="new-header-action-btn"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ) : (
+          <>
+            <h2 className="new-notification-title">Notification</h2>
+            <div className="new-notification-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button 
+                className="new-header-action-btn" 
+                onClick={() => {
+                  setIsSearchExpanded(true);
+                  setTimeout(() => searchInputRef.current?.focus(), 100);
+                }}
+                title="Search notifications"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#475569',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+              >
+                <Search size={18} />
+              </button>
+              <button className="new-header-action-btn" title="Notification Settings">
+                <Settings size={18} />
+              </button>
+              <button 
+                className="new-header-action-btn" 
+                onClick={() => setIsModalMode(!isModalMode)}
+                title={isModalMode ? "Shrink notification list" : "Expand notification list"}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#475569',
+                  padding: '4px',
+                  borderRadius: '4px'
+                }}
+              >
+                {isModalMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+              </button>
+              <button className="new-header-action-btn close" onClick={onClose} title="Close">
+                <X size={18} />
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* 2. Tabs Row Section */}
@@ -120,36 +204,14 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
         </div>
 
         {unreadCount > 0 && (
-          <button className="new-mark-all-read-btn" onClick={onMarkAllRead}>
-            Mark all as read
+          <button 
+            className="new-mark-all-read-icon-btn" 
+            onClick={onMarkAllRead}
+            title="Mark all as read"
+          >
+            <MailOpen size={18} />
           </button>
         )}
-      </div>
-
-      {/* 3. Search Bar Section */}
-      <div className="new-notification-search-row" style={{ padding: '8px 16px', borderBottom: '1px solid rgba(0,0,0,0.06)', background: '#ffffff', flexShrink: 0 }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <Search size={14} style={{ position: 'absolute', left: '10px', color: '#94a3b8', pointerEvents: 'none' }} />
-          <input 
-            type="text" 
-            placeholder="Search notifications..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '6px 8px 6px 30px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-light, #e2e8f0)',
-              fontSize: '12px',
-              outline: 'none',
-              backgroundColor: '#f8fafc',
-              color: 'var(--text-main, #0f172a)',
-              transition: 'border-color 0.15s ease'
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border-light)'}
-          />
-        </div>
       </div>
 
       {/* 4. Notifications List feed */}

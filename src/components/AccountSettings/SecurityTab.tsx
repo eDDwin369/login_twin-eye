@@ -1,13 +1,29 @@
 import { useState } from 'react';
 import { 
-  Shield, Lock, Key, Monitor, RefreshCw, Clock,
-  Info, MoreVertical, CheckCircle2, XCircle, Laptop, Smartphone as PhoneIcon 
+  Laptop, Monitor, Smartphone, Clock, Lock, Shield, Key,
+  ChevronDown, Info, CheckCircle2, XCircle 
 } from 'lucide-react';
 
 export function SecurityTab() {
-  const [activeMenu, setActiveMenu] = useState<'sessions' | 'history' | 'password' | '2fa' | 'api'>('sessions');
+  // Accordion active state (single state to ensure only one is open at a time)
+  const [activeAccordion, setActiveAccordion] = useState<string | null>('sessions');
 
-  const sessions = [
+  const handleToggleAccordion = (key: string) => {
+    setActiveAccordion(prev => prev === key ? null : key);
+  };
+
+  const isSessionsExpanded = activeAccordion === 'sessions';
+  const isHistoryExpanded = activeAccordion === 'history';
+  const isPasswordExpanded = activeAccordion === 'password';
+  const is2faExpanded = activeAccordion === '2fa';
+  const isApiExpanded = activeAccordion === 'api';
+
+  // Form states
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [sessions, setSessions] = useState([
     {
       id: 1,
       device: 'MacBook Pro',
@@ -18,7 +34,8 @@ export function SecurityTab() {
       ip: '123.45.67.89',
       lastActive: 'Just now',
       icon: Laptop,
-      circleColor: 'purple'
+      circleColor: '#f3e8ff',
+      iconColor: '#9333ea'
     },
     {
       id: 2,
@@ -30,7 +47,8 @@ export function SecurityTab() {
       ip: '103.21.244.1',
       lastActive: '28 min ago',
       icon: Monitor,
-      circleColor: 'blue'
+      circleColor: '#eff6ff',
+      iconColor: '#2563eb'
     },
     {
       id: 3,
@@ -41,10 +59,11 @@ export function SecurityTab() {
       location: 'Mumbai, MH, IN',
       ip: '106.51.23.11',
       lastActive: '2 hours ago',
-      icon: PhoneIcon,
-      circleColor: 'green'
+      icon: Smartphone,
+      circleColor: '#dcfce7',
+      iconColor: '#22c55e'
     }
-  ];
+  ]);
 
   const loginActivity = [
     {
@@ -81,257 +100,782 @@ export function SecurityTab() {
     }
   ];
 
+  const handleRevokeSession = (sessionId: number) => {
+    if (window.confirm("Are you sure you want to sign out of this device?")) {
+      setSessions(prev => prev.filter(s => s.id !== sessionId));
+    }
+  };
+
+  const handleUpdatePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      alert("Please fill in all password fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password do not match.");
+      return;
+    }
+    alert("Password updated successfully!");
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
+  const handleConfigure2fa = () => {
+    alert("Two-Factor Authentication setup window opened.");
+  };
+
+  const handleGenerateApiKey = () => {
+    alert("API Token generated: oe_live_51nzX8A2k7m9Lq...");
+  };
+
   return (
-    <div className="security-page-grid">
-      {/* LEFT SIDEBAR PANEL */}
-      <div className="security-sidebar">
-
-
-        {/* Vertical Sub-sections Menu */}
-        <div className="security-menu-card">
-          <button 
-            className={`security-menu-item ${activeMenu === 'sessions' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('sessions')}
-          >
-            <div className="security-menu-item-left">
-              <Laptop size={16} />
-              <span>Active Sessions</span>
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '40px' }}>
+      <div 
+        style={{
+          background: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid #f1f5f9',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+          overflow: 'hidden'
+        }}
+      >
+        {/* ROW 1: Active Sessions Accordion Header */}
+        <div 
+          onClick={() => handleToggleAccordion('sessions')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            borderBottom: isSessionsExpanded ? 'none' : '1px solid #f1f5f9',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div 
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: '#e0e7ff',
+                color: '#6366f1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Laptop size={18} />
             </div>
-            {activeMenu === 'sessions' && <span className="security-menu-dot" />}
-          </button>
-
-          <button 
-            className={`security-menu-item ${activeMenu === 'history' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('history')}
-          >
-            <div className="security-menu-item-left">
-              <Clock size={16} />
-              <span>Login History</span>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Active Sessions</div>
+                <span title="Manage and monitor all active sessions across your devices." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                  <Info size={14} />
+                </span>
+              </div>
             </div>
-            {activeMenu === 'history' && <span className="security-menu-dot" />}
-          </button>
-
-          <button 
-            className={`security-menu-item ${activeMenu === 'password' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('password')}
-          >
-            <div className="security-menu-item-left">
-              <Lock size={16} />
-              <span>Password</span>
-            </div>
-            {activeMenu === 'password' && <span className="security-menu-dot" />}
-          </button>
-
-          <button 
-            className={`security-menu-item ${activeMenu === '2fa' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('2fa')}
-          >
-            <div className="security-menu-item-left">
-              <Shield size={16} />
-              <span>Two-Factor Authentication</span>
-            </div>
-            {activeMenu === '2fa' && <span className="security-menu-dot" />}
-          </button>
-
-          <button 
-            className={`security-menu-item ${activeMenu === 'api' ? 'active' : ''}`}
-            onClick={() => setActiveMenu('api')}
-          >
-            <div className="security-menu-item-left">
-              <Key size={16} />
-              <span>API Tokens</span>
-            </div>
-            {activeMenu === 'api' && <span className="security-menu-dot" />}
-          </button>
+          </div>
+          <ChevronDown 
+            size={18} 
+            style={{ 
+              color: '#94a3b8', 
+              transform: isSessionsExpanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s ease'
+            }} 
+          />
         </div>
-      </div>
 
-      {/* RIGHT CONTENT STACK */}
-      <div className="security-content-stack">
-        {activeMenu === 'sessions' && (
-          /* Card 1: Active Sessions & Devices */
-          <div className="security-main-card">
-            <div className="security-card-title-row">
-              <div className="security-card-title-left">
-                <div className="security-card-icon-wrapper cyan">
-                  <Laptop size={20} />
-                </div>
-                <div>
-                  <h2 className="security-card-title">Active Sessions & Devices</h2>
-                  <p className="security-card-subtitle">Manage and monitor all active sessions across your devices</p>
-                </div>
-              </div>
-              <button className="security-refresh-btn" title="Refresh list">
-                <RefreshCw size={14} /> Refresh
-              </button>
-            </div>
+        {/* ROW 1 SUB-ITEMS: Expanded Devices list */}
+        <div 
+          style={{
+            paddingLeft: '76px',
+            paddingRight: '24px',
+            maxHeight: isSessionsExpanded ? '500px' : '0px',
+            opacity: isSessionsExpanded ? 1 : 0,
+            overflow: 'hidden',
+            pointerEvents: isSessionsExpanded ? 'auto' : 'none',
+            paddingTop: isSessionsExpanded ? '10px' : '0px',
+            paddingBottom: isSessionsExpanded ? '20px' : '0px',
+            backgroundColor: '#ffffff',
+            borderBottom: isSessionsExpanded ? '1px solid #f1f5f9' : '0px solid transparent',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+          }}
+        >
+          {/* Vertical connector line */}
+          <div 
+            style={{
+              position: 'absolute',
+              left: '42px',
+              top: '0px',
+              bottom: '42px',
+              width: '1px',
+              backgroundColor: '#e2e8f0'
+            }}
+          />
 
-            <div className="security-alert-box">
-              <Info size={16} />
-              <span>You have 3 active sessions. Maximum allowed: 5</span>
-            </div>
+          {sessions.map(session => {
+            const DevIcon = session.icon;
+            return (
+              <div 
+                key={session.id} 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between', 
+                  position: 'relative'
+                }}
+              >
+                {/* Bullet Node */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    left: '-37px',
+                    top: '24px',
+                    transform: 'translateY(-50%)',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: '#cbd5e1',
+                    border: '1px solid #ffffff',
+                    boxShadow: '0 0 0 2px #e2e8f0',
+                    zIndex: 2
+                  }}
+                />
 
-            <div className="security-device-list">
-              {sessions.map(session => {
-                const DevIcon = session.icon;
-                return (
-                  <div key={session.id} className="security-device-row">
-                    <div className="security-device-left">
-                      <div className={`security-device-circle ${session.circleColor}`}>
-                        <DevIcon size={18} />
-                      </div>
-                      <div className="security-device-info">
-                        <div className="security-device-title-line">
-                          <span>{session.device} • {session.browser}</span>
-                          {session.isCurrent && <span className="security-badge-current">Current session</span>}
-                        </div>
-                        <div className="security-device-meta">
-                          {session.os} • {session.location}
-                        </div>
-                        <div className="security-device-meta-sub">
-                          IP: {session.ip} • Last active: {session.lastActive}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="security-row-actions">
-                      {!session.isCurrent && (
-                        <button className="security-signout-btn">Sign out</button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div 
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      backgroundColor: session.circleColor,
+                      color: session.iconColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}
+                  >
+                    <DevIcon size={16} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {session.device} • {session.browser}
+                      {session.isCurrent && (
+                        <span style={{ fontSize: '10px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                          Current
+                        </span>
                       )}
-                      <button className="security-more-btn" title="More options">
-                        <MoreVertical size={16} />
-                      </button>
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
+                      {session.os} • {session.location}
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '1px' }}>
+                      IP: {session.ip} • Last active: {session.lastActive}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+
+                {!session.isCurrent && (
+                  <button 
+                    onClick={() => handleRevokeSession(session.id)}
+                    style={{
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '6px',
+                      background: '#ffffff',
+                      color: '#475569',
+                      padding: '4px 10px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#ef4444';
+                      e.currentTarget.style.color = '#ef4444';
+                      e.currentTarget.style.backgroundColor = '#fef2f2';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#cbd5e1';
+                      e.currentTarget.style.color = '#475569';
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                    }}
+                  >
+                    Sign out
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ROW 2: Login History Accordion Header */}
+        <div 
+          onClick={() => handleToggleAccordion('history')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            borderBottom: isHistoryExpanded ? 'none' : '1px solid #f1f5f9',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div 
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: '#e0e7ff',
+                color: '#6366f1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Clock size={18} />
             </div>
-
-            <a href="#devices" className="security-card-link-bottom" onClick={e => e.preventDefault()}>
-              See all devices &gt;
-            </a>
-          </div>
-        )}
-
-        {activeMenu === 'history' && (
-          /* Card 2: Recent Login Activity */
-          <div className="security-main-card">
-            <div className="security-card-title-row" style={{ marginBottom: '24px' }}>
-              <div className="security-card-title-left">
-                <div className="security-card-icon-wrapper blue">
-                  <Clock size={20} />
-                </div>
-                <div>
-                  <h2 className="security-card-title">Recent Login Activity</h2>
-                  <p className="security-card-subtitle">A log of your recent account access and authentication events</p>
-                </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Login History</div>
+                <span title="A log of your recent account access and authentication events." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                  <Info size={14} />
+                </span>
               </div>
             </div>
+          </div>
+          <ChevronDown 
+            size={18} 
+            style={{ 
+              color: '#94a3b8', 
+              transform: isHistoryExpanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s ease'
+            }} 
+          />
+        </div>
 
-            <div className="security-activity-table">
-              {loginActivity.map(activity => (
-                <div key={activity.id} className="security-activity-row">
-                  <div className="security-activity-col-left">
-                    {activity.status === 'success' ? (
-                      <CheckCircle2 size={16} className="activity-status-icon success" />
-                    ) : (
-                      <XCircle size={16} className="activity-status-icon failed" />
-                    )}
-                    <span className="activity-status-text">{activity.text}</span>
+        {/* ROW 2 SUB-ITEMS: Expanded Login Activity */}
+        <div 
+          style={{
+            paddingLeft: '76px',
+            paddingRight: '24px',
+            maxHeight: isHistoryExpanded ? '400px' : '0px',
+            opacity: isHistoryExpanded ? 1 : 0,
+            overflow: 'hidden',
+            pointerEvents: isHistoryExpanded ? 'auto' : 'none',
+            paddingTop: isHistoryExpanded ? '10px' : '0px',
+            paddingBottom: isHistoryExpanded ? '20px' : '0px',
+            backgroundColor: '#ffffff',
+            borderBottom: isHistoryExpanded ? '1px solid #f1f5f9' : '0px solid transparent',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+          }}
+        >
+          {/* Vertical connector line */}
+          <div 
+            style={{
+              position: 'absolute',
+              left: '42px',
+              top: '0px',
+              bottom: '24px',
+              width: '1px',
+              backgroundColor: '#e2e8f0'
+            }}
+          />
+
+          {loginActivity.map(activity => (
+            <div 
+              key={activity.id} 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                position: 'relative'
+              }}
+            >
+              {/* Bullet Node */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  left: '-37px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: '#cbd5e1',
+                  border: '1px solid #ffffff',
+                  boxShadow: '0 0 0 2px #e2e8f0'
+                }}
+              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {activity.status === 'success' ? (
+                  <CheckCircle2 size={14} style={{ color: '#22c55e', flexShrink: 0 }} />
+                ) : (
+                  <XCircle size={14} style={{ color: '#ef4444', flexShrink: 0 }} />
+                )}
+                <div>
+                  <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#0f172a' }}>
+                    {activity.text}
                   </div>
-                  <div className="security-activity-col-device">{activity.device}</div>
-                  <div className="security-activity-col-location">{activity.location}</div>
-                  <div className="security-activity-col-time">{activity.time}</div>
-                </div>
-              ))}
-            </div>
-
-            <a href="#history" className="security-card-link-bottom" onClick={e => e.preventDefault()}>
-              View all login history &gt;
-            </a>
-          </div>
-        )}
-
-        {activeMenu === 'password' && (
-          /* Password Card */
-          <div className="security-main-card">
-            <div className="security-card-title-row" style={{ marginBottom: '20px' }}>
-              <div className="security-card-title-left">
-                <div className="security-card-icon-wrapper" style={{ background: '#fee2e2', color: '#ef4444' }}>
-                  <Lock size={20} />
-                </div>
-                <div>
-                  <h2 className="security-card-title">Password Settings</h2>
-                  <p className="security-card-subtitle">Last changed: 30 days ago</p>
+                  <div style={{ fontSize: '11px', color: '#64748b', marginTop: '1px' }}>
+                    {activity.device} • {activity.location}
+                  </div>
                 </div>
               </div>
+              <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                {activity.time}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ROW 3: Password Settings Accordion Header */}
+        <div 
+          onClick={() => handleToggleAccordion('password')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            borderBottom: isPasswordExpanded ? 'none' : '1px solid #f1f5f9',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div 
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: '#e0e7ff',
+                color: '#6366f1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Lock size={18} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Password</div>
+                <span title="Last changed: 30 days ago. Update your security password settings." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                  <Info size={14} />
+                </span>
+              </div>
+            </div>
+          </div>
+          <ChevronDown 
+            size={18} 
+            style={{ 
+              color: '#94a3b8', 
+              transform: isPasswordExpanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s ease'
+            }} 
+          />
+        </div>
+
+        {/* ROW 3 SUB-ITEMS: Password Form */}
+        <div 
+          style={{
+            paddingLeft: '76px',
+            paddingRight: '24px',
+            maxHeight: isPasswordExpanded ? '380px' : '0px',
+            opacity: isPasswordExpanded ? 1 : 0,
+            overflow: 'hidden',
+            pointerEvents: isPasswordExpanded ? 'auto' : 'none',
+            paddingTop: isPasswordExpanded ? '10px' : '0px',
+            paddingBottom: isPasswordExpanded ? '20px' : '0px',
+            backgroundColor: '#ffffff',
+            borderBottom: isPasswordExpanded ? '1px solid #f1f5f9' : '0px solid transparent',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+          }}
+        >
+          {/* Vertical connector line */}
+          <div 
+            style={{
+              position: 'absolute',
+              left: '42px',
+              top: '0px',
+              bottom: '24px',
+              width: '1px',
+              backgroundColor: '#e2e8f0'
+            }}
+          />
+
+          <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '380px', position: 'relative' }}>
+            {/* Bullet Node */}
+            <div 
+              style={{
+                position: 'absolute',
+                left: '-37px',
+                top: '20px',
+                transform: 'translateY(-50%)',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#cbd5e1',
+                border: '1px solid #ffffff',
+                boxShadow: '0 0 0 2px #e2e8f0'
+              }}
+            />
+
+            <div className="edit-form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Current Password</label>
+              <input 
+                type="password" 
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="••••••••" 
+                style={{ 
+                  padding: '8px 12px', 
+                  borderRadius: '6px', 
+                  border: '1px solid #cbd5e1',
+                  fontSize: '13px',
+                  outline: 'none',
+                  backgroundColor: '#ffffff'
+                }} 
+              />
             </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px', marginTop: '12px' }}>
-              <div className="edit-form-group">
-                <label className="edit-form-label">Current Password</label>
-                <input type="password" className="edit-form-input" placeholder="••••••••" style={{ background: '#ffffff', border: '1px solid #cbd5e1' }} />
+            <div className="edit-form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>New Password</label>
+              <input 
+                type="password" 
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min. 8 characters" 
+                style={{ 
+                  padding: '8px 12px', 
+                  borderRadius: '6px', 
+                  border: '1px solid #cbd5e1',
+                  fontSize: '13px',
+                  outline: 'none',
+                  backgroundColor: '#ffffff'
+                }} 
+              />
+            </div>
+
+            <div className="edit-form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Confirm New Password</label>
+              <input 
+                type="password" 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password" 
+                style={{ 
+                  padding: '8px 12px', 
+                  borderRadius: '6px', 
+                  border: '1px solid #cbd5e1',
+                  fontSize: '13px',
+                  outline: 'none',
+                  backgroundColor: '#ffffff'
+                }} 
+              />
+            </div>
+
+            <button 
+              type="submit"
+              style={{ 
+                background: '#2563eb', 
+                color: '#ffffff', 
+                border: 'none',
+                padding: '8px 16px', 
+                borderRadius: '8px', 
+                fontSize: '13px', 
+                fontWeight: 600,
+                cursor: 'pointer',
+                width: 'fit-content',
+                marginTop: '6px',
+                transition: 'background-color 0.15s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+            >
+              Update Password
+            </button>
+          </form>
+        </div>
+
+        {/* ROW 4: Two-Factor Authentication Accordion Header */}
+        <div 
+          onClick={() => handleToggleAccordion('2fa')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            borderBottom: is2faExpanded ? 'none' : '1px solid #f1f5f9',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div 
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: '#e0e7ff',
+                color: '#6366f1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Shield size={18} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Two-Factor Authentication</div>
+                <span title="Add an extra layer of security to your account." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                  <Info size={14} />
+                </span>
               </div>
-              <div className="edit-form-group">
-                <label className="edit-form-label">New Password</label>
-                <input type="password" className="edit-form-input" placeholder="Min. 8 characters" style={{ background: '#ffffff', border: '1px solid #cbd5e1' }} />
-              </div>
-              <div className="edit-form-group">
-                <label className="edit-form-label">Confirm New Password</label>
-                <input type="password" className="edit-form-input" placeholder="Confirm password" style={{ background: '#ffffff', border: '1px solid #cbd5e1' }} />
-              </div>
-              <button className="btn-save" style={{ width: 'fit-content', marginTop: '8px' }}>Update Password</button>
             </div>
           </div>
-        )}
+          <ChevronDown 
+            size={18} 
+            style={{ 
+              color: '#94a3b8', 
+              transform: is2faExpanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s ease'
+            }} 
+          />
+        </div>
 
-        {activeMenu === '2fa' && (
-          /* 2FA Card */
-          <div className="security-main-card">
-            <div className="security-card-title-row" style={{ marginBottom: '20px' }}>
-              <div className="security-card-title-left">
-                <div className="security-card-icon-wrapper cyan" style={{ background: '#ecfdf5', color: '#10b981' }}>
-                  <Shield size={20} />
-                </div>
-                <div>
-                  <h2 className="security-card-title">Two-Factor Authentication (2FA)</h2>
-                  <p className="security-card-subtitle">Add an extra layer of security to your account</p>
-                </div>
-              </div>
+        {/* ROW 4 SUB-ITEMS: 2FA Content */}
+        <div 
+          style={{
+            paddingLeft: '76px',
+            paddingRight: '24px',
+            maxHeight: is2faExpanded ? '200px' : '0px',
+            opacity: is2faExpanded ? 1 : 0,
+            overflow: 'hidden',
+            pointerEvents: is2faExpanded ? 'auto' : 'none',
+            paddingTop: is2faExpanded ? '10px' : '0px',
+            paddingBottom: is2faExpanded ? '20px' : '0px',
+            backgroundColor: '#ffffff',
+            borderBottom: is2faExpanded ? '1px solid #f1f5f9' : '0px solid transparent',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+          }}
+        >
+          {/* Vertical connector line */}
+          <div 
+            style={{
+              position: 'absolute',
+              left: '42px',
+              top: '0px',
+              bottom: '24px',
+              width: '1px',
+              backgroundColor: '#e2e8f0'
+            }}
+          />
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+            {/* Bullet Node */}
+            <div 
+              style={{
+                position: 'absolute',
+                left: '-37px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#cbd5e1',
+                border: '1px solid #ffffff',
+                boxShadow: '0 0 0 2px #e2e8f0'
+              }}
+            />
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Authenticator App</div>
+              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '1px' }}>Use verification codes generated by Authenticator apps.</div>
             </div>
+            <button 
+              onClick={handleConfigure2fa}
+              style={{
+                border: '1px solid #cbd5e1',
+                borderRadius: '6px',
+                background: '#ffffff',
+                color: '#475569',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#2563eb';
+                e.currentTarget.style.color = '#2563eb';
+                e.currentTarget.style.backgroundColor = '#eff6ff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#cbd5e1';
+                e.currentTarget.style.color = '#475569';
+                e.currentTarget.style.backgroundColor = '#ffffff';
+              }}
+            >
+              Configure
+            </button>
+          </div>
+        </div>
 
-            <div style={{ padding: '20px', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', marginBottom: '4px' }}>Authenticator App</div>
-                <div style={{ fontSize: '12.5px', color: '#64748b' }}>Use an app like Google Authenticator to generate verification codes.</div>
+        {/* ROW 5: API Tokens Accordion Header */}
+        <div 
+          onClick={() => handleToggleAccordion('api')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div 
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: '#e0e7ff',
+                color: '#6366f1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Key size={18} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>API Tokens</div>
+                <span title="Generate and manage API keys for programmatic access." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                  <Info size={14} />
+                </span>
               </div>
-              <button className="security-signout-btn" style={{ borderColor: '#2563eb', color: '#2563eb' }}>Configure</button>
             </div>
           </div>
-        )}
+          <ChevronDown 
+            size={18} 
+            style={{ 
+              color: '#94a3b8', 
+              transform: isApiExpanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s ease'
+            }} 
+          />
+        </div>
 
-        {activeMenu === 'api' && (
-          /* API Tokens Card */
-          <div className="security-main-card">
-            <div className="security-card-title-row" style={{ marginBottom: '20px' }}>
-              <div className="security-card-title-left">
-                <div className="security-card-icon-wrapper" style={{ background: '#fef3c7', color: '#d97706' }}>
-                  <Key size={20} />
-                </div>
-                <div>
-                  <h2 className="security-card-title">API Tokens</h2>
-                  <p className="security-card-subtitle">Generate and manage API keys for programmatic access</p>
-                </div>
-              </div>
-            </div>
+        {/* ROW 5 SUB-ITEMS: API Key Generation */}
+        <div 
+          style={{
+            paddingLeft: '76px',
+            paddingRight: '24px',
+            maxHeight: isApiExpanded ? '200px' : '0px',
+            opacity: isApiExpanded ? 1 : 0,
+            overflow: 'hidden',
+            pointerEvents: isApiExpanded ? 'auto' : 'none',
+            paddingTop: isApiExpanded ? '10px' : '0px',
+            paddingBottom: isApiExpanded ? '20px' : '0px',
+            backgroundColor: '#ffffff',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+        >
+          {/* Vertical connector line */}
+          <div 
+            style={{
+              position: 'absolute',
+              left: '42px',
+              top: '0px',
+              bottom: '24px',
+              width: '1px',
+              backgroundColor: '#e2e8f0'
+            }}
+          />
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <p style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.5' }}>
-                Use personal access tokens to authenticate with the OmniEye API. Keep your tokens secure and never share them.
-              </p>
-              <button className="btn-save" style={{ width: 'fit-content', background: '#d97706' }}>Generate New API Key</button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+            {/* Bullet Node */}
+            <div 
+              style={{
+                position: 'absolute',
+                left: '-37px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#cbd5e1',
+                border: '1px solid #ffffff',
+                boxShadow: '0 0 0 2px #e2e8f0'
+              }}
+            />
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Personal Access Token</div>
+              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '1px' }}>Authenticate securely with the OmniEye API.</div>
             </div>
+            <button 
+              onClick={handleGenerateApiKey}
+              style={{
+                background: '#d97706',
+                color: '#ffffff',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'background-color 0.15s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b45309'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d97706'}
+            >
+              Generate Token
+            </button>
           </div>
-        )}
+        </div>
+
       </div>
     </div>
   );

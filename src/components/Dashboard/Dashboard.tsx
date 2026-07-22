@@ -12,6 +12,7 @@ import { FormView } from './FormView';
 import { ReportsPage } from './ReportsPage';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
+import { GlobalSettingsWorkspace } from '../GlobalSettings/GlobalSettingsWorkspace';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -23,6 +24,40 @@ export function Dashboard({ onLogout }: DashboardProps) {
   const [isThemeStudioOpen, setIsThemeStudioOpen] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>(mockNotifications);
+
+  // Sidebar states
+  const [isLocked, setIsLocked] = useState(() => {
+    const saved = localStorage.getItem('sidebarLocked');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+  const [collapsed, setCollapsed] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleSetIsLocked = (locked: boolean) => {
+    setIsLocked(locked);
+    localStorage.setItem('sidebarLocked', JSON.stringify(locked));
+  };
+
+  // Global settings modal state
+  const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
+  const [headerConfig, setHeaderConfig] = useState(() => {
+    const saved = localStorage.getItem('headerConfig');
+    return saved ? JSON.parse(saved) : {
+      logo: '',
+      showLogo: true,
+      companyName: 'OomniEye',
+      showCompanyName: true,
+      companyCaption: 'Digital Twin Solutions',
+      showCompanyCaption: true,
+      textColor: '#4A6FA5',
+      textColorApply: 'both'
+    };
+  });
+
+  const handleSaveHeaderConfig = (newConfig: any) => {
+    setHeaderConfig(newConfig);
+    localStorage.setItem('headerConfig', JSON.stringify(newConfig));
+  };
 
   const handleSetCurrentView = (view: string) => {
     if (view === 'theme-studio') {
@@ -65,12 +100,22 @@ export function Dashboard({ onLogout }: DashboardProps) {
     handleSetCurrentView(notification.actionRoute);
   };
 
+  const headerLeftPadding = (!isLocked && isVisible) 
+    ? (collapsed ? '68px' : '260px') 
+    : '0px';
+
   return (
     <div className="dashboard-wrapper dashboard-fade-in">
       <Sidebar 
         currentView={currentView} 
         setCurrentView={handleSetCurrentView} 
         isThemeStudioOpen={isThemeStudioOpen}
+        isLocked={isLocked}
+        setIsLocked={handleSetIsLocked}
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
       />
       <div className="dashboard-main">
         <Header 
@@ -80,8 +125,17 @@ export function Dashboard({ onLogout }: DashboardProps) {
           onViewAllClick={() => handleSetCurrentView('notifications')}
           onLogout={handleLogout}
           onNavigate={handleSetCurrentView}
+          onSettingsClick={() => setIsGlobalSettingsOpen(true)}
+          headerConfig={headerConfig}
+          leftPadding={headerLeftPadding}
         />
-        <div className="dashboard-content-scrollable">
+        <div 
+          className="dashboard-content-scrollable"
+          style={{
+            paddingLeft: headerLeftPadding,
+            transition: 'padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+        >
           {isThemeStudioOpen ? (
             <ThemeStudioLayout 
               onClose={() => {
@@ -138,7 +192,35 @@ export function Dashboard({ onLogout }: DashboardProps) {
             </div>
           )}
         </div>
+        <footer 
+          style={{
+            height: '32px',
+            backgroundColor: 'var(--bg-card, #ffffff)',
+            borderTop: '1px solid var(--border-light, #e2e8f0)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 20px',
+            paddingLeft: `calc(20px + ${headerLeftPadding})`,
+            fontSize: '11.5px',
+            color: 'var(--text-secondary, #64748b)',
+            flexShrink: 0,
+            transition: 'padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            zIndex: 40
+          }}
+        >
+          <div>Ready</div>
+          <div>© {new Date().getFullYear()} {headerConfig?.companyName || 'OomniEye'}. All rights reserved.</div>
+          <div>Powered by {headerConfig?.companyName || 'OomniEye'} Digital Solutions</div>
+        </footer>
       </div>
+      {isGlobalSettingsOpen && (
+        <GlobalSettingsWorkspace 
+          onClose={() => setIsGlobalSettingsOpen(false)} 
+          headerConfig={headerConfig}
+          onSaveConfig={handleSaveHeaderConfig}
+        />
+      )}
     </div>
   );
 }
