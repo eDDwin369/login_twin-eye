@@ -71,8 +71,6 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
   const [minPasswordLength, setMinPasswordLength] = useState(12);
   const [reqUppercase, setReqUppercase] = useState(true);
   const [reqLowercase, setReqLowercase] = useState(true);
-  const [reqNumber, setReqNumber] = useState(true);
-  const [reqSymbol, setReqSymbol] = useState(true);
   const [showStrengthMeter, setShowStrengthMeter] = useState(true);
 
   // Customer Profile Config States
