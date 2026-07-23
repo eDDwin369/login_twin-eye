@@ -497,6 +497,16 @@
   background: var(--bg-dashboard);
   color: var(--text-main);
 }
+
+@keyframes circular-hold {
+  from {
+    stroke-dashoffset: 62.83;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .header-avatar {
   width: 32px;
   height: 32px;

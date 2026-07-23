@@ -39,6 +39,7 @@ export function Header({
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isAvatarHovered, setIsAvatarHovered] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const [currentTheme, setCurrentTheme] = useState<string>('corporate-blue');
@@ -67,12 +68,14 @@ export function Header({
 
   const handleMouseDownButton = () => {
     didLongPressRef.current = false;
+    setIsHolding(true);
     longPressTimerRef.current = setTimeout(() => {
       const currentMode = document.documentElement.getAttribute('data-theme-mode') || 'light';
       const nextMode = currentMode === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme-mode', nextMode);
       window.dispatchEvent(new CustomEvent('theme-mode-change', { detail: nextMode }));
       didLongPressRef.current = true;
+      setIsHolding(false);
 
       // Show temporary toast
       const emoji = nextMode === 'dark' ? '🌙' : '☀️';
@@ -94,6 +97,7 @@ export function Header({
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
+    setIsHolding(false);
     if (!didLongPressRef.current) {
       handleCycleTheme();
     }
@@ -105,6 +109,7 @@ export function Header({
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
+    setIsHolding(false);
     didLongPressRef.current = false;
   };
 
@@ -140,11 +145,13 @@ export function Header({
     <header className="dash-header">
       <div
         className="header-left"
+        onClick={() => onNavigate && onNavigate('overview')}
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start',
-          gap: '12px'
+          gap: '12px',
+          cursor: 'pointer'
         }}
       >
         {(!headerConfig || headerConfig.showLogo) && (
@@ -222,8 +229,33 @@ export function Header({
               strokeLinecap="round"
               strokeLinejoin="round"
             >
+              <defs>
+                <linearGradient id="theme-hold-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
               {/* Outer Circle */}
-              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="10" stroke={isHolding ? "rgba(0, 0, 0, 0.1)" : "currentColor"} />
+              {/* Hold progress circle animation */}
+              {isHolding && (
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="url(#theme-hold-grad)"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeDasharray="62.83"
+                  strokeDashoffset="62.83"
+                  style={{
+                    transformOrigin: '12px 12px',
+                    transform: 'rotate(-90deg)',
+                    animation: 'circular-hold 2s linear forwards',
+                    filter: 'drop-shadow(0 0 3px #a855f7) drop-shadow(0 0 1px #3b82f6)'
+                  }}
+                />
+              )}
               {/* Red dot animated via rotation */}
               <circle
                 cx="12"
@@ -248,21 +280,30 @@ export function Header({
               backgroundColor: '#1e293b',
               border: '1px solid #475569',
               borderRadius: '8px',
-              padding: '10px 14px',
+              padding: isHolding ? '8px 12px' : '10px 14px',
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
               zIndex: 99999,
-              width: '240px',
+              width: isHolding ? '120px' : '240px',
               fontFamily: 'system-ui, -apple-system, sans-serif',
-              textAlign: 'left',
-              pointerEvents: 'none'
+              textAlign: isHolding ? 'center' : 'left',
+              pointerEvents: 'none',
+              transition: 'width 0.15s ease, padding 0.15s ease'
             }}>
-              <div style={{ fontWeight: 700, fontSize: '12px', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
-                Theme
-              </div>
-              <div style={{ fontSize: '11px', color: '#e2e8f0', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
-                <div>• <strong>Click</strong> to cycle through preset themes.</div>
-                <div>• <strong>Press & hold</strong> to switch between Light and Dark mode.</div>
-              </div>
+              {isHolding ? (
+                <div style={{ fontWeight: 600, fontSize: '11.5px', color: '#e2e8f0' }}>
+                  Hold for 2 sec
+                </div>
+              ) : (
+                <>
+                  <div style={{ fontWeight: 700, fontSize: '12px', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                    Theme
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#e2e8f0', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
+                    <div>• <strong>Click</strong> to cycle through preset themes.</div>
+                    <div>• <strong>Press & hold</strong> to switch between Light and Dark mode.</div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

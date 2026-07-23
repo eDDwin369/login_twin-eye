@@ -131,7 +131,9 @@ export function Dashboard({ onLogout }: DashboardProps) {
     ? (collapsed ? '68px' : '260px') 
     : '0px';
 
-  const showPill = isLocked || isVisible;
+  const isSidebarVisible = isLocked || isVisible;
+  const pillLeft = isSidebarVisible ? (collapsed ? '68px' : '260px') : '0px';
+  const showPill = true;
 
   return (
     <div className="dashboard-wrapper dashboard-fade-in">
@@ -162,7 +164,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
         <div 
           style={{
             position: 'fixed',
-            left: collapsed ? '68px' : '260px',
+            left: pillLeft,
             top: '120px',
             width: '42px',
             backgroundColor: '#0f172a',
