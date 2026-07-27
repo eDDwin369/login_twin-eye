@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle2, XCircle, KeyRound, Check, HelpCircle, User, Info } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, XCircle, KeyRound, Check, Info } from 'lucide-react';
 import './index.css';
 import logo from './assets/logo.png';
 import gmailBg from './assets/gmail-bg.jpg';
@@ -17,7 +17,6 @@ function App() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [forgotEmailError, setForgotEmailError] = useState('');
 
   // Sidebar State Management at Root Level
   const [sidebarLocked, setSidebarLocked] = useState(() => {
@@ -104,7 +103,6 @@ function App() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
 
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -133,7 +131,6 @@ function App() {
     if (!email) return;
 
     setIsLoading(true);
-    setForgotEmailError('');
 
     setTimeout(() => {
       setIsLoading(false);
@@ -257,13 +254,7 @@ function App() {
     }, 1500);
   };
 
-  const maskEmail = (email: string) => {
-    if (!email) return '';
-    const [name, domain] = email.split('@');
-    if (!domain) return email;
-    const maskedName = name.length > 2 ? `${name.substring(0, 2)}***` : `${name}***`;
-    return `${maskedName}@${domain}`;
-  };
+
 
   if (showLanding) {
     return (
@@ -440,10 +431,7 @@ function App() {
                         className="form-input"
                         placeholder="User email address"
                         value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          setForgotEmailError('');
-                        }}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
@@ -559,8 +547,6 @@ function App() {
                         placeholder=""
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        onFocus={() => setIsNewPasswordFocused(true)}
-                        onBlur={() => setIsNewPasswordFocused(false)}
                         required
                       />
                       <button

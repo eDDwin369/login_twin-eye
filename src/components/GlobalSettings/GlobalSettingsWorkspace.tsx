@@ -666,7 +666,9 @@ export function GlobalSettingsWorkspace({
                     </div>
                     <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                       Powered By
-                      <Info size={12} style={{ opacity: 0.6, cursor: 'help' }} title="Custom branding text or logo in footer bottom-right" />
+                      <span title="Custom branding text or logo in footer bottom-right" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <Info size={12} style={{ opacity: 0.6, cursor: 'help' }} />
+                      </span>
                     </label>
                   </div>
 

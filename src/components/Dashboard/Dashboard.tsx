@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Home, MapPin, Camera, X, FileText, Download } from 'lucide-react';
+import { X, FileText, Download } from 'lucide-react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { TemplateWelcome } from './TemplateWelcome';
@@ -363,7 +363,7 @@ export function Dashboard({
             </p>
 
             {/* Actor & details if any */}
-            {selectedFullNotification.actor && (
+            {selectedFullNotification.actorName && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
                 <div style={{
                   width: '32px',
@@ -378,10 +378,10 @@ export function Dashboard({
                   justifyContent: 'center',
                   textTransform: 'uppercase'
                 }}>
-                  {selectedFullNotification.actor.split(' ').map((n: string) => n[0]).join('')}
+                  {selectedFullNotification.actorName.split(' ').map((n: string) => n[0]).join('')}
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{selectedFullNotification.actor}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{selectedFullNotification.actorName}</div>
                   <div style={{ fontSize: '11px', color: '#64748b' }}>{selectedFullNotification.actionText || 'Updated details'}</div>
                 </div>
               </div>
