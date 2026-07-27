@@ -19,6 +19,58 @@ function App() {
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotEmailError, setForgotEmailError] = useState('');
 
+  // Sidebar State Management at Root Level
+  const [sidebarLocked, setSidebarLocked] = useState(() => {
+    try {
+      const saved = localStorage.getItem('sidebarLocked');
+      return (saved !== null && saved !== 'undefined') ? JSON.parse(saved) : false;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      const savedCollapsed = localStorage.getItem('sidebarCollapsed');
+      if (savedCollapsed !== null && savedCollapsed !== 'undefined') {
+        return JSON.parse(savedCollapsed);
+      }
+      const startExpanded = localStorage.getItem('gs_startExpanded');
+      if (startExpanded !== null && startExpanded !== 'undefined') {
+        return !JSON.parse(startExpanded);
+      }
+    } catch (e) {
+      // ignore
+    }
+    return true;
+  });
+
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  const [sidebarAutoHide, setSidebarAutoHide] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gs_autoHideSidebar');
+      return saved !== null ? JSON.parse(saved) : false; // Default: false
+    } catch {
+      return false;
+    }
+  });
+
+  const handleSetSidebarAutoHide = (val: boolean) => {
+    setSidebarAutoHide(val);
+    localStorage.setItem('gs_autoHideSidebar', JSON.stringify(val));
+  };
+
+  const handleSetSidebarCollapsed = (val: boolean) => {
+    setSidebarCollapsed(val);
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(val));
+  };
+
+  const handleSetSidebarLocked = (locked: boolean) => {
+    setSidebarLocked(locked);
+    localStorage.setItem('sidebarLocked', JSON.stringify(locked));
+  };
+
   // Load saved credentials on mount
   useEffect(() => {
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
@@ -30,6 +82,16 @@ function App() {
       setPassword(savedPassword);
     }
   }, []);
+
+  // Autofill email on forgot password screen if empty but exists in localStorage
+  useEffect(() => {
+    if (currentScreen === 'forgot-password' && !email) {
+      const savedEmail = localStorage.getItem('email') || '';
+      if (savedEmail) {
+        setEmail(savedEmail);
+      }
+    }
+  }, [currentScreen]);
 
   // OTP State
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -69,27 +131,16 @@ function App() {
   const handleForgotPasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
-    // Mock database check
-    const savedEmail = localStorage.getItem('email');
-    const mockDb = ['john.doe@acme.com', 'admin@company.com', 'test@example.com'];
-    if (savedEmail) {
-      mockDb.push(savedEmail.toLowerCase().trim());
-    }
 
     setIsLoading(true);
     setForgotEmailError('');
 
     setTimeout(() => {
       setIsLoading(false);
-      if (mockDb.includes(email.toLowerCase().trim())) {
-        setCurrentScreen('otp');
-        setTimeLeft(60);
-        setOtp(['', '', '', '', '', '']);
-        setOtpError('');
-      } else {
-        setForgotEmailError('This email address is not registered in our database.');
-      }
+      setCurrentScreen('otp');
+      setTimeLeft(60);
+      setOtp(['', '', '', '', '', '']);
+      setOtpError('');
     }, 1200);
   };
 
@@ -186,11 +237,12 @@ function App() {
 
   // Password Validation
   const passwordReqs = {
-    length: newPassword.length >= 8,
-    uppercase: /[A-Z]/.test(newPassword),
-    lowercase: /[a-z]/.test(newPassword),
-    number: /[0-9]/.test(newPassword),
-    special: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+    length: newPassword.length >= 12,
+    notCommon: !['123456', 'password', '12345678', '123456789', 'qwerty', 'admin', 'welcome'].includes(newPassword.toLowerCase()),
+    noPersonal: email ? (
+      !newPassword.toLowerCase().includes(email.toLowerCase()) && 
+      !newPassword.toLowerCase().includes(email.split('@')[0].toLowerCase())
+    ) : true,
   };
   const isPasswordValid = Object.values(passwordReqs).every(Boolean) && newPassword === confirmPassword;
 
@@ -260,7 +312,19 @@ function App() {
   };
 
   if (currentScreen === 'dashboard') {
-    return <Dashboard onLogout={handleLogout} />;
+    return (
+      <Dashboard 
+        onLogout={handleLogout} 
+        sidebarLocked={sidebarLocked}
+        setSidebarLocked={handleSetSidebarLocked}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={handleSetSidebarCollapsed}
+        sidebarVisible={sidebarVisible}
+        setSidebarVisible={setSidebarVisible}
+        sidebarAutoHide={sidebarAutoHide}
+        setSidebarAutoHide={handleSetSidebarAutoHide}
+      />
+    );
   }
 
   return (
@@ -274,33 +338,22 @@ function App() {
 
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-            <img src={logo} alt="Logo" style={{ maxWidth: '130px', height: 'auto' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <img src={logo} alt="Logo" style={{ maxWidth: '312px', height: 'auto' }} />
           </div>
           <div className="outer-auth-card">
 
             {currentScreen === 'login' && (
               <div className="fade-in">
-                <div className="form-header centered">
-                  <h1>Welcome back</h1>
-                  <p>Sign in to continue</p>
-                </div>
                 <form onSubmit={handleLoginSubmit}>
                   <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
-                      <label htmlFor="login-email" style={{ margin: 0, display: 'inline-block' }}>Email Address</label>
-                      <div className="tooltip-container">
-                        <Info size={13} style={{ opacity: 0.6 }} />
-                        <span className="tooltip-text">Enter your registered email address to sign in.</span>
-                      </div>
-                    </div>
-                    <div className="input-wrapper" title="Enter your Email address">
+                    <div className="input-wrapper">
                       <Mail className="input-icon" size={18} />
                       <input
                         type="email"
                         id="login-email"
                         className="form-input"
-                        placeholder=""
+                        placeholder="User email address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -308,14 +361,7 @@ function App() {
                     </div>
                   </div>
                   <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
-                      <label htmlFor="login-password" style={{ margin: 0, display: 'inline-block' }}>Password</label>
-                      <div className="tooltip-container">
-                        <Info size={13} style={{ opacity: 0.6 }} />
-                        <span className="tooltip-text">Enter your account password.</span>
-                      </div>
-                    </div>
-                    <div className="input-wrapper" title="Enter your password">
+                    <div className="input-wrapper">
                       <Lock className="input-icon" size={18} />
                       <input
                         type={showPassword ? 'text' : 'password'}
@@ -336,124 +382,63 @@ function App() {
                       </button>
                     </div>
                   </div>
-                  <div className="form-options" style={{ marginBottom: '1.5rem' }}>
-                    <label className="checkbox-wrapper">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
+                    <label 
+                      className="checkbox-wrapper"
+                      style={{
+                        fontSize: '0.78rem',
+                        fontWeight: 400,
+                        color: 'var(--text-secondary)'
+                      }}
+                    >
                       <input 
                         type="checkbox" 
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
+                        style={{
+                          width: '13px',
+                          height: '13px',
+                          accentColor: 'var(--text-secondary)',
+                          opacity: 0.6,
+                          cursor: 'pointer',
+                          margin: 0
+                        }}
                       />
-                      <span>Remember me</span>
+                      <span style={{ marginLeft: '6px' }}>Remember me</span>
                     </label>
+                    <a
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--text-secondary)',
+                        textDecoration: 'none',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    >
+                      Forgot password?
+                    </a>
                   </div>
-                  <button type="submit" className="submit-btn" style={{ width: '100%', marginBottom: '1.5rem' }}>
+                  <button type="submit" className="submit-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     Sign in <ArrowRight size={18} />
                   </button>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '1.5rem 0',
-                    color: 'var(--text-secondary)',
-                    fontSize: 'var(--text-xs)',
-                  }}>
-                    <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
-                    <span style={{ padding: '0 10px', fontSize: '0.8rem' }}>or</span>
-                    <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem', width: '100%', marginTop: '1rem' }}>
-                    <button
-                      type="button"
-                      style={{
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        background: 'rgba(255,255,255,0.02)',
-                        border: 'none',
-                        borderRadius: '10px',
-                        padding: '0.6rem var(--spacing-2)',
-                        color: 'var(--text-primary)',
-                        fontSize: '0.75rem',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                      }}
-                      onClick={() => setCurrentScreen('forgot-password')}
-                    >
-                      <Lock size={14} style={{ color: '#3b82f6' }} />
-                      <span>Forgot password?</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      style={{
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        background: 'rgba(255,255,255,0.02)',
-                        border: 'none',
-                        borderRadius: '10px',
-                        padding: '0.6rem var(--spacing-2)',
-                        color: 'var(--text-primary)',
-                        fontSize: '0.75rem',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.background = 'rgba(139, 92, 246, 0.08)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                      }}
-                      onClick={() => setCurrentScreen('forgot-username')}
-                    >
-                      <User size={14} style={{ color: '#8b5cf6' }} />
-                      <span>Forgot username?</span>
-                    </button>
-                  </div>
                 </form>
               </div>
             )}
 
             {currentScreen === 'forgot-password' && (
               <div className="fade-in">
-                <button className="back-btn" onClick={() => {
-                  setCurrentScreen('login');
-                  setForgotEmailError('');
-                }}>
-                  <ArrowLeft size={16} /> Back to login
-                </button>
-                <div className="form-header">
-                  <h1>Enter your Email Address</h1><br />
-                  {/* <p>Enter the email address associated with your account. We'll send a 6-digit verification code.</p> */}
-                </div>
                 <form onSubmit={handleForgotPasswordSubmit}>
                   <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
-                      <label htmlFor="forgot-email" style={{ margin: 0, display: 'inline-block' }}>Email Address</label>
-                      <div className="tooltip-container">
-                        <Info size={13} style={{ opacity: 0.6 }} />
-                        <span className="tooltip-text">Enter your registered email to receive a recovery code.</span>
-                      </div>
-                    </div>
-                    <div className="input-wrapper" title="Enter your Email address">
+                    <div className="input-wrapper">
                       <Mail className="input-icon" size={18} />
                       <input
                         type="email"
                         id="forgot-email"
                         className="form-input"
-                        placeholder=""
+                        placeholder="User email address"
                         value={email}
                         onChange={(e) => {
                           setEmail(e.target.value);
@@ -462,73 +447,36 @@ function App() {
                         required
                       />
                     </div>
-                    {forgotEmailError && (
-                      <div className="error-message">
-                        <XCircle size={14} /> {forgotEmailError}
-                      </div>
-                    )}
                   </div>
-                  <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email}>
+                  <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     {isLoading ? 'Sending...' : 'Send OTP'} <ArrowRight size={18} />
                   </button>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+                    <a
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); setCurrentScreen('login'); }}
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--text-secondary)',
+                        textDecoration: 'none',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    >
+                      Back to login
+                    </a>
+                  </div>
                 </form>
-              </div>
-            )}
-
-            {currentScreen === 'forgot-username' && (
-              <div className="fade-in">
-                <button className="back-btn" onClick={() => setCurrentScreen('login')}>
-                  <ArrowLeft size={16} /> Back to login
-                </button>
-                <div className="form-header" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                  <HelpCircle className="brand-text" size={24} />
-                  <h1 style={{ margin: 0 }}>Forgot Username</h1>
-                </div>
-                <div style={{ 
-                  background: 'var(--input-bg)', 
-                  border: '1px solid var(--border-subtle)', 
-                  borderRadius: 'var(--radius-lg)', 
-                  padding: '1.5rem', 
-                  marginBottom: '2rem',
-                  lineHeight: '1.6',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.9rem'
-                }}>
-                  Contact your administrator or email{' '}
-                  <a 
-                    href="mailto:support@company.com" 
-                    style={{ 
-                      color: 'var(--accent)', 
-                      textDecoration: 'none', 
-                      fontWeight: '500',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseOver={(e) => (e.currentTarget.style.color = 'var(--accent-hover)')}
-                    onMouseOut={(e) => (e.currentTarget.style.color = 'var(--accent)')}
-                  >
-                    support@company.com
-                  </a>.
-                </div>
-                <button 
-                  type="button" 
-                  className="submit-btn" 
-                  onClick={() => setCurrentScreen('login')}
-                >
-                  <ArrowLeft size={18} /> Back to Login
-                </button>
               </div>
             )}
 
             {currentScreen === 'otp' && (
               <div className="fade-in">
-                <button className="back-btn" onClick={() => setCurrentScreen('forgot-password')}>
-                  <ArrowLeft size={16} /> Back
-                </button>
-                <div className="form-header">
-                  <h1>Verify your email</h1>
-                  <p>We've sent a 6-digit verification code to <strong>{maskEmail(email)}</strong></p>
+                <div style={{ textAlign: 'center', marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  If the email is registered, we've sent a verification code.
                 </div>
-                <div className="otp-container">
+                <div className="otp-container" style={{ margin: '1rem 0' }}>
                   <div className="otp-inputs" onPaste={handleOtpPaste}>
                     {otp.map((digit, index) => (
                       <input
@@ -545,25 +493,29 @@ function App() {
                     ))}
                   </div>
                   {otpError && (
-                    <div className="error-message">
+                    <div className="error-message" style={{ marginTop: '0.75rem', justifyContent: 'center' }}>
                       <XCircle size={14} /> {otpError}
                     </div>
                   )}
-                  <div className="timer-section">
-                    {timeLeft > 0 ? (
-                      <span className="timer">Resend code in {timeLeft}s</span>
-                    ) : (
-                      <button type="button" className="text-btn resend-btn" onClick={handleResendOtp} disabled={isLoading}>
-                        Resend OTP
-                      </button>
-                    )}
-                  </div>
                 </div>
-
-                <div className="form-options">
-                  <button type="button" className="text-btn change-email" onClick={() => setCurrentScreen('forgot-password')}>
-                    Change Email
-                  </button>
+                
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
+                  {timeLeft > 0 ? (
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Resend code in {timeLeft}s</span>
+                  ) : (
+                    <a
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); handleResendOtp(); }}
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--accent)',
+                        textDecoration: 'none',
+                        fontWeight: 500
+                      }}
+                    >
+                      Resend OTP
+                    </a>
+                  )}
                 </div>
 
                 <button
@@ -571,30 +523,34 @@ function App() {
                   className={`submit-btn ${isLoading ? 'loading' : ''}`}
                   onClick={handleVerifyOtp}
                   disabled={isLoading || otp.join('').length !== 6 || timeLeft === 0}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
                   {isLoading ? 'Verifying...' : 'Verify OTP'} <ArrowRight size={18} />
                 </button>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+                  <a
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
+                    style={{
+                      fontSize: '0.78rem',
+                      color: 'var(--text-secondary)',
+                      textDecoration: 'none',
+                      transition: 'color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                    onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                  >
+                    Back
+                  </a>
+                </div>
               </div>
             )}
 
             {currentScreen === 'new-password' && (
               <div className="fade-in">
-                <button className="back-btn" onClick={() => setCurrentScreen('login')}>
-                  <ArrowLeft size={16} /> Back to login
-                </button>
-                <div className="form-header">
-                  <h1>Create a New Password</h1>
-                </div>
                 <form onSubmit={handleCreateNewPassword}>
                   <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
-                      <label htmlFor="new-password" style={{ margin: 0, display: 'inline-block' }}>New Password</label>
-                      <div className="tooltip-container">
-                        <Info size={13} style={{ opacity: 0.6 }} />
-                        <span className="tooltip-text">Create a secure new password.</span>
-                      </div>
-                    </div>
-                    <div className="input-wrapper" title="Enter your new password">
+                    <div className="input-wrapper">
                       <Lock className="input-icon" size={18} />
                       <input
                         type={showNewPassword ? 'text' : 'password'}
@@ -615,43 +571,43 @@ function App() {
                         {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
-                    
-                    <div className={`validation-checklist-wrapper ${isNewPasswordFocused || newPassword.length > 0 ? 'visible' : ''}`}>
-                      {Object.values(passwordReqs).every(Boolean) ? (
-                        <div className="success-message">
-                          <CheckCircle2 size={16} /> Strong password
+                    {newPassword.length === 0 ? (
+                      <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.75rem', fontSize: '0.78rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary, #64748b)' }}>
+                          <span style={{ fontWeight: 600 }}>•</span> At least 12 characters
                         </div>
-                      ) : (
-                        <div className="validation-checklist">
-                          <div className={`checklist-item ${passwordReqs.length ? 'met' : ''}`}>
-                            <CheckCircle2 size={16} /> Minimum 8 characters
-                          </div>
-                          <div className={`checklist-item ${passwordReqs.uppercase ? 'met' : ''}`}>
-                            <CheckCircle2 size={16} /> One uppercase letter
-                          </div>
-                          <div className={`checklist-item ${passwordReqs.lowercase ? 'met' : ''}`}>
-                            <CheckCircle2 size={16} /> One lowercase letter
-                          </div>
-                          <div className={`checklist-item ${passwordReqs.number ? 'met' : ''}`}>
-                            <CheckCircle2 size={16} /> One number
-                          </div>
-                          <div className={`checklist-item ${passwordReqs.special ? 'met' : ''}`}>
-                            <CheckCircle2 size={16} /> One special character
+                      </div>
+                    ) : (
+                      (!passwordReqs.length || !passwordReqs.notCommon || !passwordReqs.noPersonal) && (
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '0.75rem', padding: '10px 12px', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
+                          <Info size={14} style={{ color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#ef4444' }}>Security requirements not met:</span>
+                            <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.78rem' }}>
+                              {!passwordReqs.length && (
+                                <div style={{ color: 'var(--text-secondary, #64748b)' }}>
+                                  • At least 12 characters
+                                </div>
+                              )}
+                              {!passwordReqs.notCommon && (
+                                <div style={{ color: 'var(--text-secondary, #64748b)' }}>
+                                  • Not a commonly used password
+                                </div>
+                              )}
+                              {!passwordReqs.noPersonal && (
+                                <div style={{ color: 'var(--text-secondary, #64748b)' }}>
+                                  • Doesn't contain your email or personal information
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      )}
-                    </div>
+                      )
+                    )}
                   </div>
 
                   <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
-                      <label htmlFor="confirm-password" style={{ margin: 0, display: 'inline-block' }}>Confirm Password</label>
-                      <div className="tooltip-container">
-                        <Info size={13} style={{ opacity: 0.6 }} />
-                        <span className="tooltip-text">Verify your new password.</span>
-                      </div>
-                    </div>
-                    <div className="input-wrapper" title="Confirm your new password">
+                    <div className="input-wrapper">
                       <KeyRound className="input-icon" size={18} />
                       <input
                         type={showNewPassword ? 'text' : 'password'}
@@ -663,58 +619,81 @@ function App() {
                         required
                       />
                     </div>
-                    {confirmPassword && newPassword !== confirmPassword && (
-                      <div className="error-message">
-                        <XCircle size={14} /> Passwords do not match
+                    {confirmPassword && (
+                      <div style={{ 
+                        marginTop: '0.5rem', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '6px', 
+                        fontSize: '0.78rem',
+                        color: newPassword === confirmPassword ? 'var(--success, #10b981)' : 'var(--error, #ef4444)',
+                        transition: 'color 0.2s'
+                      }}>
+                        {newPassword === confirmPassword ? (
+                          <>
+                            <CheckCircle2 size={14} /> Passwords match
+                          </>
+                        ) : (
+                          <>
+                            <XCircle size={14} /> Passwords don't match
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
-
-
 
                   <button
                     type="submit"
                     className={`submit-btn ${isLoading ? 'loading' : ''}`}
                     disabled={isLoading || !isPasswordValid}
-                    style={{ marginTop: '2rem' }}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
                     {isLoading ? 'Updating...' : 'Reset Password'} <Check size={18} />
                   </button>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+                    <a
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); setCurrentScreen('login'); }}
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--text-secondary)',
+                        textDecoration: 'none',
+                        transition: 'color 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    >
+                      Back to login
+                    </a>
+                  </div>
                 </form>
               </div>
             )}
 
             {currentScreen === 'success' && (
-              <div className="fade-in success-screen">
-                <div className="success-icon-wrapper">
-                  <div className="success-pulse"></div>
-                  <CheckCircle2 className="success-icon" size={64} />
+              <div className="fade-in success-screen" style={{ textAlign: 'center' }}>
+                <div className="success-icon-wrapper" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                  <CheckCircle2 className="success-icon" size={64} color="var(--success)" />
                 </div>
-                <div className="form-header centered">
-                  <h1>Password Updated Successfully</h1>
-                  {/* <p>Your password has been changed successfully. You can now sign in using your new password.</p> */}
+                <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2rem' }}>
+                  Password Updated Successfully
                 </div>
-                <div className="success-actions">
-                  <button
-                    type="button"
-                    className="submit-btn"
-                    onClick={() => {
-                      setCurrentScreen('login');
-                      setPassword('');
-                      setNewPassword('');
-                      setConfirmPassword('');
-                    }}
-                  >
-                    Back to Login
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="submit-btn"
+                  onClick={() => {
+                    setCurrentScreen('login');
+                    setPassword('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  Back to Login
+                </button>
               </div>
             )}
 
-            {/* Optional Footer */}
-            <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-              Powered by OmniEye &copy; {new Date().getFullYear()}
-            </div>
           </div>
         </div>
       </div>

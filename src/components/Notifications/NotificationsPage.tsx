@@ -17,18 +17,22 @@ export function NotificationsPage({
   onClearRead, 
   onNotificationClick 
 }: NotificationsPageProps) {
-  const [activeTab, setActiveTab] = useState<string>('All');
+  const notificationsToShowSetting = localStorage.getItem('gs_notificationsToShow');
+  const itemsPerPage = notificationsToShowSetting ? Number(JSON.parse(notificationsToShowSetting)) : 5;
+
+  const [activeTab, setActiveTab] = useState<string>('Mentions');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
 
-  const tabs = ['All', 'Unread', 'Themes', 'Team Activity', 'System'];
+  const tabs = ['Mentions', 'All', 'Unread', 'Themes', 'Team Activity', 'System'];
   const unreadCount = notifications.filter(n => !n.isRead).length;
+  const mentionsCount = notifications.filter(n => n.isMention).length;
 
   const filteredNotifications = notifications.filter(n => {
     // Tab filter
     if (activeTab === 'Unread' && n.isRead) return false;
-    if (activeTab !== 'All' && activeTab !== 'Unread' && n.category !== activeTab) return false;
+    if (activeTab === 'Mentions' && !n.isMention) return false;
+    if (activeTab !== 'All' && activeTab !== 'Unread' && activeTab !== 'Mentions' && n.category !== activeTab) return false;
     
     // Search filter
     if (searchQuery && !n.title.toLowerCase().includes(searchQuery.toLowerCase()) && !n.description.toLowerCase().includes(searchQuery.toLowerCase())) {
@@ -85,8 +89,19 @@ export function NotificationsPage({
   const hasNotifications = filteredNotifications.length > 0;
 
   return (
-    <div className="notifications-page-container dashboard-fade-in">
-      <div className="tw-parent-card" style={{ background: 'var(--bg-dashboard)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="notifications-page-container dashboard-fade-in" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+      <div 
+        className="tw-parent-card" 
+        style={{ 
+          background: 'var(--bg-dashboard)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '20px',
+          width: itemsPerPage === 20 ? '96%' : '100%',
+          maxWidth: itemsPerPage === 20 ? '96vw' : '100%',
+          transition: 'all 0.3s ease'
+        }}
+      >
         
         {/* Top inner card */}
         <div className="settings-card" style={{ padding: '24px' }}>
@@ -137,7 +152,12 @@ export function NotificationsPage({
           <div className="notifications-toolbar">
             <div className="notifications-tabs">
               {tabs.map(tab => {
-                const count = tab === 'Unread' ? ` (${unreadCount})` : '';
+                let count = '';
+                if (tab === 'Unread') {
+                  count = ` (${unreadCount})`;
+                } else if (tab === 'Mentions') {
+                  count = ` (${mentionsCount})`;
+                }
                 return (
                   <button 
                     key={tab}
@@ -196,7 +216,7 @@ export function NotificationsPage({
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   paddingTop: '20px',
-                  borderTop: '1px solid var(--border-light, #e2e8f0)',
+                  borderTop: 'none',
                   marginTop: '20px',
                   flexWrap: 'wrap',
                   gap: '12px'

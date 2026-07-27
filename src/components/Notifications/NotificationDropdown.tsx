@@ -121,7 +121,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
   const { notifications, onClose, onMarkAllRead, onNotificationClick } = props;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'all' | 'mentions' | 'unread'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'mentions' | 'unread'>('mentions');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isModalMode, setIsModalMode] = useState(false);
@@ -289,16 +289,16 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
       <div className="new-notification-tabs-row" style={{ flexShrink: 0 }}>
         <div className="new-tabs-pill-container">
           <button 
-            className={`new-tab-pill-btn ${activeTab === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveTab('all')}
-          >
-            View all
-          </button>
-          <button 
             className={`new-tab-pill-btn ${activeTab === 'mentions' ? 'active' : ''}`}
             onClick={() => setActiveTab('mentions')}
           >
             Mentions
+          </button>
+          <button 
+            className={`new-tab-pill-btn ${activeTab === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveTab('all')}
+          >
+            View all
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'unread' ? 'active' : ''}`}

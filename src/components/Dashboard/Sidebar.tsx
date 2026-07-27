@@ -22,6 +22,7 @@ interface SidebarProps {
   setCollapsed: (collapsed: boolean) => void;
   isVisible: boolean;
   setIsVisible: (visible: boolean) => void;
+  autoHideSidebar: boolean;
 }
 
 export function Sidebar({
@@ -33,13 +34,20 @@ export function Sidebar({
   collapsed,
   setCollapsed,
   isVisible,
-  setIsVisible
+  setIsVisible,
+  autoHideSidebar
 }: SidebarProps) {
+
+  // Evaluate collapsed status
+  const isSidebarCollapsed = collapsed;
 
   // Hover state specifically for logo in collapsed state
   const [isLogoHovered, setIsLogoHovered] = useState(false);
+  // Hovered item for tooltip in collapsed state
+  const [hoveredItem, setHoveredItem] = useState<{ label: string; y: number } | null>(null);
 
   const hideTimeoutRef = useRef<any>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
 
   // Reset visibility when lock state changes
   useEffect(() => {
@@ -48,15 +56,31 @@ export function Sidebar({
     }
   }, [isLocked]);
 
-  // Handle Theme Studio triggers
+  // Clear tooltip when sidebar expands
   useEffect(() => {
-    if (isThemeStudioOpen) {
-      setCollapsed(true);
+    if (!collapsed) {
+      setHoveredItem(null);
     }
-  }, [isThemeStudioOpen]);
+  }, [collapsed]);
+
+  // Collapse and hide sidebar when clicking outside in unpinned state
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (isLocked) return;
+      if (isSidebarCollapsed && !isVisible) return;
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+        setCollapsed(true);
+        setIsVisible(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isLocked, isSidebarCollapsed, isVisible, setCollapsed, setIsVisible]);
 
   const handleMouseEnter = () => {
-    if (!isLocked) {
+    if (!isLocked && autoHideSidebar) {
       if (hideTimeoutRef.current) {
         clearTimeout(hideTimeoutRef.current);
         hideTimeoutRef.current = null;
@@ -66,7 +90,8 @@ export function Sidebar({
   };
 
   const handleMouseLeave = () => {
-    if (!isLocked) {
+    setHoveredItem(null);
+    if (!isLocked && autoHideSidebar) {
       hideTimeoutRef.current = setTimeout(() => {
         setIsVisible(false);
         setCollapsed(true);
@@ -74,14 +99,32 @@ export function Sidebar({
     }
   };
 
-  const handleSidebarClick = () => {
-    if (collapsed) {
-      setCollapsed(false);
+  const handleItemMouseEnter = (label: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isSidebarCollapsed) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setHoveredItem({
+        label,
+        y: rect.top + rect.height / 2
+      });
     }
   };
 
-  // Evaluate collapsed status
-  const isSidebarCollapsed = collapsed;
+  const handleItemMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
+  const handleNavItemClick = (view: string | null, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (view) {
+      setCurrentView(view);
+    }
+    if (!isLocked) {
+      setIsVisible(false);
+      setCollapsed(true);
+    }
+  };
+
+
 
   return (
     <>
@@ -102,11 +145,11 @@ export function Sidebar({
       )}
 
       <aside
-        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${!isLocked && isVisible ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
-        onClick={handleSidebarClick}
+        ref={sidebarRef}
+        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        style={{ cursor: isSidebarCollapsed ? 'pointer' : 'default' }}
+        style={{ cursor: 'default' }}
       >
         {isSidebarCollapsed && (
           <div
@@ -159,8 +202,10 @@ export function Sidebar({
           <a
             href="#"
             className={`nav-item ${currentView === 'overview' ? 'active' : ''}`}
-            onClick={(e) => { e.preventDefault(); setCurrentView('overview'); }}
+            onClick={(e) => handleNavItemClick('overview', e)}
             style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}
+            onMouseEnter={(e) => handleItemMouseEnter("Dashboard", e)}
+            onMouseLeave={handleItemMouseLeave}
           >
             <LayoutGrid size={20} className="nav-icon" color="#3b82f6" />
             <span className="nav-label" style={{ flex: 1 }}>Dashboard</span>
@@ -220,11 +265,23 @@ export function Sidebar({
               </div>
             )}
           </a>
-          <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
+          <a
+            href="#"
+            className="nav-item"
+            onClick={(e) => handleNavItemClick(null, e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Menu Item 1", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
             <Grid size={20} className="nav-icon" color="#10b981" />
             <span className="nav-label">Menu Item 1</span>
           </a>
-          <a href="#" className="nav-item" onClick={(e) => e.preventDefault()}>
+          <a
+            href="#"
+            className="nav-item"
+            onClick={(e) => handleNavItemClick(null, e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Menu Item 2", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
             <Store size={20} className="nav-icon" color="#f59e0b" />
             <span className="nav-label">Menu Item 2</span>
           </a>
@@ -235,7 +292,9 @@ export function Sidebar({
           <a
             href="#reports"
             className={`nav-item ${currentView === 'reports' ? 'active' : ''}`}
-            onClick={(e) => { e.preventDefault(); setCurrentView('reports'); }}
+            onClick={(e) => handleNavItemClick('reports', e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Report Builder", e)}
+            onMouseLeave={handleItemMouseLeave}
           >
             <BarChart2 size={20} className="nav-icon" color="#8b5cf6" />
             <span className="nav-label">Report Builder</span>
@@ -243,7 +302,9 @@ export function Sidebar({
           <a
             href="#reports"
             className={`nav-item ${currentView === 'reports' ? 'active' : ''}`}
-            onClick={(e) => { e.preventDefault(); setCurrentView('reports'); }}
+            onClick={(e) => handleNavItemClick('reports', e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Testing Reports", e)}
+            onMouseLeave={handleItemMouseLeave}
           >
             <FlaskConical size={20} className="nav-icon" color="#ec4899" />
             <span className="nav-label">Testing Reports</span>
@@ -255,10 +316,9 @@ export function Sidebar({
           <a
             href="#theme-studio"
             className={`nav-item ${isThemeStudioOpen ? 'active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault();
-              setCurrentView('theme-studio');
-            }}
+            onClick={(e) => handleNavItemClick('theme-studio', e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
+            onMouseLeave={handleItemMouseLeave}
           >
             <Palette size={20} className="nav-icon" color="#14b8a6" />
             <span className="nav-label">Theme Studio</span>
@@ -266,7 +326,9 @@ export function Sidebar({
           <a
             href="#"
             className={`nav-item ${currentView === 'account' ? 'active' : ''}`}
-            onClick={(e) => { e.preventDefault(); setCurrentView('account'); }}
+            onClick={(e) => handleNavItemClick('account', e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Account Settings", e)}
+            onMouseLeave={handleItemMouseLeave}
           >
             <UserCircle size={20} className="nav-icon" color="#6366f1" />
             <span className="nav-label">Account Settings</span>
@@ -274,6 +336,15 @@ export function Sidebar({
         </div>
 
       </aside>
+
+      {hoveredItem && (
+        <div
+          className="sidebar-fixed-tooltip"
+          style={{ top: `${hoveredItem.y}px` }}
+        >
+          {hoveredItem.label}
+        </div>
+      )}
     </>
   );
 }

@@ -139,7 +139,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         display: 'flex',
         alignItems: 'flex-start',
         padding: '16px',
-        borderBottom: '1px solid #f1f5f9',
+        borderBottom: 'none',
         backgroundColor: '#ffffff',
         width: '100%',
         border: 'none',

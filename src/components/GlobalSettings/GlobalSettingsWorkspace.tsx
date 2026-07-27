@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Settings, Eye, Download, Upload, X,
   LayoutPanelTop, Layout, LayoutPanelLeft, ShieldCheck, Users,
-  RotateCcw, Info, Link, Plus, Shield, Lock, FileText, Check, Palette
+  RotateCcw, Info, Link, Plus, Shield, Lock, FileText, Check, Palette, Bell, Star, Type, Image
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 import logoDefault from '../../assets/logo.png';
@@ -20,12 +20,20 @@ interface GlobalSettingsWorkspaceProps {
     textColorApply: 'both' | 'name' | 'caption';
   };
   onSaveConfig: (config: any) => void;
+  sidebarAutoHide: boolean;
+  setSidebarAutoHide: (val: boolean) => void;
 }
 
-type TabId = 'header' | 'footer' | 'sidebar' | 'security' | 'profile' | 'login';
+type TabId = 'header' | 'footer' | 'sidebar' | 'security' | 'profile' | 'login' | 'notifications';
 
-export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }: GlobalSettingsWorkspaceProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('header');
+export function GlobalSettingsWorkspace({ 
+  onClose, 
+  headerConfig, 
+  onSaveConfig,
+  sidebarAutoHide,
+  setSidebarAutoHide
+}: GlobalSettingsWorkspaceProps) {
+  const [activeTab, setActiveTab] = useState<TabId>('footer');
 
   // Local form states (Header Config)
   const [logo, setLogo] = useState(headerConfig.logo);
@@ -43,7 +51,21 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
     return saved !== null ? JSON.parse(saved) : true;
   });
   const [copyrightText, setCopyrightText] = useState(() => {
-    return localStorage.getItem('gs_copyrightText') || '© {year} MyProduct. All rights reserved.';
+    return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
+  });
+  const [footerPoweredByType, setFooterPoweredByType] = useState<'text' | 'image'>(() => {
+    try {
+      const saved = localStorage.getItem('gs_footerPoweredByType');
+      return saved ? JSON.parse(saved) : 'text';
+    } catch {
+      return 'text';
+    }
+  });
+  const [footerPoweredByText, setFooterPoweredByText] = useState(() => {
+    return localStorage.getItem('gs_footerPoweredByText') || 'Powered by OomniEye Digital Solutions';
+  });
+  const [footerPoweredByImage, setFooterPoweredByImage] = useState(() => {
+    return localStorage.getItem('gs_footerPoweredByImage') || '';
   });
   const [footerLinks, setFooterLinks] = useState<string[]>([]);
   const [linkText, setLinkText] = useState('');
@@ -54,10 +76,7 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
     const saved = localStorage.getItem('gs_startExpanded');
     return saved !== null ? JSON.parse(saved) : false;
   });
-  const [autoHideSidebar, setAutoHideSidebar] = useState(() => {
-    const saved = localStorage.getItem('sidebarLocked');
-    return saved !== null ? !JSON.parse(saved) : false;
-  });
+  const [autoHideSidebar, setAutoHideSidebar] = useState(sidebarAutoHide);
   const [expandedWidth, setExpandedWidth] = useState(260);
   const [collapsedWidth, setCollapsedWidth] = useState(68);
   const [showIcons, setShowIcons] = useState(true);
@@ -86,6 +105,12 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
   const [loginWelcomeSub, setLoginWelcomeSub] = useState('Access your digital twin workspace');
   const [loginBackground, setLoginBackground] = useState('glassmorphism');
 
+  // Notifications Config States
+  const [notificationsToShow, setNotificationsToShow] = useState(() => {
+    const saved = localStorage.getItem('gs_notificationsToShow');
+    return saved !== null ? JSON.parse(saved) : 5;
+  });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync form states with props if they change
@@ -101,6 +126,19 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
   }, [headerConfig]);
 
   // Handle Logo file upload
+  const handleFooterImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setFooterPoweredByImage(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -125,6 +163,11 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
       setShowCompanyCaption(false);
       setTextColor('#000000');
       setTextColorApply('both');
+      setFooterPoweredByType('text');
+      setFooterPoweredByText('Powered by OomniEye Digital Solutions');
+      setFooterPoweredByImage('');
+      setStartExpanded(false);
+      setAutoHideSidebar(false);
     }
   };
 
@@ -133,7 +176,13 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
     localStorage.setItem('gs_footerVisible', JSON.stringify(footerVisible));
     localStorage.setItem('gs_copyrightText', copyrightText);
     localStorage.setItem('gs_startExpanded', JSON.stringify(startExpanded));
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(!startExpanded));
     localStorage.setItem('sidebarLocked', JSON.stringify(!autoHideSidebar));
+    localStorage.setItem('gs_notificationsToShow', JSON.stringify(notificationsToShow));
+    setSidebarAutoHide(autoHideSidebar);
+    localStorage.setItem('gs_footerPoweredByType', JSON.stringify(footerPoweredByType));
+    localStorage.setItem('gs_footerPoweredByText', footerPoweredByText);
+    localStorage.setItem('gs_footerPoweredByImage', footerPoweredByImage);
 
     onSaveConfig({
       logo,
@@ -144,7 +193,8 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
       showCompanyCaption,
       textColor,
       textColorApply,
-      autoHideSidebar
+      autoHideSidebar,
+      startExpanded
     });
     onClose();
   };
@@ -259,6 +309,7 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
     { id: 'security', label: 'Security', icon: <ShieldCheck size={16} /> },
     { id: 'profile', label: 'Customer Profile', icon: <Users size={16} /> },
     { id: 'login', label: 'Login Config', icon: <Settings size={16} /> },
+    { id: 'notifications', label: 'Notifications', icon: <Bell size={16} /> },
   ];
 
   return (
@@ -547,7 +598,219 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
           {/* Footer Config Panel */}
           {activeTab === 'footer' && (
             <div className="gs-tab-content-container">
+              {/* Footer Live Preview Section at the Top */}
+              <div className="gs-config-card" style={{ width: '100%', marginBottom: '20px', padding: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <Eye size={16} style={{ color: '#2563eb' }} />
+                  <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Footer Live Preview</label>
+                </div>
+                <div style={{ 
+                  border: '1px solid #cbd5e1', 
+                  borderRadius: '8px', 
+                  overflow: 'hidden', 
+                  background: '#f8fafc',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '64px'
+                }}>
+                  {footerVisible ? (
+                    <footer 
+                      style={{
+                        height: '32px',
+                        width: '100%',
+                        backgroundColor: 'var(--bg-card, #ffffff)',
+                        border: '1px solid var(--border-light, #e2e8f0)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0 20px',
+                        fontSize: '11.5px',
+                        color: 'var(--text-secondary, #64748b)',
+                        borderRadius: '4px'
+                      }}
+                    >
+                      <div>Ready</div>
+                      <div>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</div>
+                      <div>
+                        {footerPoweredByType === 'image' && footerPoweredByImage ? (
+                          <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain' }} />
+                        ) : (
+                          footerPoweredByText
+                        )}
+                      </div>
+                    </footer>
+                  ) : (
+                    <div style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>
+                      Footer is currently hidden
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="gs-cards-2x2">
+                <div className="gs-config-card gs-card-blue">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                      color: '#2563eb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Star size={16} fill="currentColor" />
+                    </div>
+                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Powered By
+                      <Info size={12} style={{ opacity: 0.6, cursor: 'help' }} title="Custom branding text or logo in footer bottom-right" />
+                    </label>
+                  </div>
+
+                  {/* Tabs: Text vs Image */}
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setFooterPoweredByType('text')}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: footerPoweredByType === 'text' ? 'none' : '1px solid #1a73e8',
+                        backgroundColor: footerPoweredByType === 'text' ? '#0b57d0' : 'transparent',
+                        color: footerPoweredByType === 'text' ? '#ffffff' : '#1a73e8',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <Type size={14} /> TEXT
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFooterPoweredByType('image')}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: footerPoweredByType === 'image' ? 'none' : '1px solid #1a73e8',
+                        backgroundColor: footerPoweredByType === 'image' ? '#0b57d0' : 'transparent',
+                        color: footerPoweredByType === 'image' ? '#ffffff' : '#1a73e8',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <Image size={14} /> IMAGE
+                    </button>
+                  </div>
+
+                  {/* Dynamic Inputs */}
+                  {footerPoweredByType === 'text' ? (
+                    <div style={{ position: 'relative', marginTop: '12px', width: '100%' }}>
+                      <span style={{ 
+                        position: 'absolute', 
+                        top: '-8px', 
+                        left: '12px', 
+                        background: '#eff6ff', 
+                        padding: '0 4px', 
+                        fontSize: '11px', 
+                        color: '#475569',
+                        fontWeight: 500
+                      }}>
+                        Powered By Text
+                      </span>
+                      <input 
+                        type="text" 
+                        value={footerPoweredByText}
+                        onChange={(e) => setFooterPoweredByText(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '10px',
+                          border: '1px solid #cbd5e1',
+                          fontSize: '14px',
+                          outline: 'none',
+                          color: '#0f172a',
+                          backgroundColor: '#ffffff'
+                        }}
+                      />
+                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px' }}>
+                        Displayed in the footer bottom-right
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ position: 'relative', marginTop: '6px', width: '100%' }}>
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          left: '12px', 
+                          background: '#eff6ff', 
+                          padding: '0 4px', 
+                          fontSize: '11px', 
+                          color: '#475569',
+                          fontWeight: 500
+                        }}>
+                          Footer Logo URL
+                        </span>
+                        <input 
+                          type="text" 
+                          placeholder="https://example.com/logo.png"
+                          value={footerPoweredByImage.startsWith('data:') ? '' : footerPoweredByImage}
+                          onChange={(e) => setFooterPoweredByImage(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '10px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '14px',
+                            outline: 'none',
+                            color: '#0f172a',
+                            backgroundColor: '#ffffff'
+                          }}
+                        />
+                      </div>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Or Upload Image</label>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={handleFooterImageUpload}
+                          style={{ fontSize: '12px' }}
+                        />
+                        {footerPoweredByImage && (
+                          <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>Preview:</span>
+                            <img src={footerPoweredByImage} alt="Footer Logo Preview" style={{ maxHeight: '24px', maxWidth: '100px', objectFit: 'contain', border: '1px solid #e2e8f0', padding: '2px', borderRadius: '4px' }} />
+                            <button 
+                              type="button" 
+                              onClick={() => setFooterPoweredByImage('')} 
+                              style={{ border: 'none', background: 'none', color: '#ef4444', fontSize: '11px', cursor: 'pointer' }}
+                            >
+                              Clear
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="gs-config-card gs-card-blue">
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -563,13 +826,10 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                       }}>
                         <Eye size={18} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Footer Visibility</span>
+                      <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Footer Visibility</label>
                     </div>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
-                  <span style={{ fontSize: '12px', color: '#475569', lineHeight: '1.5' }}>
-                    When disabled, the footer is hidden across the entire application. This recovers 32px of vertical space.
-                  </span>
                 </div>
 
                 <div className="gs-config-card gs-card-green">
@@ -586,10 +846,9 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                     }}>
                       <Check size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Copyright Text</span>
+                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Copyright Text</label>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Copyright Text</label>
                     <input 
                       type="text" 
                       value={copyrightText} 
@@ -605,7 +864,6 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                         outline: 'none'
                       }}
                     />
-                    <span style={{ fontSize: '10.5px', color: '#64748b', marginTop: '4px' }}>Use &#123;year&#125; to automatically insert the current year</span>
                   </div>
                 </div>
 
@@ -623,7 +881,7 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                     }}>
                       <Link size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Footer Links</span>
+                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Footer Links</label>
                   </div>
                   <div style={{ fontSize: '12px', color: '#64748b', minHeight: '60px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {footerLinks.length === 0 ? (
@@ -653,7 +911,7 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                     }}>
                       <Plus size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Add Footer Link</span>
+                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Add Footer Link</label>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <input 
@@ -684,6 +942,7 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                     </button>
                   </div>
                 </div>
+
               </div>
             </div>
           )}
@@ -1133,6 +1392,48 @@ export function GlobalSettingsWorkspace({ onClose, headerConfig, onSaveConfig }:
                       <option value="grid">Grid Mesh Pattern</option>
                     </select>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'notifications' && (
+            <div className="gs-card-grid">
+              <div className="gs-config-card" style={{ flex: 1 }}>
+                <div className="gs-card-header" style={{ marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Bell size={18} style={{ color: '#2563eb' }} />
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Notification Settings</span>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#475569' }}>Notifications to Display</label>
+                    <select
+                      value={notificationsToShow}
+                      onChange={(e) => setNotificationsToShow(Number(e.target.value))}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        color: '#0f172a',
+                        backgroundColor: '#ffffff',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="5">5 notifications (Standard)</option>
+                      <option value="10">10 notifications</option>
+                      <option value="15">15 notifications</option>
+                      <option value="20">20 notifications (Expanded View)</option>
+                    </select>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.5' }}>
+                    Controls the page size / items displayed per page in the main notification builder. If 20 is selected, the notifications card width will occupy 80% of the screen width.
+                  </span>
                 </div>
               </div>
             </div>
