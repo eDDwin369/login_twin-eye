@@ -23,6 +23,9 @@ interface SidebarProps {
   isVisible: boolean;
   setIsVisible: (visible: boolean) => void;
   autoHideSidebar: boolean;
+  showIcons: boolean;
+  showLabels: boolean;
+  isEditing?: boolean;
 }
 
 export function Sidebar({
@@ -35,7 +38,10 @@ export function Sidebar({
   setCollapsed,
   isVisible,
   setIsVisible,
-  autoHideSidebar
+  autoHideSidebar,
+  showIcons,
+  showLabels,
+  isEditing = false
 }: SidebarProps) {
 
   // Evaluate collapsed status
@@ -144,9 +150,24 @@ export function Sidebar({
         />
       )}
 
+      <style>{`
+        ${(!isSidebarCollapsed && !showIcons) ? `
+          .dash-sidebar:not(.collapsed) .nav-icon {
+            display: none !important;
+          }
+        ` : ''}
+        ${(!isSidebarCollapsed && !showLabels) ? `
+          .dash-sidebar:not(.collapsed) .nav-label,
+          .dash-sidebar:not(.collapsed) .nav-section-title,
+          .dash-sidebar:not(.collapsed) .nav-divider {
+            display: none !important;
+          }
+        ` : ''}
+      `}</style>
+
       <aside
         ref={sidebarRef}
-        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
+        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''} ${isEditing ? 'editing-focus' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         style={{ cursor: 'default' }}

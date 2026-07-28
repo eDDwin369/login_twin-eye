@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Settings, Eye, Download, Upload, X,
   LayoutPanelTop, Layout, LayoutPanelLeft, ShieldCheck, Users,
-  RotateCcw, Info, Link, Plus, Shield, Lock, FileText, Check, Palette, Bell, Star, Type, Image
+  RotateCcw, Info, Link, Plus, Shield, Lock, Check, Palette, Star, Type, Image
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 import logoDefault from '../../assets/logo.png';
@@ -22,16 +22,46 @@ interface GlobalSettingsWorkspaceProps {
   onSaveConfig: (config: any) => void;
   sidebarAutoHide: boolean;
   setSidebarAutoHide: (val: boolean) => void;
+  sidebarExpandedWidth: number;
+  setSidebarExpandedWidth: (val: number) => void;
+  sidebarCollapsedWidth: number;
+  setSidebarCollapsedWidth: (val: number) => void;
+  sidebarShowIcons: boolean;
+  setSidebarShowIcons: (val: boolean) => void;
+  sidebarShowLabels: boolean;
+  setSidebarShowLabels: (val: boolean) => void;
+  onSyncFooter: (footerData: any) => void;
+  setSidebarCollapsed: (val: boolean) => void;
+  onTabChange?: (tab: string) => void;
+  onSyncCustomerProfile?: (data: {
+    showCustomerProfile: boolean;
+    customerName: string;
+    customerColorFollow: boolean;
+    showCustomerLogo: boolean;
+    customerLogo: string;
+  }) => void;
 }
 
-type TabId = 'header' | 'footer' | 'sidebar' | 'security' | 'profile' | 'login' | 'notifications';
+type TabId = 'header' | 'footer' | 'sidebar' | 'security' | 'profile';
 
 export function GlobalSettingsWorkspace({ 
   onClose, 
   headerConfig, 
   onSaveConfig,
   sidebarAutoHide,
-  setSidebarAutoHide
+  setSidebarAutoHide,
+  sidebarExpandedWidth,
+  setSidebarExpandedWidth,
+  sidebarCollapsedWidth,
+  setSidebarCollapsedWidth,
+  sidebarShowIcons,
+  setSidebarShowIcons,
+  sidebarShowLabels,
+  setSidebarShowLabels,
+  onSyncFooter,
+  setSidebarCollapsed,
+  onTabChange,
+  onSyncCustomerProfile
 }: GlobalSettingsWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<TabId>('footer');
 
@@ -67,9 +97,17 @@ export function GlobalSettingsWorkspace({
   const [footerPoweredByImage, setFooterPoweredByImage] = useState(() => {
     return localStorage.getItem('gs_footerPoweredByImage') || '';
   });
-  const [footerLinks, setFooterLinks] = useState<string[]>([]);
+  const [footerLinks, setFooterLinks] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('gs_footerLinks');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [linkText, setLinkText] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [isAddingLink, setIsAddingLink] = useState(false);
 
   // Sidebar Config States
   const [startExpanded, setStartExpanded] = useState(() => {
@@ -77,10 +115,117 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : false;
   });
   const [autoHideSidebar, setAutoHideSidebar] = useState(sidebarAutoHide);
-  const [expandedWidth, setExpandedWidth] = useState(260);
-  const [collapsedWidth, setCollapsedWidth] = useState(68);
-  const [showIcons, setShowIcons] = useState(true);
-  const [showLabels, setShowLabels] = useState(true);
+  const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
+  const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
+  const [showIcons, setShowIcons] = useState(sidebarShowIcons);
+  const [showLabels, setShowLabels] = useState(sidebarShowLabels);
+
+  // Capture initial snapshot on mount for revert support
+  const originalSettingsRef = useRef({
+    headerConfig: { ...headerConfig },
+    footerVisible: Boolean(JSON.parse(localStorage.getItem('gs_footerVisible') ?? 'true')),
+    copyrightText: localStorage.getItem('gs_copyrightText') ?? '© {year} OomniEye. All rights reserved.',
+    footerPoweredByType: JSON.parse(localStorage.getItem('gs_footerPoweredByType') ?? '"text"'),
+    footerPoweredByText: localStorage.getItem('gs_footerPoweredByText') ?? '',
+    footerPoweredByImage: localStorage.getItem('gs_footerPoweredByImage') ?? '',
+    sidebarAutoHide,
+    sidebarExpandedWidth,
+    sidebarCollapsedWidth,
+    sidebarShowIcons,
+    sidebarShowLabels,
+    sidebarCollapsed: !JSON.parse(localStorage.getItem('gs_startExpanded') ?? 'false'),
+    footerLinks: JSON.parse(localStorage.getItem('gs_footerLinks') ?? '[]'),
+    showCustomerProfile: Boolean(JSON.parse(localStorage.getItem('gs_showCustomerProfile') ?? 'false')),
+    customerName: localStorage.getItem('gs_customerName') ?? 'Default Customer',
+    customerColorFollow: Boolean(JSON.parse(localStorage.getItem('gs_customerColorFollow') ?? 'true')),
+    showCustomerLogo: Boolean(JSON.parse(localStorage.getItem('gs_showCustomerLogo') ?? 'false')),
+    customerLogo: localStorage.getItem('gs_customerLogo') ?? ''
+  });
+
+  // Track if changes have been saved to avoid reverting on close
+  const isSavedRef = useRef(false);
+
+  // Wrapper for onClose to support cancel/revert
+  const handleCancelAndClose = () => {
+    if (!isSavedRef.current) {
+      const orig = originalSettingsRef.current;
+      onSaveConfig(orig.headerConfig);
+      onSyncFooter({
+        footerVisible: orig.footerVisible,
+        copyrightText: orig.copyrightText,
+        footerPoweredByType: orig.footerPoweredByType,
+        footerPoweredByText: orig.footerPoweredByText,
+        footerPoweredByImage: orig.footerPoweredByImage,
+        footerLinks: orig.footerLinks
+      });
+      setSidebarAutoHide(orig.sidebarAutoHide);
+      setSidebarExpandedWidth(orig.sidebarExpandedWidth);
+      setSidebarCollapsedWidth(orig.sidebarCollapsedWidth);
+      setSidebarShowIcons(orig.sidebarShowIcons);
+      setSidebarShowLabels(orig.sidebarShowLabels);
+      setSidebarCollapsed(orig.sidebarCollapsed);
+      if (onSyncCustomerProfile) {
+        onSyncCustomerProfile({
+          showCustomerProfile: orig.showCustomerProfile,
+          customerName: orig.customerName,
+          customerColorFollow: orig.customerColorFollow,
+          showCustomerLogo: orig.showCustomerLogo,
+          customerLogo: orig.customerLogo
+        });
+      }
+    }
+    onClose();
+  };
+
+  // Sync Header config in real-time
+  useEffect(() => {
+    onSaveConfig({
+      logo,
+      showLogo,
+      companyName,
+      showCompanyName,
+      companyCaption,
+      showCompanyCaption,
+      textColor,
+      textColorApply
+    });
+  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply]);
+
+  // Sync Footer config in real-time
+  useEffect(() => {
+    onSyncFooter({
+      footerVisible,
+      copyrightText,
+      footerPoweredByType,
+      footerPoweredByText,
+      footerPoweredByImage,
+      footerLinks
+    });
+  }, [footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks]);
+
+  // Sync Sidebar config in real-time
+  useEffect(() => {
+    setSidebarAutoHide(autoHideSidebar);
+    setSidebarExpandedWidth(expandedWidth);
+    setSidebarCollapsedWidth(collapsedWidth);
+    setSidebarShowIcons(showIcons);
+    setSidebarShowLabels(showLabels);
+    setSidebarCollapsed(!startExpanded);
+  }, [autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels, startExpanded]);
+
+  // Sync active settings tab with parent
+  useEffect(() => {
+    if (onTabChange) {
+      onTabChange(activeTab);
+    }
+  }, [activeTab, onTabChange]);
+
+  // Clean up tab track on unmount
+  useEffect(() => {
+    return () => {
+      if (onTabChange) onTabChange('');
+    };
+  }, [onTabChange]);
 
   // Security Config States
   const [defaultEmail, setDefaultEmail] = useState('admin@digitaltwin.com');
@@ -94,19 +239,57 @@ export function GlobalSettingsWorkspace({
   const [showStrengthMeter, setShowStrengthMeter] = useState(true);
 
   // Customer Profile Config States
-  const [showCustomerProfile, setShowCustomerProfile] = useState(false);
-  const [customerName, setCustomerName] = useState('Default Customer');
-  const [customerColorFollow, setCustomerColorFollow] = useState(true);
-  const [showCustomerLogo, setShowCustomerLogo] = useState(false);
+  const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
+    const saved = localStorage.getItem('gs_showCustomerProfile');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+  const [customerName, setCustomerName] = useState(() => {
+    return localStorage.getItem('gs_customerName') || 'Default Customer';
+  });
+  const [customerColorFollow, setCustomerColorFollow] = useState(() => {
+    const saved = localStorage.getItem('gs_customerColorFollow');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
+    const saved = localStorage.getItem('gs_showCustomerLogo');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+  const [customerLogo, setCustomerLogo] = useState(() => {
+    return localStorage.getItem('gs_customerLogo') || '';
+  });
 
-  // Login Config States
-  const [loginLayout, setLoginLayout] = useState('split');
-  const [loginWelcomeHeader, setLoginWelcomeHeader] = useState('Welcome Back');
-  const [loginWelcomeSub, setLoginWelcomeSub] = useState('Access your digital twin workspace');
-  const [loginBackground, setLoginBackground] = useState('glassmorphism');
+  const customerLogoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCustomerLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setCustomerLogo(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Sync Customer Profile config in real-time
+  useEffect(() => {
+    if (onSyncCustomerProfile) {
+      onSyncCustomerProfile({
+        showCustomerProfile,
+        customerName,
+        customerColorFollow,
+        showCustomerLogo,
+        customerLogo
+      });
+    }
+  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, onSyncCustomerProfile]);
+
+
 
   // Notifications Config States
-  const [notificationsToShow, setNotificationsToShow] = useState(() => {
+  const [notificationsToShow] = useState(() => {
     const saved = localStorage.getItem('gs_notificationsToShow');
     return saved !== null ? JSON.parse(saved) : 5;
   });
@@ -168,11 +351,16 @@ export function GlobalSettingsWorkspace({
       setFooterPoweredByImage('');
       setStartExpanded(false);
       setAutoHideSidebar(false);
+      setExpandedWidth(260);
+      setCollapsedWidth(68);
+      setShowIcons(true);
+      setShowLabels(true);
     }
   };
 
   // Save changes
   const handleSave = () => {
+    isSavedRef.current = true;
     localStorage.setItem('gs_footerVisible', JSON.stringify(footerVisible));
     localStorage.setItem('gs_copyrightText', copyrightText);
     localStorage.setItem('gs_startExpanded', JSON.stringify(startExpanded));
@@ -183,6 +371,21 @@ export function GlobalSettingsWorkspace({
     localStorage.setItem('gs_footerPoweredByType', JSON.stringify(footerPoweredByType));
     localStorage.setItem('gs_footerPoweredByText', footerPoweredByText);
     localStorage.setItem('gs_footerPoweredByImage', footerPoweredByImage);
+    localStorage.setItem('gs_footerLinks', JSON.stringify(footerLinks));
+    localStorage.setItem('gs_footerLinks', JSON.stringify(footerLinks));
+    localStorage.setItem('gs_showCustomerProfile', JSON.stringify(showCustomerProfile));
+    localStorage.setItem('gs_customerName', customerName);
+    localStorage.setItem('gs_customerColorFollow', JSON.stringify(customerColorFollow));
+    localStorage.setItem('gs_showCustomerLogo', JSON.stringify(showCustomerLogo));
+    localStorage.setItem('gs_customerLogo', customerLogo);
+    localStorage.setItem('gs_expandedWidth', JSON.stringify(expandedWidth));
+    localStorage.setItem('gs_collapsedWidth', JSON.stringify(collapsedWidth));
+    localStorage.setItem('gs_showIcons', JSON.stringify(showIcons));
+    localStorage.setItem('gs_showLabels', JSON.stringify(showLabels));
+    setSidebarExpandedWidth(expandedWidth);
+    setSidebarCollapsedWidth(collapsedWidth);
+    setSidebarShowIcons(showIcons);
+    setSidebarShowLabels(showLabels);
 
     onSaveConfig({
       logo,
@@ -258,11 +461,11 @@ export function GlobalSettingsWorkspace({
   // Close on Escape keypress
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleCancelAndClose();
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [handleCancelAndClose]);
 
   // Apple-style toggle switch inside modal
   const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
@@ -308,12 +511,10 @@ export function GlobalSettingsWorkspace({
     { id: 'sidebar', label: 'Sidebar', icon: <LayoutPanelLeft size={16} /> },
     { id: 'security', label: 'Security', icon: <ShieldCheck size={16} /> },
     { id: 'profile', label: 'Customer Profile', icon: <Users size={16} /> },
-    { id: 'login', label: 'Login Config', icon: <Settings size={16} /> },
-    { id: 'notifications', label: 'Notifications', icon: <Bell size={16} /> },
   ];
 
   return (
-    <div className="gs-overlay" onClick={onClose}>
+    <div className="gs-overlay" onClick={handleCancelAndClose}>
       <div className="gs-modal" onClick={e => e.stopPropagation()}>
 
         {/* HEADER BAR */}
@@ -334,7 +535,7 @@ export function GlobalSettingsWorkspace({
             <button className="gs-icon-btn" title="Import Settings" onClick={handleImportSettings}>
               <Upload size={18} />
             </button>
-            <button className="gs-icon-btn" title="Close" onClick={onClose} style={{ marginLeft: '8px' }}>
+            <button className="gs-icon-btn" title="Close" onClick={handleCancelAndClose} style={{ marginLeft: '8px' }}>
               <X size={18} />
             </button>
           </div>
@@ -356,229 +557,273 @@ export function GlobalSettingsWorkspace({
 
         {/* CONTENT PANEL BODY */}
         <div className="gs-content-body">
-          {activeTab === 'header' ? (
-            <div className="gs-card-grid">
+          {activeTab === 'header' && (
+            <div className="gs-tab-content-container">
+              <div className="gs-cards-2x2">
 
-              {/* Left Card: Logo */}
-              <div className="gs-config-card" style={{ flex: 1 }}>
-                <div className="gs-card-header" style={{ marginBottom: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <h3 className="gs-card-title">Logo</h3>
-                    <span title="Upload your company logo to be displayed in the header." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
-                      <Info size={14} />
-                    </span>
-                  </div>
-                </div>
-
-                {/* Logo Drag Box Preview Area */}
-                <div
-                  style={{
-                    background: '#f8fafc',
-                    border: '1px dashed #cbd5e1',
-                    borderRadius: '12px',
-                    height: '180px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '20px',
-                    padding: '16px'
-                  }}
-                >
-                  <img
-                    src={logo || logoDefault}
-                    alt="Logo Preview"
-                    style={{ maxHeight: '110px', maxWidth: '100%', objectFit: 'contain', marginBottom: '12px' }}
-                  />
-                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
-                    Height 80px (transparent PNG recommended)
-                  </span>
-                </div>
-
-                {/* Left Card Bottom Controls */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{
-                      display: 'inline-flex',
+                {/* Left Card: Logo Settings */}
+                <div className="gs-config-card gs-card-blue">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                      color: '#2563eb',
+                      display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      border: '1px solid #cbd5e1',
+                      justifyContent: 'center'
+                    }}>
+                      <Image size={18} />
+                    </div>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Logo Settings</span>
+                  </div>
+
+                  {/* Logo Drag Box Preview Area */}
+                  <div
+                    style={{
                       background: '#ffffff',
-                      color: '#475569',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#94a3b8';
-                      e.currentTarget.style.backgroundColor = '#f8fafc';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = '#cbd5e1';
-                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      border: '1px dashed #bfdbfe',
+                      borderRadius: '12px',
+                      height: '110px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: '12px',
+                      padding: '8px'
                     }}
                   >
-                    <Upload size={14} />
-                    Upload Logo
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    style={{ display: 'none' }}
-                  />
-
-                  {/* Toggle */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
-                    <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#0f172a' }}>Show Logo</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <AppleToggle checked={showLogo} onChange={setShowLogo} />
-                      <span style={{ fontSize: '11.5px', color: '#64748b' }}></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Card: Text & Visibility */}
-              <div className="gs-config-card" style={{ flex: 1.2 }}>
-                <div className="gs-card-header" style={{ marginBottom: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <h3 className="gs-card-title">Text & Visibility</h3>
-                    <span title="Manage the company name and caption text shown in the header." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
-                      <Info size={14} />
+                    <img
+                      src={logo || logoDefault}
+                      alt="Logo Preview"
+                      style={{ maxHeight: '60px', maxWidth: '100%', objectFit: 'contain', marginBottom: '8px' }}
+                    />
+                    <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>
+                      Height 80px (transparent PNG recommended)
                     </span>
                   </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* Show Logo Toggle Row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Eye size={16} style={{ color: '#475569' }} />
+                        <span style={{ fontSize: '12.5px', color: '#1e293b', fontWeight: 500 }}>Show Logo</span>
+                      </div>
+                      <AppleToggle checked={showLogo} onChange={setShowLogo} />
+                    </div>
+
+                    {/* Upload Logo Row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #bfdbfe', paddingTop: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Upload size={16} style={{ color: '#475569' }} />
+                        <span style={{ fontSize: '12.5px', color: '#1e293b', fontWeight: 500 }}>Upload File</span>
+                      </div>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        style={{
+                          background: '#2563eb',
+                          color: '#ffffff',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '11.5px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        UPLOAD LOGO
+                      </button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        style={{ display: 'none' }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
-                  {/* Company Name row */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#0f172a' }}>Company Name</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <input
-                        type="text"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="Company name"
-                        style={{
-                          flex: 1,
-                          maxWidth: '320px',
-                          padding: '8px 12px',
-                          borderRadius: '8px',
-                          border: '1px solid #cbd5e1',
-                          fontSize: '13px',
-                          fontWeight: 500,
-                          outline: 'none',
-                          color: '#0f172a'
-                        }}
-                      />
-                      <AppleToggle checked={showCompanyName} onChange={setShowCompanyName} />
+                {/* Right Card: Branding Texts */}
+                <div className="gs-config-card gs-card-green">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                      color: '#10b981',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Type size={18} />
                     </div>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Branding Texts</span>
                   </div>
 
-                  {/* Horizontal divider */}
-                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '4px 0' }} />
-
-                  {/* Company Caption row */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#0f172a' }}>Company Caption</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <input
-                        type="text"
-                        value={companyCaption}
-                        onChange={(e) => setCompanyCaption(e.target.value)}
-                        placeholder="Caption description"
-                        style={{
-                          flex: 1,
-                          maxWidth: '320px',
-                          padding: '8px 12px',
-                          borderRadius: '8px',
-                          border: '1px solid #cbd5e1',
-                          fontSize: '13px',
-                          fontWeight: 500,
-                          outline: 'none',
-                          color: '#0f172a'
-                        }}
-                      />
-                      <AppleToggle checked={showCompanyCaption} onChange={setShowCompanyCaption} />
-                    </div>
-                  </div>
-
-                  {/* Horizontal divider */}
-                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '4px 0' }} />
-
-                  {/* Text Color Selection Row */}
-                  <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#0f172a' }}>Text Color</span>
-                        <span title="Choose color for company name and caption." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
-                          <Info size={13} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {/* Company Name Row */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ flex: 1, position: 'relative', marginTop: '8px' }}>
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          left: '12px', 
+                          background: '#ecfdf5', 
+                          padding: '0 4px', 
+                          fontSize: '11px', 
+                          color: '#475569',
+                          fontWeight: 500
+                        }}>
+                          Company Name
                         </span>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', height: '38px' }}>
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                          <div
-                            style={{
-                              width: '36px',
-                              height: '36px',
-                              borderRadius: '8px',
-                              backgroundColor: textColor,
-                              border: '1px solid #cbd5e1',
-                              cursor: 'pointer'
-                            }}
-                            onClick={() => document.getElementById('gs-color-picker')?.click()}
-                          />
-                          <input
-                            id="gs-color-picker"
-                            type="color"
-                            value={textColor}
-                            onChange={(e) => setTextColor(e.target.value)}
-                            style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
-                          />
-                        </div>
                         <input
                           type="text"
-                          value={textColor}
-                          onChange={(e) => setTextColor(e.target.value)}
-                          placeholder="#000000"
+                          value={companyName}
+                          onChange={(e) => setCompanyName(e.target.value)}
+                          placeholder="e.g. OomniEye"
                           style={{
-                            padding: '8px 12px',
-                            borderRadius: '8px',
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '10px',
                             border: '1px solid #cbd5e1',
-                            fontSize: '13px',
-                            fontWeight: 500,
+                            fontSize: '14px',
                             outline: 'none',
-                            width: '100px',
-                            color: '#0f172a'
+                            color: '#0f172a',
+                            backgroundColor: '#ffffff'
                           }}
                         />
                       </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+                        <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
+                        <AppleToggle checked={showCompanyName} onChange={setShowCompanyName} />
+                      </div>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '180px' }}>
-                      <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#0f172a' }}>Apply to</span>
-                      <div style={{ display: 'flex', alignItems: 'center', height: '38px' }}>
+                    {/* Company Caption Row */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ flex: 1, position: 'relative', marginTop: '8px' }}>
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          left: '12px', 
+                          background: '#ecfdf5', 
+                          padding: '0 4px', 
+                          fontSize: '11px', 
+                          color: '#475569',
+                          fontWeight: 500
+                        }}>
+                          Company Caption
+                        </span>
+                        <input
+                          type="text"
+                          value={companyCaption}
+                          onChange={(e) => setCompanyCaption(e.target.value)}
+                          placeholder="e.g. Digital Twin Solutions"
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '10px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '14px',
+                            outline: 'none',
+                            color: '#0f172a',
+                            backgroundColor: '#ffffff'
+                          }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+                        <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
+                        <AppleToggle checked={showCompanyCaption} onChange={setShowCompanyCaption} />
+                      </div>
+                    </div>
+
+                    {/* Color and Dropdown Row */}
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '8px' }}>
+                      {/* Color Picker clicker */}
+                      <div
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '8px',
+                          backgroundColor: textColor,
+                          border: '1px solid #cbd5e1',
+                          cursor: 'pointer',
+                          marginTop: '8px',
+                          flexShrink: 0
+                        }}
+                        onClick={() => document.getElementById('gs-color-picker')?.click()}
+                      />
+                      <input
+                        id="gs-color-picker"
+                        type="color"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+                      />
+
+                      {/* Text Color Input */}
+                      <div style={{ flex: 1.2, position: 'relative', marginTop: '8px' }}>
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          left: '12px', 
+                          background: '#ecfdf5', 
+                          padding: '0 4px', 
+                          fontSize: '11px', 
+                          color: '#475569',
+                          fontWeight: 500
+                        }}>
+                          Text Color
+                        </span>
+                        <input 
+                          type="text" 
+                          value={textColor}
+                          onChange={(e) => setTextColor(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '10px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '14px',
+                            outline: 'none',
+                            color: '#0f172a',
+                            backgroundColor: '#ffffff'
+                          }}
+                        />
+                      </div>
+
+                      {/* Apply Color Dropdown */}
+                      <div style={{ flex: 2, position: 'relative', marginTop: '8px' }}>
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          left: '12px', 
+                          background: '#ecfdf5', 
+                          padding: '0 4px', 
+                          fontSize: '11px', 
+                          color: '#475569',
+                          fontWeight: 500
+                        }}>
+                          Apply Color To
+                        </span>
                         <select
                           value={textColorApply}
-                          onChange={(e: any) => setTextColorApply(e.target.value)}
+                          onChange={(e) => setTextColorApply(e.target.value as any)}
                           style={{
-                            padding: '8px 12px',
-                            borderRadius: '8px',
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '10px',
                             border: '1px solid #cbd5e1',
-                            fontSize: '13px',
-                            fontWeight: 500,
-                            color: '#0f172a',
+                            fontSize: '14px',
                             outline: 'none',
+                            color: '#0f172a',
                             backgroundColor: '#ffffff',
-                            cursor: 'pointer',
-                            width: '100%'
+                            cursor: 'pointer'
                           }}
                         >
                           <option value="both">Company name & caption</option>
@@ -588,74 +833,21 @@ export function GlobalSettingsWorkspace({
                       </div>
                     </div>
                   </div>
-
                 </div>
+
               </div>
-
             </div>
-          ) : null}
+          )}
 
-          {/* Footer Config Panel */}
           {activeTab === 'footer' && (
             <div className="gs-tab-content-container">
-              {/* Footer Live Preview Section at the Top */}
-              <div className="gs-config-card" style={{ width: '100%', marginBottom: '20px', padding: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <Eye size={16} style={{ color: '#2563eb' }} />
-                  <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Footer Live Preview</label>
-                </div>
-                <div style={{ 
-                  border: '1px solid #cbd5e1', 
-                  borderRadius: '8px', 
-                  overflow: 'hidden', 
-                  background: '#f8fafc',
-                  padding: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minHeight: '64px'
-                }}>
-                  {footerVisible ? (
-                    <footer 
-                      style={{
-                        height: '32px',
-                        width: '100%',
-                        backgroundColor: 'var(--bg-card, #ffffff)',
-                        border: '1px solid var(--border-light, #e2e8f0)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0 20px',
-                        fontSize: '11.5px',
-                        color: 'var(--text-secondary, #64748b)',
-                        borderRadius: '4px'
-                      }}
-                    >
-                      <div>Ready</div>
-                      <div>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</div>
-                      <div>
-                        {footerPoweredByType === 'image' && footerPoweredByImage ? (
-                          <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain' }} />
-                        ) : (
-                          footerPoweredByText
-                        )}
-                      </div>
-                    </footer>
-                  ) : (
-                    <div style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>
-                      Footer is currently hidden
-                    </div>
-                  )}
-                </div>
-              </div>
-
               <div className="gs-cards-2x2">
                 <div className="gs-config-card gs-card-blue">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
                       color: '#2563eb',
                       display: 'flex',
@@ -664,7 +856,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Star size={16} fill="currentColor" />
                     </div>
-                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                       Powered By
                       <span title="Custom branding text or logo in footer bottom-right" style={{ display: 'inline-flex', alignItems: 'center' }}>
                         <Info size={12} style={{ opacity: 0.6, cursor: 'help' }} />
@@ -813,13 +1005,15 @@ export function GlobalSettingsWorkspace({
                   )}
                 </div>
 
-                <div className="gs-config-card gs-card-blue">
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div className="gs-config-card gs-card-green">
+                  
+                  {/* Row 1: Footer Visibility */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <div style={{
                         width: '36px',
                         height: '36px',
-                        borderRadius: '50%',
+                        borderRadius: '10px',
                         backgroundColor: 'rgba(37, 99, 235, 0.1)',
                         color: '#2563eb',
                         display: 'flex',
@@ -828,122 +1022,249 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Eye size={18} />
                       </div>
-                      <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Footer Visibility</label>
+                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700 }}>Footer Visibility</label>
                     </div>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
-                </div>
 
-                <div className="gs-config-card gs-card-green">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '12px 0' }} />
+
+                  {/* Row 2: Copyright Text */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(16, 185, 129, 0.1)',
                       color: '#10b981',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
                       <Check size={18} />
                     </div>
-                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Copyright Text</label>
+                    <div style={{ flex: 1, position: 'relative', marginTop: '12px' }}>
+                      <span style={{ 
+                        position: 'absolute', 
+                        top: '-8px', 
+                        left: '12px', 
+                        background: '#ecfdf5', 
+                        padding: '0 4px', 
+                        fontSize: '11px', 
+                        color: '#475569',
+                        fontWeight: 500
+                      }}>
+                        Copyright Text
+                      </span>
+                      <input 
+                        type="text" 
+                        value={copyrightText} 
+                        onChange={(e) => setCopyrightText(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '10px',
+                          border: '1px solid #cbd5e1',
+                          fontSize: '14px',
+                          outline: 'none',
+                          color: '#0f172a',
+                          backgroundColor: '#ffffff'
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <input 
-                      type="text" 
-                      value={copyrightText} 
-                      onChange={(e) => setCopyrightText(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '13px',
-                        backgroundColor: '#ffffff',
-                        color: '#0f172a',
-                        outline: 'none'
-                      }}
-                    />
+
+                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '12px 0' }} />
+
+                  {/* Row 3: Add Footer Link */}
+                  <div style={{ 
+                    position: 'relative', 
+                    height: '44px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    {/* State A: Add Link Trigger */}
+                    <div style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      opacity: isAddingLink ? 0 : 1,
+                      transform: isAddingLink ? 'translateX(-20px)' : 'translateX(0)',
+                      pointerEvents: isAddingLink ? 'none' : 'auto',
+                      transition: 'all 0.30s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '10px',
+                          backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                          color: '#f97316',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <Plus size={18} />
+                        </div>
+                        <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700 }}>Add Footer Link</label>
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={() => setIsAddingLink(true)}
+                        style={{
+                          padding: '6px 16px',
+                          background: '#f97316',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#ea580c'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = '#f97316'}
+                      >
+                        ADD LINK
+                      </button>
+                    </div>
+
+                    {/* State B: Animated Inline Inputs */}
+                    <div style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      opacity: isAddingLink ? 1 : 0,
+                      transform: isAddingLink ? 'translateX(0)' : 'translateX(20px)',
+                      pointerEvents: isAddingLink ? 'auto' : 'none',
+                      transition: 'all 0.30s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}>
+                      <input 
+                        type="text" 
+                        placeholder="Link Label" 
+                        value={linkText}
+                        onChange={e => setLinkText(e.target.value)}
+                        style={{
+                          flex: 1,
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          border: '1px solid #cbd5e1',
+                          fontSize: '12px',
+                          color: '#0f172a',
+                          backgroundColor: '#ffffff',
+                          outline: 'none',
+                          minWidth: 0
+                        }}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="Link URL" 
+                        value={linkUrl}
+                        onChange={e => setLinkUrl(e.target.value)}
+                        style={{
+                          flex: 1.5,
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          border: '1px solid #cbd5e1',
+                          fontSize: '12px',
+                          color: '#0f172a',
+                          backgroundColor: '#ffffff',
+                          outline: 'none',
+                          minWidth: 0
+                        }}
+                      />
+                      {/* Confirm Icon Button */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (linkText && linkUrl) {
+                            setFooterLinks(prev => [...prev, `${linkText} (${linkUrl})`]);
+                            setLinkText('');
+                            setLinkUrl('');
+                            setIsAddingLink(false);
+                          } else {
+                            alert('Please enter both a label and a URL.');
+                          }
+                        }}
+                        style={{
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '10px',
+                          backgroundColor: '#22c55e',
+                          color: '#ffffff',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          flexShrink: 0
+                        }}
+                      >
+                        <Check size={14} strokeWidth={3} />
+                      </button>
+                      {/* Cancel Icon Button */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLinkText('');
+                          setLinkUrl('');
+                          setIsAddingLink(false);
+                        }}
+                        style={{
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '10px',
+                          backgroundColor: '#ef4444',
+                          color: '#ffffff',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          flexShrink: 0
+                        }}
+                      >
+                        <X size={14} strokeWidth={3} />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <div className="gs-config-card gs-card-teal">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                      color: '#20b8a6',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Link size={18} />
+                {footerLinks.length > 0 && (
+                  <div className="gs-config-card gs-card-teal">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                      <div style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                        color: '#20b8a6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <Link size={18} />
+                      </div>
+                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700 }}>Footer Links</label>
                     </div>
-                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Footer Links</label>
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#64748b', minHeight: '60px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {footerLinks.length === 0 ? (
-                      <span>No footer links added yet</span>
-                    ) : (
-                      footerLinks.map((link, idx) => (
+                    <div style={{ fontSize: '12px', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {footerLinks.map((link, idx) => (
                         <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
                           <span>{link}</span>
                           <button onClick={() => setFooterLinks(prev => prev.filter((_, i) => i !== idx))} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '11px' }}>Remove</button>
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                <div className="gs-config-card gs-card-orange">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                      color: '#f97316',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Plus size={18} />
+                      ))}
                     </div>
-                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Add Footer Link</label>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <input 
-                      type="text" 
-                      placeholder="Link Label" 
-                      value={linkText}
-                      onChange={e => setLinkText(e.target.value)}
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    />
-                    <input 
-                      type="text" 
-                      placeholder="Link URL" 
-                      value={linkUrl}
-                      onChange={e => setLinkUrl(e.target.value)}
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    />
-                    <button 
-                      onClick={() => {
-                        if (linkText && linkUrl) {
-                          setFooterLinks(prev => [...prev, `${linkText} (${linkUrl})`]);
-                          setLinkText('');
-                          setLinkUrl('');
-                        }
-                      }}
-                      style={{ padding: '6px 12px', background: '#f97316', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}
-                    >
-                      ADD LINK
-                    </button>
-                  </div>
-                </div>
+                )}
 
               </div>
             </div>
@@ -953,12 +1274,14 @@ export function GlobalSettingsWorkspace({
           {activeTab === 'sidebar' && (
             <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
+                
+                {/* Behavior Card */}
                 <div className="gs-config-card gs-card-blue">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
                       color: '#2563eb',
                       display: 'flex',
@@ -983,12 +1306,13 @@ export function GlobalSettingsWorkspace({
                   </div>
                 </div>
 
+                {/* Expanded Width Card */}
                 <div className="gs-config-card gs-card-teal">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(20, 184, 166, 0.1)',
                       color: '#20b8a6',
                       display: 'flex',
@@ -1015,12 +1339,13 @@ export function GlobalSettingsWorkspace({
                   </div>
                 </div>
 
+                {/* Collapsed Width Card */}
                 <div className="gs-config-card gs-card-green">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(16, 185, 129, 0.1)',
                       color: '#10b981',
                       display: 'flex',
@@ -1047,12 +1372,13 @@ export function GlobalSettingsWorkspace({
                   </div>
                 </div>
 
+                {/* Display Options Card */}
                 <div className="gs-config-card gs-card-orange">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(249, 115, 22, 0.1)',
                       color: '#f97316',
                       display: 'flex',
@@ -1075,6 +1401,7 @@ export function GlobalSettingsWorkspace({
                     <span style={{ fontSize: '10.5px', color: '#64748b' }}>Icons are always visible in collapsed mode</span>
                   </div>
                 </div>
+
               </div>
             </div>
           )}
@@ -1088,7 +1415,7 @@ export function GlobalSettingsWorkspace({
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
                       color: '#2563eb',
                       display: 'flex',
@@ -1128,7 +1455,7 @@ export function GlobalSettingsWorkspace({
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(16, 185, 129, 0.1)',
                       color: '#10b981',
                       display: 'flex',
@@ -1167,7 +1494,7 @@ export function GlobalSettingsWorkspace({
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(239, 68, 68, 0.1)',
                       color: '#ef4444',
                       display: 'flex',
@@ -1194,7 +1521,7 @@ export function GlobalSettingsWorkspace({
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: '10px',
                       backgroundColor: 'rgba(249, 115, 22, 0.1)',
                       color: '#f97316',
                       display: 'flex',
@@ -1223,7 +1550,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{
                         width: '36px',
                         height: '36px',
-                        borderRadius: '50%',
+                        borderRadius: '10px',
                         backgroundColor: 'rgba(37, 99, 235, 0.1)',
                         color: '#2563eb',
                         display: 'flex',
@@ -1257,7 +1584,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{
                         width: '36px',
                         height: '36px',
-                        borderRadius: '50%',
+                        borderRadius: '10px',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         color: '#10b981',
                         display: 'flex',
@@ -1270,176 +1597,39 @@ export function GlobalSettingsWorkspace({
                     </div>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
                   </div>
-                  <button style={{ padding: '6px 12px', background: '#10b981', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button 
+                    onClick={() => customerLogoInputRef.current?.click()}
+                    style={{ padding: '6px 12px', background: '#10b981', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}
+                  >
                     UPLOAD LOGO
                   </button>
-                </div>
-
-                <div className="gs-config-card gs-card-teal" style={{ gridColumn: 'span 2' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                      color: '#20b8a6',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Eye size={18} />
+                  <input 
+                    type="file" 
+                    ref={customerLogoInputRef} 
+                    onChange={handleCustomerLogoUpload} 
+                    accept="image/*" 
+                    style={{ display: 'none' }} 
+                  />
+                  {customerLogo && (
+                    <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '11px', color: '#64748b' }}>Preview:</span>
+                      <img src={customerLogo} alt="Customer Logo Preview" style={{ maxHeight: '24px', maxWidth: '100px', objectFit: 'contain', border: '1px solid #e2e8f0', padding: '2px', borderRadius: '4px' }} />
+                      <button 
+                        type="button" 
+                        onClick={() => setCustomerLogo('')} 
+                        style={{ border: 'none', background: 'none', color: '#ef4444', fontSize: '11px', cursor: 'pointer' }}
+                      >
+                        Clear
+                      </button>
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Header Preview</span>
-                  </div>
-                  <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '16px', textAlign: 'center', color: '#64748b', fontSize: '12px' }}>
-                    {showCustomerProfile ? `Customer profile active: ${customerName}` : "Customer profile is hidden"}
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
           )}
 
-          {/* Login Layout Config Panel */}
-          {activeTab === 'login' && (
-            <div className="gs-tab-content-container">
-              <div className="gs-cards-2x2">
-                <div className="gs-config-card gs-card-blue">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <LayoutPanelTop size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Layout Selection</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Active Layout</label>
-                    <select 
-                      value={loginLayout} 
-                      onChange={e => setLoginLayout(e.target.value)}
-                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12.5px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    >
-                      <option value="split">Split-screen</option>
-                      <option value="card">Centered Card</option>
-                      <option value="minimal">Minimalist View</option>
-                    </select>
-                  </div>
-                </div>
 
-                <div className="gs-config-card gs-card-green">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      color: '#10b981',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <FileText size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Welcome Text</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <input 
-                      type="text" 
-                      value={loginWelcomeHeader} 
-                      onChange={e => setLoginWelcomeHeader(e.target.value)} 
-                      placeholder="Header Text"
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    />
-                    <input 
-                      type="text" 
-                      value={loginWelcomeSub} 
-                      onChange={e => setLoginWelcomeSub(e.target.value)} 
-                      placeholder="Subtitle Text"
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    />
-                  </div>
-                </div>
 
-                <div className="gs-config-card gs-card-orange">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                      color: '#f97316',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Palette size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Visual Background</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <select 
-                      value={loginBackground} 
-                      onChange={e => setLoginBackground(e.target.value)}
-                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12.5px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    >
-                      <option value="glassmorphism">Glassmorphism Blur</option>
-                      <option value="solid">Solid Slate Theme</option>
-                      <option value="grid">Grid Mesh Pattern</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'notifications' && (
-            <div className="gs-card-grid">
-              <div className="gs-config-card" style={{ flex: 1 }}>
-                <div className="gs-card-header" style={{ marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Bell size={18} style={{ color: '#2563eb' }} />
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Notification Settings</span>
-                  </div>
-                </div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#475569' }}>Notifications to Display</label>
-                    <select
-                      value={notificationsToShow}
-                      onChange={(e) => setNotificationsToShow(Number(e.target.value))}
-                      style={{
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        color: '#0f172a',
-                        backgroundColor: '#ffffff',
-                        outline: 'none',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <option value="5">5 notifications (Standard)</option>
-                      <option value="10">10 notifications</option>
-                      <option value="15">15 notifications</option>
-                      <option value="20">20 notifications (Expanded View)</option>
-                    </select>
-                  </div>
-                  <span style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.5' }}>
-                    Controls the page size / items displayed per page in the main notification builder. If 20 is selected, the notifications card width will occupy 80% of the screen width.
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* BOTTOM STICKY FOOTER */}
@@ -1449,7 +1639,7 @@ export function GlobalSettingsWorkspace({
             Reset to defaults
           </button>
           <div className="gs-footer-right">
-            <button className="gs-btn-cancel" onClick={onClose}>
+            <button className="gs-btn-cancel" onClick={handleCancelAndClose}>
               Cancel
             </button>
             <button className="gs-btn-save" onClick={handleSave}>

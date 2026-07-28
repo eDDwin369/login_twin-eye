@@ -185,6 +185,12 @@
   overflow: hidden;
 }
 
+.dash-sidebar.editing-focus {
+  z-index: 10000 !important;
+  box-shadow: 4px 0 24px rgba(37, 99, 235, 0.15), 0 0 0 2px rgba(37, 99, 235, 0.5) !important;
+  transition: width 0.3s ease, box-shadow 0.3s ease !important;
+}
+
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
@@ -413,6 +419,12 @@
   justify-content: space-between;
   padding: 0 var(--spacing-5);
   flex-shrink: 0;
+}
+
+.dash-header.editing-focus {
+  z-index: 10000 !important;
+  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.15), 0 0 0 2px rgba(37, 99, 235, 0.5) !important;
+  transition: box-shadow 0.3s ease, z-index 0.3s ease !important;
 }
 
 .header-left, .header-center, .header-right {

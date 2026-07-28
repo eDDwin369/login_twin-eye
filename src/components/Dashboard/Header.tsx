@@ -23,6 +23,12 @@ interface HeaderProps {
   onNavigate?: (view: string, options?: any) => void;
   onSettingsClick?: () => void;
   headerConfig?: any;
+  isEditing?: boolean;
+  showCustomerProfile?: boolean;
+  customerName?: string;
+  customerColorFollow?: boolean;
+  showCustomerLogo?: boolean;
+  customerLogo?: string;
 }
 
 export function Header({
@@ -33,7 +39,13 @@ export function Header({
   onLogout,
   onNavigate,
   onSettingsClick,
-  headerConfig
+  headerConfig,
+  isEditing = false,
+  showCustomerProfile = false,
+  customerName = 'Default Customer',
+  customerColorFollow = true,
+  showCustomerLogo = false,
+  customerLogo = ''
 }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -142,7 +154,7 @@ export function Header({
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <header className="dash-header">
+    <header className={`dash-header ${isEditing ? 'editing-focus' : ''}`}>
       <div
         className="header-left"
         onClick={() => onNavigate && onNavigate('overview')}
@@ -196,14 +208,28 @@ export function Header({
       </div>
 
       <div className="header-center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-        <img
-          src={logo}
-          alt="Digital Twin Logo"
-          style={{ height: '64px', width: 'auto', objectFit: 'contain' }}
-        />
-        <span style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--text-main)', letterSpacing: '0.02em' }}>
-          Digital Twin
-        </span>
+        {showCustomerProfile && (
+          <>
+            {/* Logo in Center */}
+            {showCustomerLogo && (
+              <img
+                src={customerLogo || logo}
+                alt="Customer Logo"
+                style={{ height: '64px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+              />
+            )}
+
+            {/* Text/Font in Center */}
+            <span style={{ 
+              fontWeight: 700, 
+              fontSize: '1.15rem', 
+              color: (customerColorFollow && headerConfig?.textColor) ? headerConfig.textColor : 'var(--text-main)', 
+              letterSpacing: '0.02em' 
+            }}>
+              {customerName}
+            </span>
+          </>
+        )}
       </div>
 
       <div className="header-right">

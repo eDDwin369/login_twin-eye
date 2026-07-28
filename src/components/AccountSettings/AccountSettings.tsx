@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ProfileTab } from './ProfileTab';
 import { SecurityTab } from './SecurityTab';
 import { PreferencesTab } from './PreferencesTab';
+import { NotificationsTab } from './NotificationsTab';
 import './AccountSettings.css';
 
 interface AccountSettingsProps {
@@ -52,6 +53,12 @@ export function AccountSettings({
           >
             Preferences & Privacy
           </button>
+          <button 
+            className={`account-tab ${activeTab === 'notifications' ? 'active' : ''}`}
+            onClick={() => handleTabChange('notifications')}
+          >
+            Notification
+          </button>
         </div>
       </div>
 
@@ -66,6 +73,7 @@ export function AccountSettings({
         )}
         {activeTab === 'security' && <SecurityTab />}
         {activeTab === 'preferences' && <PreferencesTab />}
+        {activeTab === 'notifications' && <NotificationsTab />}
       </div>
     </div>
   );

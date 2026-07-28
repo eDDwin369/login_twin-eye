@@ -60,6 +60,62 @@ function App() {
     localStorage.setItem('gs_autoHideSidebar', JSON.stringify(val));
   };
 
+  const [sidebarExpandedWidth, setSidebarExpandedWidth] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gs_expandedWidth');
+      return saved !== null ? Number(saved) : 260;
+    } catch {
+      return 260;
+    }
+  });
+
+  const [sidebarCollapsedWidth, setSidebarCollapsedWidth] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gs_collapsedWidth');
+      return saved !== null ? Number(saved) : 68;
+    } catch {
+      return 68;
+    }
+  });
+
+  const [sidebarShowIcons, setSidebarShowIcons] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gs_showIcons');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+
+  const [sidebarShowLabels, setSidebarShowLabels] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gs_showLabels');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+
+  const handleSetSidebarExpandedWidth = (val: number) => {
+    setSidebarExpandedWidth(val);
+    localStorage.setItem('gs_expandedWidth', JSON.stringify(val));
+  };
+
+  const handleSetSidebarCollapsedWidth = (val: number) => {
+    setSidebarCollapsedWidth(val);
+    localStorage.setItem('gs_collapsedWidth', JSON.stringify(val));
+  };
+
+  const handleSetSidebarShowIcons = (val: boolean) => {
+    setSidebarShowIcons(val);
+    localStorage.setItem('gs_showIcons', JSON.stringify(val));
+  };
+
+  const handleSetSidebarShowLabels = (val: boolean) => {
+    setSidebarShowLabels(val);
+    localStorage.setItem('gs_showLabels', JSON.stringify(val));
+  };
+
   const handleSetSidebarCollapsed = (val: boolean) => {
     setSidebarCollapsed(val);
     localStorage.setItem('sidebarCollapsed', JSON.stringify(val));
@@ -314,6 +370,14 @@ function App() {
         setSidebarVisible={setSidebarVisible}
         sidebarAutoHide={sidebarAutoHide}
         setSidebarAutoHide={handleSetSidebarAutoHide}
+        sidebarExpandedWidth={sidebarExpandedWidth}
+        setSidebarExpandedWidth={handleSetSidebarExpandedWidth}
+        sidebarCollapsedWidth={sidebarCollapsedWidth}
+        setSidebarCollapsedWidth={handleSetSidebarCollapsedWidth}
+        sidebarShowIcons={sidebarShowIcons}
+        setSidebarShowIcons={handleSetSidebarShowIcons}
+        sidebarShowLabels={sidebarShowLabels}
+        setSidebarShowLabels={handleSetSidebarShowLabels}
       />
     );
   }
@@ -544,7 +608,7 @@ function App() {
                         type={showNewPassword ? 'text' : 'password'}
                         id="new-password"
                         className="form-input"
-                        placeholder=""
+                        placeholder="Enter your new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
@@ -599,7 +663,7 @@ function App() {
                         type={showNewPassword ? 'text' : 'password'}
                         id="confirm-password"
                         className="form-input"
-                        placeholder=""
+                        placeholder="Confirm your new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required

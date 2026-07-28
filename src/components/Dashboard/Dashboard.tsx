@@ -26,6 +26,14 @@ interface DashboardProps {
   setSidebarVisible: (visible: boolean) => void;
   sidebarAutoHide: boolean;
   setSidebarAutoHide: (val: boolean) => void;
+  sidebarExpandedWidth: number;
+  setSidebarExpandedWidth: (val: number) => void;
+  sidebarCollapsedWidth: number;
+  setSidebarCollapsedWidth: (val: number) => void;
+  sidebarShowIcons: boolean;
+  setSidebarShowIcons: (val: boolean) => void;
+  sidebarShowLabels: boolean;
+  setSidebarShowLabels: (val: boolean) => void;
 }
 
 export function Dashboard({ 
@@ -37,7 +45,15 @@ export function Dashboard({
   sidebarVisible: isVisible,
   setSidebarVisible: setIsVisible,
   sidebarAutoHide,
-  setSidebarAutoHide
+  setSidebarAutoHide,
+  sidebarExpandedWidth,
+  setSidebarExpandedWidth,
+  sidebarCollapsedWidth,
+  setSidebarCollapsedWidth,
+  sidebarShowIcons,
+  setSidebarShowIcons,
+  sidebarShowLabels,
+  setSidebarShowLabels
 }: DashboardProps) {
   const [currentView, setCurrentView] = useState('overview');
   const [isThemeStudioOpen, setIsThemeStudioOpen] = useState(false);
@@ -53,9 +69,51 @@ export function Dashboard({
   const [copyrightText, setCopyrightText] = useState(() => {
     return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
   });
+  const [footerPoweredByType, setFooterPoweredByType] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gs_footerPoweredByType');
+      return saved ? JSON.parse(saved) : 'text';
+    } catch {
+      return 'text';
+    }
+  });
+  const [footerPoweredByText, setFooterPoweredByText] = useState(() => {
+    return localStorage.getItem('gs_footerPoweredByText') || '';
+  });
+  const [footerPoweredByImage, setFooterPoweredByImage] = useState(() => {
+    return localStorage.getItem('gs_footerPoweredByImage') || '';
+  });
+  // Customer Profile states
+  const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
+    const saved = localStorage.getItem('gs_showCustomerProfile');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+  const [customerName, setCustomerName] = useState(() => {
+    return localStorage.getItem('gs_customerName') || 'Default Customer';
+  });
+  const [customerColorFollow, setCustomerColorFollow] = useState(() => {
+    const saved = localStorage.getItem('gs_customerColorFollow');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
+    const saved = localStorage.getItem('gs_showCustomerLogo');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+  const [customerLogo, setCustomerLogo] = useState(() => {
+    return localStorage.getItem('gs_customerLogo') || '';
+  });
+  const [footerLinks, setFooterLinks] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('gs_footerLinks');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Global settings modal state
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState<string>('');
   const [headerConfig, setHeaderConfig] = useState(() => {
     const saved = localStorage.getItem('headerConfig');
     return saved ? JSON.parse(saved) : {
@@ -137,23 +195,20 @@ export function Dashboard({
   };
 
   const headerLeftPadding = (!isLocked && isVisible) 
-    ? (collapsed ? '68px' : '260px') 
+    ? (collapsed ? `${sidebarCollapsedWidth}px` : `${sidebarExpandedWidth}px`) 
     : '0px';
 
-  // Resolve Powered By custom footer branding
-  const footerPoweredByType = (() => {
-    try {
-      const saved = localStorage.getItem('gs_footerPoweredByType');
-      return saved ? JSON.parse(saved) : 'text';
-    } catch {
-      return 'text';
-    }
-  })();
-  const footerPoweredByText = localStorage.getItem('gs_footerPoweredByText') || `Powered by ${headerConfig?.companyName || 'OomniEye'} Digital Solutions`;
-  const footerPoweredByImage = localStorage.getItem('gs_footerPoweredByImage') || '';
+  // Resolve Powered By custom footer branding placeholder fallback
+  const resolvedFooterPoweredByText = footerPoweredByText || `Powered by ${headerConfig?.companyName || 'OomniEye'} Digital Solutions`;
 
   return (
-    <div className="dashboard-wrapper dashboard-fade-in">
+    <div 
+      className="dashboard-wrapper dashboard-fade-in"
+      style={{
+        ['--sidebar-width' as any]: `${sidebarExpandedWidth}px`,
+        ['--sidebar-width-collapsed' as any]: `${sidebarCollapsedWidth}px`
+      }}
+    >
       <Header 
         notifications={notifications}
         onMarkAllRead={handleMarkAllRead}
@@ -163,6 +218,12 @@ export function Dashboard({
         onNavigate={handleSetCurrentView}
         onSettingsClick={() => setIsGlobalSettingsOpen(true)}
         headerConfig={headerConfig}
+        isEditing={isGlobalSettingsOpen && (activeSettingsTab === 'header' || activeSettingsTab === 'profile')}
+        showCustomerProfile={showCustomerProfile}
+        customerName={customerName}
+        customerColorFollow={customerColorFollow}
+        showCustomerLogo={showCustomerLogo}
+        customerLogo={customerLogo}
       />
       <div className="dashboard-body">
         <Sidebar 
@@ -176,6 +237,9 @@ export function Dashboard({
           isVisible={isVisible}
           setIsVisible={setIsVisible}
           autoHideSidebar={sidebarAutoHide}
+          showIcons={sidebarShowIcons}
+          showLabels={sidebarShowLabels}
+          isEditing={isGlobalSettingsOpen && activeSettingsTab === 'sidebar'}
         />
         
         <div className="dashboard-main">
@@ -252,24 +316,59 @@ export function Dashboard({
             height: '32px',
             backgroundColor: 'var(--bg-card, #ffffff)',
             borderTop: '1px solid var(--border-light, #e2e8f0)',
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
-            justifyContent: 'space-between',
             padding: '0 20px',
             fontSize: '11.5px',
             color: 'var(--text-secondary, #64748b)',
             flexShrink: 0,
-            zIndex: 40
+            position: 'relative',
+            zIndex: (isGlobalSettingsOpen && activeSettingsTab === 'footer') ? 10000 : 40,
+            boxShadow: (isGlobalSettingsOpen && activeSettingsTab === 'footer') ? '0 -4px 24px rgba(37, 99, 235, 0.15), 0 0 0 2px rgba(37, 99, 235, 0.5)' : 'none',
+            transition: 'box-shadow 0.3s ease, z-index 0.3s ease'
           }}
         >
+          {/* Left column */}
           <div>Ready</div>
-          <div>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+
+          {/* Center column — powered-by image */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {footerPoweredByType === 'image' && footerPoweredByImage ? (
               <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
-            ) : (
-              footerPoweredByText
-            )}
+            ) : null}
+          </div>
+
+          {/* Right column — copyright, links, powered-by text */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+            <span>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</span>
+            {footerLinks.map((linkStr, idx) => {
+              const match = linkStr.match(/^(.*?)\s*\((.*?)\)$/);
+              const label = match ? match[1] : linkStr;
+              const url = match ? match[2] : '#';
+              return (
+                <span key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>·</span>
+                  <a 
+                    href={url.startsWith('http') ? url : `https://${url}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      color: 'var(--color-primary, #2563eb)', 
+                      textDecoration: 'none',
+                      fontWeight: 500
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                  >
+                    {label}
+                  </a>
+                </span>
+              );
+            })}
+            {footerPoweredByType === 'text' && resolvedFooterPoweredByText ? (
+              <span>{resolvedFooterPoweredByText}</span>
+            ) : null}
           </div>
         </footer>
       )}
@@ -280,6 +379,31 @@ export function Dashboard({
           onSaveConfig={handleSaveHeaderConfig}
           sidebarAutoHide={sidebarAutoHide}
           setSidebarAutoHide={setSidebarAutoHide}
+          sidebarExpandedWidth={sidebarExpandedWidth}
+          setSidebarExpandedWidth={setSidebarExpandedWidth}
+          sidebarCollapsedWidth={sidebarCollapsedWidth}
+          setSidebarCollapsedWidth={setSidebarCollapsedWidth}
+          sidebarShowIcons={sidebarShowIcons}
+          setSidebarShowIcons={setSidebarShowIcons}
+          sidebarShowLabels={sidebarShowLabels}
+          setSidebarShowLabels={setSidebarShowLabels}
+          onSyncFooter={(footerData) => {
+            if (footerData.footerVisible !== undefined) setFooterVisible(footerData.footerVisible);
+            if (footerData.copyrightText !== undefined) setCopyrightText(footerData.copyrightText);
+            if (footerData.footerPoweredByType !== undefined) setFooterPoweredByType(footerData.footerPoweredByType);
+            if (footerData.footerPoweredByText !== undefined) setFooterPoweredByText(footerData.footerPoweredByText);
+            if (footerData.footerPoweredByImage !== undefined) setFooterPoweredByImage(footerData.footerPoweredByImage);
+            if (footerData.footerLinks !== undefined) setFooterLinks(footerData.footerLinks);
+          }}
+          setSidebarCollapsed={handleSetCollapsed}
+          onTabChange={setActiveSettingsTab}
+          onSyncCustomerProfile={(data) => {
+            setShowCustomerProfile(data.showCustomerProfile);
+            setCustomerName(data.customerName);
+            setCustomerColorFollow(data.customerColorFollow);
+            setShowCustomerLogo(data.showCustomerLogo);
+            setCustomerLogo(data.customerLogo);
+          }}
         />
       )}
 
