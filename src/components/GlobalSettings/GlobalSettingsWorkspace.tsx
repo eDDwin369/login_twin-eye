@@ -145,35 +145,8 @@ export function GlobalSettingsWorkspace({
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
 
-  // Wrapper for onClose to support cancel/revert
+  // Close modal — changes are auto-persisted, no revert needed
   const handleCancelAndClose = () => {
-    if (!isSavedRef.current) {
-      const orig = originalSettingsRef.current;
-      onSaveConfig(orig.headerConfig);
-      onSyncFooter({
-        footerVisible: orig.footerVisible,
-        copyrightText: orig.copyrightText,
-        footerPoweredByType: orig.footerPoweredByType,
-        footerPoweredByText: orig.footerPoweredByText,
-        footerPoweredByImage: orig.footerPoweredByImage,
-        footerLinks: orig.footerLinks
-      });
-      setSidebarAutoHide(orig.sidebarAutoHide);
-      setSidebarExpandedWidth(orig.sidebarExpandedWidth);
-      setSidebarCollapsedWidth(orig.sidebarCollapsedWidth);
-      setSidebarShowIcons(orig.sidebarShowIcons);
-      setSidebarShowLabels(orig.sidebarShowLabels);
-      setSidebarCollapsed(orig.sidebarCollapsed);
-      if (onSyncCustomerProfile) {
-        onSyncCustomerProfile({
-          showCustomerProfile: orig.showCustomerProfile,
-          customerName: orig.customerName,
-          customerColorFollow: orig.customerColorFollow,
-          showCustomerLogo: orig.showCustomerLogo,
-          customerLogo: orig.customerLogo
-        });
-      }
-    }
     onClose();
   };
 
@@ -507,10 +480,10 @@ export function GlobalSettingsWorkspace({
 
   const navItems = [
     { id: 'header', label: 'Header', icon: <LayoutPanelTop size={16} /> },
+    { id: 'profile', label: 'Customer Profile', icon: <Users size={16} /> },
     { id: 'footer', label: 'Footer', icon: <Layout size={16} /> },
     { id: 'sidebar', label: 'Sidebar', icon: <LayoutPanelLeft size={16} /> },
     { id: 'security', label: 'Security', icon: <ShieldCheck size={16} /> },
-    { id: 'profile', label: 'Customer Profile', icon: <Users size={16} /> },
   ];
 
   return (
@@ -654,8 +627,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      color: '#10b981',
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -673,7 +646,7 @@ export function GlobalSettingsWorkspace({
                           position: 'absolute', 
                           top: '-8px', 
                           left: '12px', 
-                          background: '#ecfdf5', 
+                          background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
                           color: '#475569',
@@ -711,7 +684,7 @@ export function GlobalSettingsWorkspace({
                           position: 'absolute', 
                           top: '-8px', 
                           left: '12px', 
-                          background: '#ecfdf5', 
+                          background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
                           color: '#475569',
@@ -772,7 +745,7 @@ export function GlobalSettingsWorkspace({
                           position: 'absolute', 
                           top: '-8px', 
                           left: '12px', 
-                          background: '#ecfdf5', 
+                          background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
                           color: '#475569',
@@ -803,7 +776,7 @@ export function GlobalSettingsWorkspace({
                           position: 'absolute', 
                           top: '-8px', 
                           left: '12px', 
-                          background: '#ecfdf5', 
+                          background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
                           color: '#475569',
@@ -919,7 +892,7 @@ export function GlobalSettingsWorkspace({
                         position: 'absolute', 
                         top: '-8px', 
                         left: '12px', 
-                        background: '#eff6ff', 
+                        background: '#f0f4ff', 
                         padding: '0 4px', 
                         fontSize: '11px', 
                         color: '#475569',
@@ -953,7 +926,7 @@ export function GlobalSettingsWorkspace({
                           position: 'absolute', 
                           top: '-8px', 
                           left: '12px', 
-                          background: '#eff6ff', 
+                          background: '#f0f4ff', 
                           padding: '0 4px', 
                           fontSize: '11px', 
                           color: '#475569',
@@ -1035,8 +1008,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      color: '#10b981',
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1049,7 +1022,7 @@ export function GlobalSettingsWorkspace({
                         position: 'absolute', 
                         top: '-8px', 
                         left: '12px', 
-                        background: '#ecfdf5', 
+                        background: '#e8eefb', 
                         padding: '0 4px', 
                         fontSize: '11px', 
                         color: '#475569',
@@ -1103,8 +1076,8 @@ export function GlobalSettingsWorkspace({
                           width: '36px',
                           height: '36px',
                           borderRadius: '10px',
-                          backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                          color: '#f97316',
+                          backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                          color: '#2563eb',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
@@ -1118,7 +1091,7 @@ export function GlobalSettingsWorkspace({
                         onClick={() => setIsAddingLink(true)}
                         style={{
                           padding: '6px 16px',
-                          background: '#f97316',
+                          background: '#2563eb',
                           color: '#ffffff',
                           border: 'none',
                           borderRadius: '6px',
@@ -1127,8 +1100,8 @@ export function GlobalSettingsWorkspace({
                           cursor: 'pointer',
                           transition: 'all 0.15s ease'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#ea580c'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = '#f97316'}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#1d4ed8'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = '#2563eb'}
                       >
                         ADD LINK
                       </button>
@@ -1245,8 +1218,8 @@ export function GlobalSettingsWorkspace({
                         width: '36px',
                         height: '36px',
                         borderRadius: '10px',
-                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                        color: '#20b8a6',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        color: '#2563eb',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -1313,8 +1286,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                      color: '#20b8a6',
+                      backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1346,8 +1319,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      color: '#10b981',
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1379,8 +1352,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                      color: '#f97316',
+                      backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1456,8 +1429,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      color: '#10b981',
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1495,8 +1468,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                      color: '#ef4444',
+                      backgroundColor: 'rgba(37, 99, 235, 0.14)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1507,12 +1480,14 @@ export function GlobalSettingsWorkspace({
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '12px', color: '#475569' }}>Show Strength Meter</span>
+                      <span style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Show Strength Meter
+                        <span title="Displays a visual indicator of password strength during account creation and password changes." style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <Info size={12} style={{ opacity: 0.6, cursor: 'help' }} />
+                        </span>
+                      </span>
                       <AppleToggle checked={showStrengthMeter} onChange={setShowStrengthMeter} />
                     </div>
-                    <span style={{ fontSize: '11.5px', color: '#64748b', lineHeight: '1.4' }}>
-                      Displays a visual indicator of password strength during account creation and password changes.
-                    </span>
                   </div>
                 </div>
 
@@ -1522,8 +1497,8 @@ export function GlobalSettingsWorkspace({
                       width: '36px',
                       height: '36px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                      color: '#f97316',
+                      backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                      color: '#2563eb',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1585,8 +1560,8 @@ export function GlobalSettingsWorkspace({
                         width: '36px',
                         height: '36px',
                         borderRadius: '10px',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        color: '#10b981',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        color: '#2563eb',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -1599,7 +1574,7 @@ export function GlobalSettingsWorkspace({
                   </div>
                   <button 
                     onClick={() => customerLogoInputRef.current?.click()}
-                    style={{ padding: '6px 12px', background: '#10b981', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ padding: '6px 12px', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}
                   >
                     UPLOAD LOGO
                   </button>
