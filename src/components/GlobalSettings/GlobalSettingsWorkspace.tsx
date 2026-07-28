@@ -120,28 +120,6 @@ export function GlobalSettingsWorkspace({
   const [showIcons, setShowIcons] = useState(sidebarShowIcons);
   const [showLabels, setShowLabels] = useState(sidebarShowLabels);
 
-  // Capture initial snapshot on mount for revert support
-  const originalSettingsRef = useRef({
-    headerConfig: { ...headerConfig },
-    footerVisible: Boolean(JSON.parse(localStorage.getItem('gs_footerVisible') ?? 'true')),
-    copyrightText: localStorage.getItem('gs_copyrightText') ?? '© {year} OomniEye. All rights reserved.',
-    footerPoweredByType: JSON.parse(localStorage.getItem('gs_footerPoweredByType') ?? '"text"'),
-    footerPoweredByText: localStorage.getItem('gs_footerPoweredByText') ?? '',
-    footerPoweredByImage: localStorage.getItem('gs_footerPoweredByImage') ?? '',
-    sidebarAutoHide,
-    sidebarExpandedWidth,
-    sidebarCollapsedWidth,
-    sidebarShowIcons,
-    sidebarShowLabels,
-    sidebarCollapsed: !JSON.parse(localStorage.getItem('gs_startExpanded') ?? 'false'),
-    footerLinks: JSON.parse(localStorage.getItem('gs_footerLinks') ?? '[]'),
-    showCustomerProfile: Boolean(JSON.parse(localStorage.getItem('gs_showCustomerProfile') ?? 'false')),
-    customerName: localStorage.getItem('gs_customerName') ?? 'Default Customer',
-    customerColorFollow: Boolean(JSON.parse(localStorage.getItem('gs_customerColorFollow') ?? 'true')),
-    showCustomerLogo: Boolean(JSON.parse(localStorage.getItem('gs_showCustomerLogo') ?? 'false')),
-    customerLogo: localStorage.getItem('gs_customerLogo') ?? ''
-  });
-
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
 
