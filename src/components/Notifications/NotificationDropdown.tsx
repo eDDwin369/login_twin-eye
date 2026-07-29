@@ -115,10 +115,11 @@ interface NotificationDropdownProps {
   onMarkAllRead: () => void;
   onNotificationClick: (notification: NotificationItem) => void;
   onViewAllClick: () => void;
+  onSettingsClick?: () => void;
 }
 
 export function NotificationDropdown(props: NotificationDropdownProps) {
-  const { notifications, onClose, onMarkAllRead, onNotificationClick } = props;
+  const { notifications, onClose, onMarkAllRead, onNotificationClick: _onNotificationClick, onViewAllClick: _onViewAllClick, onSettingsClick } = props;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'mentions' | 'unread'>('mentions');
@@ -126,7 +127,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isModalMode, setIsModalMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const [expandedNotificationId, setExpandedNotificationId] = useState<string | null>(null);
+  const itemsPerPage = Number(localStorage.getItem('gs_notificationsToShow') || '5');
 
   // Handle closing when clicking outside the modal dropdown (only if not in modal mode)
   useEffect(() => {
@@ -256,7 +258,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               >
                 <Search size={18} />
               </button>
-              <button className="new-header-action-btn" title="Notification Settings">
+              <button className="new-header-action-btn" title="Notification Settings" onClick={onSettingsClick}>
                 <Settings size={18} />
               </button>
               <button 
@@ -334,7 +336,13 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               <div 
                 key={item.id} 
                 className={`new-notification-item-row ${!item.isRead ? 'unread' : ''}`}
-                onClick={() => onNotificationClick(item)}
+                onClick={() => {
+                  if (expandedNotificationId === item.id) {
+                    setExpandedNotificationId(null);
+                  } else {
+                    setExpandedNotificationId(item.id);
+                  }
+                }}
                 title={item.description}
                 style={{ 
                   cursor: 'pointer',
@@ -347,6 +355,78 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   position: 'relative'
                 }}
               >
+                {/* Detailed Popup View */}
+                {expandedNotificationId === item.id && (
+                  <div 
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      position: 'absolute',
+                      top: '20px',
+                      left: '60px',
+                      right: '20px',
+                      width: 'auto',
+                      backgroundColor: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      zIndex: 100,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}
+                  >
+                    {/* Top Row: Avatar + Heading + Close Icon */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {item.actorName && !['system', 'warning', 'integration'].some(k => item.actorName!.toLowerCase().includes(k)) ? (
+                          <img 
+                            src={avatarImg}
+                            alt={item.actorName}
+                            style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          <div 
+                            style={{ 
+                              width: '36px', 
+                              height: '36px', 
+                              borderRadius: '50%', 
+                              backgroundColor: colorTheme.bg, 
+                              color: colorTheme.text, 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center', 
+                              fontSize: '14px', 
+                              fontWeight: 600,
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            {initials}
+                          </div>
+                        )}
+                        <span style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }}>{item.actorName || 'System'}</span>
+                      </div>
+                      <button 
+                        onClick={() => setExpandedNotificationId(null)}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px' }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+
+                    {/* Content Section */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '48px' }}>
+                      {item.description && (
+                        <p style={{ margin: 0, fontSize: '13px', color: '#475569', lineHeight: '1.5' }}>
+                          {item.description}
+                        </p>
+                      )}
+                      <p style={{ margin: 0, fontSize: '13px', color: '#475569', lineHeight: '1.5' }}>
+                        Detailed content expanded version of the notification with logo and all.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {/* Left Column: Avatar + Badge */}
                 <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0, marginRight: '14px' }}>
                   {item.actorName && !['system', 'warning', 'integration'].some(k => item.actorName!.toLowerCase().includes(k)) ? (
@@ -378,14 +458,26 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 </div>
 
                 {/* Right Details Column */}
-                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', paddingTop: '6px' }}>
-                  {/* Line 1: Actor Name, Time, Unread Dot */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <span style={{ fontWeight: 700, fontSize: '13.5px', color: '#0f172a' }}>
-                      {item.actorName || 'System'}
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '9.5px', color: '#94a3b8' }}>
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  {/* Single Line: Actor Name, Action, Target, Category, Time, Unread Dot */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '12px' }}>
+                    
+                    {/* Left Side Info */}
+                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: '12px', color: '#64748b' }}>
+                      <span style={{ fontWeight: 700, fontSize: '13px', color: '#0f172a' }}>
+                        {item.actorName || 'System'}
+                      </span>
+                      <span>{item.actionText || 'alerted'}</span>
+                      <span style={{ color: '#cbd5e1' }}>•</span>
+                      <span style={{ fontSize: '12px' }}>{getTargetEmoji(item.targetName, item.category)}</span>
+                      <span style={{ fontWeight: 600, color: '#334155' }}>{item.targetName || item.title}</span>
+                      <span style={{ color: '#cbd5e1' }}>•</span>
+                      <span>{item.category}</span>
+                    </div>
+
+                    {/* Right Side: Time & Unread */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                      <span style={{ fontSize: '10px', color: '#94a3b8', whiteSpace: 'nowrap' }}>
                         {item.dateText || 'Just now'}
                       </span>
                       {!item.isRead && (
@@ -395,21 +487,12 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                             height: '8px', 
                             backgroundColor: '#ef4444', 
                             borderRadius: '50%', 
-                            display: 'inline-block' 
+                            display: 'inline-block',
+                            flexShrink: 0
                           }} 
                         />
                       )}
                     </div>
-                  </div>
-
-                  {/* Line 2: Action, Emoji, Target, Category */}
-                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px', marginTop: '2px', fontSize: '10.5px', color: '#64748b' }}>
-                    <span>{item.actionText || 'alerted'}</span>
-                    <span style={{ color: '#cbd5e1' }}>•</span>
-                    <span style={{ fontSize: '11px' }}>{getTargetEmoji(item.targetName, item.category)}</span>
-                    <span style={{ fontWeight: 600, color: '#334155' }}>{item.targetName || item.title}</span>
-                    <span style={{ color: '#cbd5e1' }}>•</span>
-                    <span>{item.category}</span>
                   </div>
 
                   {/* Accept/Decline action buttons */}
@@ -536,8 +619,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               onClick={(e) => e.stopPropagation()}
               style={{
                 position: 'relative',
-                width: '560px',
-                height: '580px',
+                width: '800px',
+                height: 'calc(100vh - 120px)',
                 marginTop: 0,
                 right: 'auto',
                 top: 'auto',
@@ -561,7 +644,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           className="new-notification-dropdown" 
           ref={dropdownRef}
           style={{
-            height: '520px',
+            height: itemsPerPage === 10 ? 'calc(100vh - 120px)' : '520px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between'

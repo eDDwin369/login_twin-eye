@@ -439,7 +439,6 @@
   top: 100%;
   right: -10px;
   width: 410px;
-  max-height: 580px;
   margin-top: 20px;
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
@@ -591,7 +590,6 @@
 .new-notification-list-scroll {
   flex: 1;
   overflow-y: auto;
-  max-height: 440px;
   background: #ffffff;
   display: flex;
   flex-direction: column;

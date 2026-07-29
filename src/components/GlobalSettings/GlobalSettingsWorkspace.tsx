@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import {
-  Settings, Eye, Download, Upload, X,
+  Settings, Eye, Download, Upload, X, MoreVertical,
   LayoutPanelTop, Layout, LayoutPanelLeft, ShieldCheck, Users,
   RotateCcw, Info, Link, Plus, Shield, Lock, Check, Palette, Star, Type, Image
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 import logoDefault from '../../assets/logo.png';
+import { ImageCropperModal } from './ImageCropperModal';
 
 interface GlobalSettingsWorkspaceProps {
   onClose: () => void;
@@ -66,6 +67,12 @@ export function GlobalSettingsWorkspace({
   const [activeTab, setActiveTab] = useState<TabId>('footer');
 
   // Local form states (Header Config)
+
+  // Cropper State
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [pendingCropImage, setPendingCropImage] = useState('');
+  const [cropperTarget, setCropperTarget] = useState<'header' | 'footer' | 'customer' | null>(null);
+
   const [logo, setLogo] = useState(headerConfig.logo);
   const [showLogo, setShowLogo] = useState(headerConfig.showLogo);
   const [companyName, setCompanyName] = useState(headerConfig.companyName);
@@ -217,7 +224,9 @@ export function GlobalSettingsWorkspace({
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
-          setCustomerLogo(reader.result);
+          setPendingCropImage(reader.result);
+          setCropperTarget('customer');
+          setIsCropperOpen(true);
         }
       };
       reader.readAsDataURL(file);
@@ -245,7 +254,26 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : 5;
   });
 
+  const [isHoveringExpanded, setIsHoveringExpanded] = useState(false);
+  const [isDraggingExpanded, setIsDraggingExpanded] = useState(false);
+  const [isHoveringCollapsed, setIsHoveringCollapsed] = useState(false);
+  const [isDraggingCollapsed, setIsDraggingCollapsed] = useState(false);
+
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (isHoveringExpanded || isDraggingExpanded) {
+      setSidebarCollapsed(false);
+    } else if (isHoveringCollapsed || isDraggingCollapsed) {
+      setSidebarCollapsed(true);
+    } else {
+      setSidebarCollapsed(!startExpanded);
+    }
+  }, [isHoveringExpanded, isDraggingExpanded, isHoveringCollapsed, isDraggingCollapsed, startExpanded, setSidebarCollapsed]);
+
+  // Removed unused containerRef
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const footerFileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync form states with props if they change
   useEffect(() => {
@@ -266,7 +294,9 @@ export function GlobalSettingsWorkspace({
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          setFooterPoweredByImage(reader.result);
+          setPendingCropImage(reader.result);
+          setCropperTarget('footer');
+          setIsCropperOpen(true);
         }
       };
       reader.readAsDataURL(file);
@@ -279,7 +309,9 @@ export function GlobalSettingsWorkspace({
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          setLogo(reader.result);
+          setPendingCropImage(reader.result);
+          setCropperTarget('header');
+          setIsCropperOpen(true);
         }
       };
       reader.readAsDataURL(file);
@@ -316,7 +348,6 @@ export function GlobalSettingsWorkspace({
     localStorage.setItem('gs_copyrightText', copyrightText);
     localStorage.setItem('gs_startExpanded', JSON.stringify(startExpanded));
     localStorage.setItem('sidebarCollapsed', JSON.stringify(!startExpanded));
-    localStorage.setItem('sidebarLocked', JSON.stringify(!autoHideSidebar));
     localStorage.setItem('gs_notificationsToShow', JSON.stringify(notificationsToShow));
     setSidebarAutoHide(autoHideSidebar);
     localStorage.setItem('gs_footerPoweredByType', JSON.stringify(footerPoweredByType));
@@ -468,6 +499,22 @@ export function GlobalSettingsWorkspace({
     <div className="gs-overlay" onClick={handleCancelAndClose}>
       <div className="gs-modal" onClick={e => e.stopPropagation()}>
 
+        <ImageCropperModal 
+          isOpen={isCropperOpen}
+          imageUrl={pendingCropImage}
+          onClose={() => setIsCropperOpen(false)}
+          onConfirm={(croppedUrl) => {
+            if (cropperTarget === 'header') {
+              setLogo(croppedUrl);
+            } else if (cropperTarget === 'footer') {
+              setFooterPoweredByImage(croppedUrl);
+            } else if (cropperTarget === 'customer') {
+              setCustomerLogo(croppedUrl);
+            }
+            setIsCropperOpen(false);
+          }}
+        />
+
         {/* HEADER BAR */}
         <div className="gs-header">
           <div className="gs-header-left">
@@ -477,15 +524,6 @@ export function GlobalSettingsWorkspace({
             </h2>
           </div>
           <div className="gs-header-right">
-            <button className="gs-icon-btn" title="Live Preview" onClick={() => alert("Live Preview is active.")}>
-              <Eye size={18} />
-            </button>
-            <button className="gs-icon-btn" title="Export Settings" onClick={handleExportSettings}>
-              <Download size={18} />
-            </button>
-            <button className="gs-icon-btn" title="Import Settings" onClick={handleImportSettings}>
-              <Upload size={18} />
-            </button>
             <button className="gs-icon-btn" title="Close" onClick={handleCancelAndClose} style={{ marginLeft: '8px' }}>
               <X size={18} />
             </button>
@@ -930,16 +968,38 @@ export function GlobalSettingsWorkspace({
                         />
                       </div>
                       
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <label style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>Or Upload Image</label>
-                        <input 
-                          type="file" 
-                          accept="image/*"
-                          onChange={handleFooterImageUpload}
-                          style={{ fontSize: '12px' }}
-                        />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid #bfdbfe', paddingTop: '12px', marginTop: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Upload size={16} style={{ color: '#475569' }} />
+                            <span style={{ fontSize: '12.5px', color: '#1e293b', fontWeight: 500 }}>Upload File</span>
+                          </div>
+                          <button
+                            onClick={() => footerFileInputRef.current?.click()}
+                            style={{
+                              background: '#2563eb',
+                              color: '#ffffff',
+                              border: 'none',
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              fontSize: '11.5px',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            UPLOAD LOGO
+                          </button>
+                          <input
+                            ref={footerFileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFooterImageUpload}
+                            style={{ display: 'none' }}
+                          />
+                        </div>
                         {footerPoweredByImage && (
-                          <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{ fontSize: '11px', color: '#64748b' }}>Preview:</span>
                             <img src={footerPoweredByImage} alt="Footer Logo Preview" style={{ maxHeight: '24px', maxWidth: '100px', objectFit: 'contain', border: '1px solid #e2e8f0', padding: '2px', borderRadius: '4px' }} />
                             <button 
@@ -1250,15 +1310,23 @@ export function GlobalSettingsWorkspace({
                     </div>
                     <div style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Automatically Hide Sidebar</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Automatically Hide Sidebar</span>
+                        <span title="Hides sidebar automatically when cursor leaves the area, expanding it on hover." style={{ display: 'inline-flex' }}>
+                          <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                        </span>
+                      </div>
                       <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
                     </div>
-                    <span style={{ fontSize: '10.5px', color: '#64748b' }}>Hides sidebar automatically when cursor leaves the area, expanding it on hover.</span>
                   </div>
                 </div>
 
                 {/* Expanded Width Card */}
-                <div className="gs-config-card gs-card-teal">
+                <div 
+                  className="gs-config-card gs-card-teal"
+                  onMouseEnter={() => setIsHoveringExpanded(true)}
+                  onMouseLeave={() => setIsHoveringExpanded(false)}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
@@ -1272,7 +1340,12 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Plus size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Expanded Width</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Expanded Width</span>
+                      <span title="Recommended range: 180-300 pixels" style={{ display: 'inline-flex' }}>
+                        <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                      </span>
+                    </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#475569' }}>
@@ -1284,14 +1357,19 @@ export function GlobalSettingsWorkspace({
                       max="300" 
                       value={expandedWidth} 
                       onChange={e => setExpandedWidth(Number(e.target.value))} 
+                      onPointerDown={() => setIsDraggingExpanded(true)}
+                      onPointerUp={() => setIsDraggingExpanded(false)}
                       style={{ width: '100%', cursor: 'pointer' }}
                     />
-                    <span style={{ fontSize: '10.5px', color: '#64748b' }}>Recommended range: 180-300 pixels</span>
                   </div>
                 </div>
 
                 {/* Collapsed Width Card */}
-                <div className="gs-config-card gs-card-green">
+                <div 
+                  className="gs-config-card gs-card-green"
+                  onMouseEnter={() => setIsHoveringCollapsed(true)}
+                  onMouseLeave={() => setIsHoveringCollapsed(false)}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{
                       width: '36px',
@@ -1305,7 +1383,12 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Eye size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Collapsed Width</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Collapsed Width</span>
+                      <span title="Recommended: 64 pixels for optimal icon spacing" style={{ display: 'inline-flex' }}>
+                        <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                      </span>
+                    </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#475569' }}>
@@ -1317,9 +1400,10 @@ export function GlobalSettingsWorkspace({
                       max="90" 
                       value={collapsedWidth} 
                       onChange={e => setCollapsedWidth(Number(e.target.value))} 
+                      onPointerDown={() => setIsDraggingCollapsed(true)}
+                      onPointerUp={() => setIsDraggingCollapsed(false)}
                       style={{ width: '100%', cursor: 'pointer' }}
                     />
-                    <span style={{ fontSize: '10.5px', color: '#64748b' }}>Recommended: 64 pixels for optimal icon spacing</span>
                   </div>
                 </div>
 
@@ -1338,7 +1422,12 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <LayoutPanelTop size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Display Options</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Display Options</span>
+                      <span title="Icons are always visible in collapsed mode" style={{ display: 'inline-flex' }}>
+                        <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                      </span>
+                    </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1349,7 +1438,6 @@ export function GlobalSettingsWorkspace({
                       <span style={{ fontSize: '12px', color: '#475569' }}>Show Labels</span>
                       <AppleToggle checked={showLabels} onChange={setShowLabels} />
                     </div>
-                    <span style={{ fontSize: '10.5px', color: '#64748b' }}>Icons are always visible in collapsed mode</span>
                   </div>
                 </div>
 
@@ -1550,32 +1638,40 @@ export function GlobalSettingsWorkspace({
                     </div>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
                   </div>
-                  <button 
-                    onClick={() => customerLogoInputRef.current?.click()}
-                    style={{ padding: '6px 12px', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    UPLOAD LOGO
-                  </button>
-                  <input 
-                    type="file" 
-                    ref={customerLogoInputRef} 
-                    onChange={handleCustomerLogoUpload} 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
-                  />
-                  {customerLogo && (
-                    <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '11px', color: '#64748b' }}>Preview:</span>
-                      <img src={customerLogo} alt="Customer Logo Preview" style={{ maxHeight: '24px', maxWidth: '100px', objectFit: 'contain', border: '1px solid #e2e8f0', padding: '2px', borderRadius: '4px' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid #bfdbfe', paddingTop: '12px', marginTop: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Upload size={16} style={{ color: '#475569' }} />
+                        <span style={{ fontSize: '12.5px', color: '#1e293b', fontWeight: 500 }}>Upload File</span>
+                      </div>
                       <button 
-                        type="button" 
-                        onClick={() => setCustomerLogo('')} 
-                        style={{ border: 'none', background: 'none', color: '#ef4444', fontSize: '11px', cursor: 'pointer' }}
+                        onClick={() => customerLogoInputRef.current?.click()}
+                        style={{ padding: '6px 12px', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease' }}
                       >
-                        Clear
+                        UPLOAD LOGO
                       </button>
+                      <input 
+                        type="file" 
+                        ref={customerLogoInputRef} 
+                        onChange={handleCustomerLogoUpload} 
+                        accept="image/*" 
+                        style={{ display: 'none' }} 
+                      />
                     </div>
-                  )}
+                    {customerLogo && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '11px', color: '#64748b' }}>Preview:</span>
+                        <img src={customerLogo} alt="Customer Logo Preview" style={{ maxHeight: '24px', maxWidth: '100px', objectFit: 'contain', border: '1px solid #e2e8f0', padding: '2px', borderRadius: '4px' }} />
+                        <button 
+                          type="button" 
+                          onClick={() => setCustomerLogo('')} 
+                          style={{ border: 'none', background: 'none', color: '#ef4444', fontSize: '11px', cursor: 'pointer' }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1587,10 +1683,43 @@ export function GlobalSettingsWorkspace({
 
         {/* BOTTOM STICKY FOOTER */}
         <div className="gs-footer">
-          <button className="gs-btn-reset" onClick={handleResetToDefaults}>
-            <RotateCcw size={14} />
-            Reset to defaults
-          </button>
+          <div style={{ flex: 1 }}>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <button 
+                className="gs-icon-btn" 
+                onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                onBlur={() => setTimeout(() => setIsMoreMenuOpen(false), 200)}
+              >
+                <MoreVertical size={18} />
+              </button>
+              {isMoreMenuOpen && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: 0,
+                  marginBottom: '8px',
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  boxShadow: '0 -4px 12px rgba(0,0,0,0.1)',
+                  padding: '4px',
+                  display: 'flex',
+                  gap: '4px',
+                  zIndex: 50
+                }}>
+                  <button className="gs-icon-btn" title="Export Settings" onClick={handleExportSettings}>
+                    <Download size={18} />
+                  </button>
+                  <button className="gs-icon-btn" title="Import Settings" onClick={handleImportSettings}>
+                    <Upload size={18} />
+                  </button>
+                  <button className="gs-icon-btn" title="Reset to defaults" onClick={handleResetToDefaults}>
+                    <RotateCcw size={18} color="#ef4444" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
           <div className="gs-footer-right">
             <button className="gs-btn-cancel" onClick={handleCancelAndClose}>
               Cancel

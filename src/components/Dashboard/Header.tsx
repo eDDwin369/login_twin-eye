@@ -372,6 +372,12 @@ export function Header({
                 onViewAllClick();
                 setShowNotifications(false);
               }}
+              onSettingsClick={() => {
+                if (onNavigate) {
+                  onNavigate('account', { tab: 'notifications' });
+                }
+                setShowNotifications(false);
+              }}
             />
           )}
         </div>

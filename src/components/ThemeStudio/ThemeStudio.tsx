@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X, RotateCcw, Upload, Download, Check, Sun, Moon,
   Palette, ChevronDown, Settings, ArrowUpFromLine
@@ -44,6 +45,8 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
   const [logoType, setLogoType] = useState<'icon' | 'upload' | 'initials'>('initials');
   const [showBrandAdvanced, setShowBrandAdvanced] = useState(false);
   const [contrastText, setContrastText] = useState<'auto' | 'light' | 'dark'>('auto');
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(50);
 
   // Typography State
   const [primaryFont, setPrimaryFont] = useState('Roboto');
@@ -100,7 +103,8 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
   }, [activeTheme, mode]);
 
   return (
-    <div className="ts-panel" onClick={e => e.stopPropagation()}>
+    <>
+      <div className="ts-panel" onClick={e => e.stopPropagation()}>
 
       {/* HEADER */}
         <div className="ts-header">
@@ -258,7 +262,10 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                         </button>
                         <button 
                           className={`ts-segment-btn ${logoType === 'upload' ? 'active' : ''}`}
-                          onClick={() => setLogoType('upload')}
+                          onClick={() => {
+                            setLogoType('upload');
+                            setIsCropperOpen(true);
+                          }}
                         >
                           Upload image
                         </button>
@@ -585,5 +592,111 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
         </div>
 
       </div>
+
+      {/* CROPPER MODAL */}
+      {isCropperOpen && createPortal(
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.4)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            width: '400px',
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+          }}>
+            <div>
+              <h2 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>Adjust brand image</h2>
+              <p style={{ margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5' }}>
+                Drag and zoom to fit your signature inside the bright frame. Anything in the dimmed area is cropped out and will not appear on the login screen.
+              </p>
+            </div>
+
+            {/* Cropper Area */}
+            <div style={{
+              width: '100%',
+              height: '220px',
+              backgroundColor: '#475569',
+              borderRadius: '12px',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {/* Dummy Image */}
+              <div style={{
+                width: '180px',
+                height: '100%',
+                backgroundColor: '#1e293b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundImage: 'repeating-linear-gradient(45deg, #334155 25%, transparent 25%, transparent 75%, #334155 75%, #334155), repeating-linear-gradient(45deg, #334155 25%, #1e293b 25%, #1e293b 75%, #334155 75%, #334155)',
+                backgroundPosition: '0 0, 10px 10px',
+                backgroundSize: '20px 20px',
+                transform: `scale(${zoomLevel / 50})`,
+                transition: 'transform 0.1s ease-out'
+              }}>
+                <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600 }}>IMAGE</span>
+              </div>
+              
+              {/* Dimmed Area overlay (bright frame cutout) */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '240px',
+                height: '140px',
+                border: '2px solid rgba(255, 255, 255, 0.9)',
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4)',
+                pointerEvents: 'none'
+              }} />
+            </div>
+
+            {/* Zoom Slider */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Zoom</span>
+              <input 
+                type="range" 
+                min="10" 
+                max="100" 
+                value={zoomLevel} 
+                onChange={(e) => setZoomLevel(Number(e.target.value))}
+                style={{ flex: 1, accentColor: '#e2e8f0', cursor: 'pointer' }}
+              />
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => setIsCropperOpen(false)}
+                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#475569', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => setIsCropperOpen(false)}
+                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
   );
 }

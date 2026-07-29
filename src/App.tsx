@@ -18,15 +18,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  // Sidebar State Management at Root Level
-  const [sidebarLocked, setSidebarLocked] = useState(() => {
-    try {
-      const saved = localStorage.getItem('sidebarLocked');
-      return (saved !== null && saved !== 'undefined') ? JSON.parse(saved) : false;
-    } catch (e) {
-      return false;
-    }
-  });
+  // sidebarLocked is now strictly derived from sidebarAutoHide to prevent layout state mismatch.
+  // We keep the variables to pass them down into the Dashboard.
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
@@ -54,6 +47,8 @@ function App() {
       return false;
     }
   });
+
+  const sidebarLocked = !sidebarAutoHide;
 
   const handleSetSidebarAutoHide = (val: boolean) => {
     setSidebarAutoHide(val);
@@ -122,8 +117,9 @@ function App() {
   };
 
   const handleSetSidebarLocked = (locked: boolean) => {
-    setSidebarLocked(locked);
-    localStorage.setItem('sidebarLocked', JSON.stringify(locked));
+    const newAutoHide = !locked;
+    setSidebarAutoHide(newAutoHide);
+    localStorage.setItem('gs_autoHideSidebar', JSON.stringify(newAutoHide));
   };
 
   // Load saved credentials on mount

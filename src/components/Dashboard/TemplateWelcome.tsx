@@ -1,16 +1,14 @@
 import { 
   CheckCircle2, 
-  Settings2, 
-  Palette, 
-  Rocket,
   Info,
-  Lightbulb,
-  LayoutDashboard,
-  Settings,
-  User,
-  Bell,
+  ArrowRight,
+  Brush,
   Wand2,
-  ArrowRight
+  Blocks,
+  ShieldCheck,
+  LayoutTemplate,
+  Sliders,
+  PaintBucket
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -18,9 +16,11 @@ interface TemplateWelcomeProps {
   onNavigate?: (view: string) => void;
 }
 
-export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
+export function TemplateWelcome({ onNavigate: _onNavigate }: TemplateWelcomeProps) {
   return (
     <div className="template-welcome dashboard-fade-in">
+      <div className="tw-bg-blob tw-blob-1"></div>
+      <div className="tw-bg-blob tw-blob-2"></div>
       <div className="tw-parent-card">
       {/* Hero Header */}
       <div className="tw-header">
@@ -30,10 +30,10 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
             <CheckCircle2 size={16} />
             <span>Template Active</span>
           </div>
+          <div className="tw-info-tooltip" title="Your project template is ready. Replace this page with your product's main view.">
+            <Info size={18} />
+          </div>
         </div>
-        <p className="tw-subtitle">
-          Your project template is ready. Replace this page with your product's main view.
-        </p>
       </div>
 
       {/* Getting Started */}
@@ -43,8 +43,8 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
           {/* Card 1 */}
           <div className="tw-card">
             <div className="tw-card-header">
-              <div className="tw-icon-wrapper icon-blue">
-                <Settings2 size={20} />
+              <div className="tw-icon-wrapper icon-gradient-1">
+                <Brush size={20} />
               </div>
               <h3>1. Configure branding</h3>
             </div>
@@ -60,8 +60,8 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
           {/* Card 2 */}
           <div className="tw-card">
             <div className="tw-card-header">
-              <div className="tw-icon-wrapper icon-green">
-                <Palette size={20} />
+              <div className="tw-icon-wrapper icon-gradient-2">
+                <Wand2 size={20} />
               </div>
               <h3>2. Choose your theme</h3>
             </div>
@@ -77,8 +77,8 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
           {/* Card 3 */}
           <div className="tw-card">
             <div className="tw-card-header">
-              <div className="tw-icon-wrapper icon-orange">
-                <Rocket size={20} />
+              <div className="tw-icon-wrapper icon-gradient-3">
+                <Blocks size={20} />
               </div>
               <h3>3. Build your content</h3>
             </div>
@@ -97,14 +97,14 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
       <div className="tw-feature-box">
         <div className="tw-feature-header">
           <Info size={18} className="tw-feature-icon" />
-          <h3>What's already built</h3>
+          <h2>What's already built</h2>
         </div>
         
         <div className="tw-grid-2">
           <div className="tw-feature-item">
-            <div className="tw-feature-icon-wrapper"><Settings2 size={20} /></div>
+            <div className="tw-feature-icon-wrapper icon-gradient-1"><ShieldCheck size={20} /></div>
             <div>
-              <h4>Authentication</h4>
+              <h3>Authentication</h3>
               <ul className="tw-feature-list">
                 <li>Login page</li>
                 <li>Forgot password (5-step OTP flow)</li>
@@ -113,9 +113,9 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
             </div>
           </div>
           <div className="tw-feature-item">
-            <div className="tw-feature-icon-wrapper"><LayoutDashboard size={20} /></div>
+            <div className="tw-feature-icon-wrapper icon-gradient-2"><LayoutTemplate size={20} /></div>
             <div>
-              <h4>Layout Shell</h4>
+              <h3>Layout Shell</h3>
               <ul className="tw-feature-list">
                 <li>Header and Collapsible sidebar</li>
                 <li>Footer and User menu</li>
@@ -124,9 +124,9 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
             </div>
           </div>
           <div className="tw-feature-item">
-            <div className="tw-feature-icon-wrapper"><Settings size={20} /></div>
+            <div className="tw-feature-icon-wrapper icon-gradient-3"><Sliders size={20} /></div>
             <div>
-              <h4>Settings System</h4>
+              <h3>Settings System</h3>
               <ul className="tw-feature-list">
                 <li>Global Settings dialog (6 tabs)</li>
                 <li>IndexedDB persistence</li>
@@ -135,9 +135,9 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
             </div>
           </div>
           <div className="tw-feature-item">
-            <div className="tw-feature-icon-wrapper"><Palette size={20} /></div>
+            <div className="tw-feature-icon-wrapper icon-gradient-4"><PaintBucket size={20} /></div>
             <div>
-              <h4>Theme Engine</h4>
+              <h3>Theme Engine</h3>
               <ul className="tw-feature-list">
                 <li>4 OmniEye brand themes</li>
                 <li>@nithishdts001/theme-engine</li>
@@ -148,38 +148,6 @@ export function TemplateWelcome({ onNavigate }: TemplateWelcomeProps) {
         </div>
       </div>
 
-      {/* Quick Navigation */}
-      <div className="tw-section">
-        <h2 className="tw-section-title" style={{ fontSize: '1.1rem' }}>Quick navigation</h2>
-        <div className="tw-nav-pills">
-          <button className="tw-pill" onClick={() => onNavigate?.('overview')}>
-            <LayoutDashboard size={16} /> Dashboard
-          </button>
-          <button className="tw-pill" onClick={() => onNavigate?.('account')}>
-            <Settings size={16} /> Settings
-          </button>
-          <button className="tw-pill">
-            <User size={16} /> Profile
-          </button>
-          <button className="tw-pill" onClick={() => onNavigate?.('notifications')}>
-            <Bell size={16} /> Notifications
-          </button>
-          <button className="tw-pill">
-            <Wand2 size={16} /> Theme Studio
-          </button>
-        </div>
-      </div>
-
-      {/* Footer Info */}
-      <div className="tw-footer-box">
-        <div className="tw-footer-header">
-          <Lightbulb size={18} className="tw-footer-icon" />
-          <h4>Built with Figma Make</h4>
-        </div>
-        <p>
-          This template was built prompt-by-prompt using Figma Make. All components use 100% Material UI v5 — zero Tailwind, zero Radix. Powered by @nithishdts001/theme-engine for full OmniEye brand theming.
-        </p>
-      </div>
 
       </div>
     </div>

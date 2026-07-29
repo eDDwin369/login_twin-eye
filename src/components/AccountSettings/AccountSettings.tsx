@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProfileTab } from './ProfileTab';
 import { SecurityTab } from './SecurityTab';
 import { PreferencesTab } from './PreferencesTab';
@@ -10,15 +10,22 @@ interface AccountSettingsProps {
   setHasUnsavedChanges?: (value: boolean) => void;
   editProfileOnLoad?: boolean;
   setEditProfileOnLoad?: (value: boolean) => void;
+  initialTab?: string;
 }
 
 export function AccountSettings({ 
   hasUnsavedChanges, 
   setHasUnsavedChanges,
   editProfileOnLoad,
-  setEditProfileOnLoad
+  setEditProfileOnLoad,
+  initialTab
 }: AccountSettingsProps) {
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(initialTab || 'profile');
+
+  // Watch for changes in initialTab if navigated while component is already mounted
+  useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
 
   const handleTabChange = (tab: string) => {
     if (tab !== activeTab && hasUnsavedChanges) {

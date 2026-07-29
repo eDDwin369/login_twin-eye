@@ -144,9 +144,15 @@ export function Dashboard({
     }
   };
 
+  const [accountSettingsInitialTab, setAccountSettingsInitialTab] = useState<string | undefined>(undefined);
+
   const handleSetCurrentView = (view: string, options?: any) => {
     if (view === 'theme-studio') {
       setIsThemeStudioOpen(true);
+      return;
+    }
+
+    if (view === currentView && !options) {
       return;
     }
 
@@ -157,10 +163,13 @@ export function Dashboard({
       setHasUnsavedChanges(false);
     }
 
-    if (view === 'account' && options?.editMode) {
-      setEditProfileOnLoad(true);
-    } else if (view === 'account') {
-      setEditProfileOnLoad(false);
+    if (view === 'account') {
+      if (options?.editMode) {
+        setEditProfileOnLoad(true);
+      } else {
+        setEditProfileOnLoad(false);
+      }
+      setAccountSettingsInitialTab(options?.tab);
     }
 
     setCurrentView(view);
@@ -266,7 +275,7 @@ export function Dashboard({
                 setHasUnsavedChanges={setHasUnsavedChanges}
               />
             ) : (
-              <div className="dashboard-container">
+              <div className={`dashboard-container ${currentView === 'overview' ? 'no-padding' : ''}`}>
                 {currentView === 'overview' ? (
                   <TemplateWelcome onNavigate={handleSetCurrentView} />
                 ) : currentView === 'notifications' ? (
@@ -282,6 +291,7 @@ export function Dashboard({
                     setHasUnsavedChanges={setHasUnsavedChanges}
                     editProfileOnLoad={editProfileOnLoad}
                     setEditProfileOnLoad={setEditProfileOnLoad}
+                    initialTab={accountSettingsInitialTab}
                   />
                 ) : currentView === 'orders' ? (
                   <OrdersView />
