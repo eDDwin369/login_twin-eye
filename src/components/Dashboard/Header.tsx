@@ -101,7 +101,7 @@ export function Header({
       toastTimeoutRef.current = setTimeout(() => {
         setThemeToast(prev => ({ ...prev, visible: false }));
       }, 3000);
-    }, 2000);
+    }, 500);
   };
 
   const handleMouseUpButton = () => {
@@ -153,6 +153,18 @@ export function Header({
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  const getFontSize = (style?: string, defaultSize: string = '1rem') => {
+    switch (style) {
+      case 'h1': return '1.5rem';
+      case 'h2': return '1.25rem';
+      case 'h3': return '1.05rem';
+      case 'h4': return '0.85rem';
+      case 'h5': return '0.75rem';
+      case 'h6': return '0.65rem';
+      default: return defaultSize;
+    }
+  };
+
   return (
     <header className={`dash-header ${isEditing ? 'editing-focus' : ''}`}>
       <div
@@ -178,11 +190,10 @@ export function Header({
             <div
               style={{
                 fontWeight: 'bold',
-                fontSize: '1.05rem',
+                fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
                 lineHeight: '1.2',
-                color: (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name'))
-                  ? headerConfig.textColor
-                  : 'var(--text-main)'
+                color: headerConfig?.companyNameColor || 
+                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name') ? headerConfig.textColor : 'var(--text-main)')
               }}
             >
               {headerConfig?.companyName || 'OomniEye'}
@@ -191,11 +202,10 @@ export function Header({
           {(!headerConfig || headerConfig.showCompanyCaption) && (
             <div
               style={{
-                fontSize: '0.65rem',
+                fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.65rem'),
                 lineHeight: '1.2',
-                color: (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption'))
-                  ? headerConfig.textColor
-                  : 'var(--text-muted, #64748b)',
+                color: headerConfig?.companyCaptionColor || 
+                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption') ? headerConfig.textColor : 'var(--text-muted, #64748b)'),
                 marginTop: '2px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
@@ -223,7 +233,7 @@ export function Header({
             <span style={{ 
               fontWeight: 700, 
               fontSize: '1.15rem', 
-              color: (customerColorFollow && headerConfig?.textColor) ? headerConfig.textColor : 'var(--text-main)', 
+              color: (customerColorFollow && headerConfig) ? (headerConfig.companyNameColor || headerConfig.textColor) : 'var(--text-main)', 
               letterSpacing: '0.02em' 
             }}>
               {customerName}
@@ -277,7 +287,7 @@ export function Header({
                   style={{
                     transformOrigin: '12px 12px',
                     transform: 'rotate(-90deg)',
-                    animation: 'circular-hold 2s linear forwards',
+                    animation: 'circular-hold 1s linear forwards',
                     filter: 'drop-shadow(0 0 3px #a855f7) drop-shadow(0 0 1px #3b82f6)'
                   }}
                 />
@@ -317,16 +327,22 @@ export function Header({
             }}>
               {isHolding ? (
                 <div style={{ fontWeight: 600, fontSize: '11.5px', color: '#e2e8f0' }}>
-                  Hold for 2 sec
+                  Hold for 500ms
                 </div>
               ) : (
                 <>
-                  <div style={{ fontWeight: 700, fontSize: '12px', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
-                    Theme
+                  <div style={{ fontWeight: 700, fontSize: '12px', color: 'color-mix(in srgb, var(--primary) 80%, white)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                    Theme: {PRESET_THEMES.find(t => t.id === currentTheme)?.label || 'Corporate Blue'}
                   </div>
                   <div style={{ fontSize: '11px', color: '#e2e8f0', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
-                    <div>• <strong>Click</strong> to cycle through preset themes.</div>
-                    <div>• <strong>Press & hold</strong> to switch between Light and Dark mode.</div>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <span>•</span>
+                      <span><strong>Click</strong> to cycle through preset themes.</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <span>•</span>
+                      <span><strong>Press & hold</strong> to switch between Light and Dark mode.</span>
+                    </div>
                   </div>
                 </>
               )}

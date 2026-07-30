@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   Settings, Eye, Download, Upload, X, MoreVertical,
-  LayoutPanelTop, Layout, LayoutPanelLeft, ShieldCheck, Users,
-  RotateCcw, Info, Link, Plus, Shield, Lock, Check, Palette, Star, Type, Image
+  LayoutPanelTop, Layout, LayoutPanelLeft, Users,
+  RotateCcw, Info, Link, Plus, Check, Palette, Star, Type, Image
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 import logoDefault from '../../assets/logo.png';
@@ -19,6 +19,10 @@ interface GlobalSettingsWorkspaceProps {
     showCompanyCaption: boolean;
     textColor: string;
     textColorApply: 'both' | 'name' | 'caption';
+    companyNameColor?: string;
+    companyCaptionColor?: string;
+    companyNameStyle?: string;
+    companyCaptionStyle?: string;
   };
   onSaveConfig: (config: any) => void;
   sidebarAutoHide: boolean;
@@ -43,7 +47,7 @@ interface GlobalSettingsWorkspaceProps {
   }) => void;
 }
 
-type TabId = 'header' | 'footer' | 'sidebar' | 'security' | 'profile';
+type TabId = 'header' | 'footer' | 'sidebar' | 'profile';
 
 export function GlobalSettingsWorkspace({ 
   onClose, 
@@ -64,7 +68,7 @@ export function GlobalSettingsWorkspace({
   onTabChange,
   onSyncCustomerProfile
 }: GlobalSettingsWorkspaceProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('footer');
+  const [activeTab, setActiveTab] = useState<TabId>('header');
 
   // Local form states (Header Config)
 
@@ -81,6 +85,10 @@ export function GlobalSettingsWorkspace({
   const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption);
   const [textColor, setTextColor] = useState(headerConfig.textColor);
   const [textColorApply, setTextColorApply] = useState<any>(headerConfig.textColorApply);
+  const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
+  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#64748b');
+  const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
+  const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
 
   // Footer Config States
   const [footerVisible, setFooterVisible] = useState(() => {
@@ -145,9 +153,13 @@ export function GlobalSettingsWorkspace({
       companyCaption,
       showCompanyCaption,
       textColor,
-      textColorApply
+      textColorApply,
+      companyNameColor,
+      companyCaptionColor,
+      companyNameStyle,
+      companyCaptionStyle
     });
-  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply]);
+  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle]);
 
   // Sync Footer config in real-time
   useEffect(() => {
@@ -186,15 +198,7 @@ export function GlobalSettingsWorkspace({
   }, [onTabChange]);
 
   // Security Config States
-  const [defaultEmail, setDefaultEmail] = useState('admin@digitaltwin.com');
-  const [defaultPassword, setDefaultPassword] = useState('••••••••••••');
-  const [rememberMe, setRememberMe] = useState(true);
-  const [enableSSO, setEnableSSO] = useState(false);
-  const [minPasswordLength, setMinPasswordLength] = useState(12);
-  const [reqUppercase, setReqUppercase] = useState(true);
-  const [reqLowercase, setReqLowercase] = useState(true);
-  // Password security policy states
-  const [showStrengthMeter, setShowStrengthMeter] = useState(true);
+  // (Removed unused security states based on tsc output)
 
   // Customer Profile Config States
   const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
@@ -246,9 +250,31 @@ export function GlobalSettingsWorkspace({
     }
   }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, onSyncCustomerProfile]);
 
+  // Equal maximum height approach for configuration cards (to prevent overflow)
+  useEffect(() => {
+    const applyEqualHeight = () => {
+      const cards = document.querySelectorAll('.gs-config-card') as NodeListOf<HTMLElement>;
+      if (cards.length === 0) return;
+      
+      // Temporarily set to auto to measure natural height
+      cards.forEach(card => { card.style.height = 'auto'; });
+      
+      let maxHeight = 0;
+      cards.forEach(card => { 
+        if (card.offsetHeight > maxHeight) {
+          maxHeight = card.offsetHeight;
+        }
+      });
+      
+      // Apply maximum height so no card overflows
+      cards.forEach(card => { card.style.height = `${maxHeight}px`; });
+    };
 
-
-  // Notifications Config States
+    // Run on tab change with a slight delay for render
+    const timeout = setTimeout(applyEqualHeight, 20);
+    
+    return () => clearTimeout(timeout);
+  }, [activeTab]);  // Notifications Config States
   const [notificationsToShow] = useState(() => {
     const saved = localStorage.getItem('gs_notificationsToShow');
     return saved !== null ? JSON.parse(saved) : 5;
@@ -329,6 +355,10 @@ export function GlobalSettingsWorkspace({
       setShowCompanyCaption(false);
       setTextColor('#000000');
       setTextColorApply('both');
+      setCompanyNameColor('#000000');
+      setCompanyCaptionColor('#64748b');
+      setCompanyNameStyle('h1');
+      setCompanyCaptionStyle('h3');
       setFooterPoweredByType('text');
       setFooterPoweredByText('Powered by OomniEye Digital Solutions');
       setFooterPoweredByImage('');
@@ -378,6 +408,10 @@ export function GlobalSettingsWorkspace({
       showCompanyCaption,
       textColor,
       textColorApply,
+      companyNameColor,
+      companyCaptionColor,
+      companyNameStyle,
+      companyCaptionStyle,
       autoHideSidebar,
       startExpanded
     });
@@ -394,7 +428,9 @@ export function GlobalSettingsWorkspace({
       companyCaption,
       showCompanyCaption,
       textColor,
-      textColorApply
+      textColorApply,
+      companyNameColor,
+      companyCaptionColor
     };
     const blob = new Blob([JSON.stringify(configToExport, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -426,6 +462,10 @@ export function GlobalSettingsWorkspace({
               if (imported.showCompanyCaption !== undefined) setShowCompanyCaption(imported.showCompanyCaption);
               if (imported.textColor !== undefined) setTextColor(imported.textColor);
               if (imported.textColorApply !== undefined) setTextColorApply(imported.textColorApply);
+              if (imported.companyNameColor !== undefined) setCompanyNameColor(imported.companyNameColor);
+              if (imported.companyCaptionColor !== undefined) setCompanyCaptionColor(imported.companyCaptionColor);
+              if (imported.companyNameStyle !== undefined) setCompanyNameStyle(imported.companyNameStyle);
+              if (imported.companyCaptionStyle !== undefined) setCompanyCaptionStyle(imported.companyCaptionStyle);
               alert("Settings imported successfully. Click Save Settings to apply.");
             } else {
               alert("Invalid backup configuration file format.");
@@ -492,7 +532,6 @@ export function GlobalSettingsWorkspace({
     { id: 'profile', label: 'Customer Profile', icon: <Users size={16} /> },
     { id: 'footer', label: 'Footer', icon: <Layout size={16} /> },
     { id: 'sidebar', label: 'Sidebar', icon: <LayoutPanelLeft size={16} /> },
-    { id: 'security', label: 'Security', icon: <ShieldCheck size={16} /> },
   ];
 
   return (
@@ -565,7 +604,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Image size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Logo Settings</span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Logo Settings <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
                   </div>
 
                   {/* Logo Drag Box Preview Area */}
@@ -651,7 +690,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Type size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Branding Texts</span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Branding Texts <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -687,9 +726,60 @@ export function GlobalSettingsWorkspace({
                           }}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
-                        <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
-                        <AppleToggle checked={showCompanyName} onChange={setShowCompanyName} />
+                      <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexShrink: 0 }}>
+                        {/* Font Style */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Style</span>
+                          <select
+                            value={companyNameStyle}
+                            onChange={(e) => setCompanyNameStyle(e.target.value)}
+                            style={{
+                              height: '28px',
+                              borderRadius: '6px',
+                              border: '1px solid #cbd5e1',
+                              fontSize: '12px',
+                              padding: '0 4px',
+                              backgroundColor: '#ffffff',
+                              color: '#0f172a',
+                              cursor: 'pointer',
+                              outline: 'none'
+                            }}
+                          >
+                            <option value="h1">H1</option>
+                            <option value="h2">H2</option>
+                            <option value="h3">H3</option>
+                            <option value="h4">H4</option>
+                            <option value="h5">H5</option>
+                            <option value="h6">H6</option>
+                          </select>
+                        </div>
+                        {/* Color Picker */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Color</span>
+                          <div
+                            style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '6px',
+                              backgroundColor: companyNameColor,
+                              border: '1px solid #cbd5e1',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => document.getElementById('gs-color-picker-name')?.click()}
+                          />
+                          <input
+                            id="gs-color-picker-name"
+                            type="color"
+                            value={companyNameColor}
+                            onChange={(e) => setCompanyNameColor(e.target.value)}
+                            style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+                          />
+                        </div>
+                        {/* Toggle */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
+                          <AppleToggle checked={showCompanyName} onChange={setShowCompanyName} />
+                        </div>
                       </div>
                     </div>
 
@@ -725,100 +815,60 @@ export function GlobalSettingsWorkspace({
                           }}
                         />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
-                        <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
-                        <AppleToggle checked={showCompanyCaption} onChange={setShowCompanyCaption} />
-                      </div>
-                    </div>
-
-                    {/* Color and Dropdown Row */}
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '8px' }}>
-                      {/* Color Picker clicker */}
-                      <div
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '8px',
-                          backgroundColor: textColor,
-                          border: '1px solid #cbd5e1',
-                          cursor: 'pointer',
-                          marginTop: '8px',
-                          flexShrink: 0
-                        }}
-                        onClick={() => document.getElementById('gs-color-picker')?.click()}
-                      />
-                      <input
-                        id="gs-color-picker"
-                        type="color"
-                        value={textColor}
-                        onChange={(e) => setTextColor(e.target.value)}
-                        style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
-                      />
-
-                      {/* Text Color Input */}
-                      <div style={{ flex: 1.2, position: 'relative', marginTop: '8px' }}>
-                        <span style={{ 
-                          position: 'absolute', 
-                          top: '-8px', 
-                          left: '12px', 
-                          background: '#e8eefb', 
-                          padding: '0 4px', 
-                          fontSize: '11px', 
-                          color: '#475569',
-                          fontWeight: 500
-                        }}>
-                          Text Color
-                        </span>
-                        <input 
-                          type="text" 
-                          value={textColor}
-                          onChange={(e) => setTextColor(e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '10px',
-                            border: '1px solid #cbd5e1',
-                            fontSize: '14px',
-                            outline: 'none',
-                            color: '#0f172a',
-                            backgroundColor: '#ffffff'
-                          }}
-                        />
-                      </div>
-
-                      {/* Apply Color Dropdown */}
-                      <div style={{ flex: 2, position: 'relative', marginTop: '8px' }}>
-                        <span style={{ 
-                          position: 'absolute', 
-                          top: '-8px', 
-                          left: '12px', 
-                          background: '#e8eefb', 
-                          padding: '0 4px', 
-                          fontSize: '11px', 
-                          color: '#475569',
-                          fontWeight: 500
-                        }}>
-                          Apply Color To
-                        </span>
-                        <select
-                          value={textColorApply}
-                          onChange={(e) => setTextColorApply(e.target.value as any)}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '10px',
-                            border: '1px solid #cbd5e1',
-                            fontSize: '14px',
-                            outline: 'none',
-                            color: '#0f172a',
-                            backgroundColor: '#ffffff',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <option value="both">Company name & caption</option>
-                          <option value="name">Company name only</option>
-                          <option value="caption">Company caption only</option>
-                        </select>
+                      <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexShrink: 0 }}>
+                        {/* Font Style */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Style</span>
+                          <select
+                            value={companyCaptionStyle}
+                            onChange={(e) => setCompanyCaptionStyle(e.target.value)}
+                            style={{
+                              height: '28px',
+                              borderRadius: '6px',
+                              border: '1px solid #cbd5e1',
+                              fontSize: '12px',
+                              padding: '0 4px',
+                              backgroundColor: '#ffffff',
+                              color: '#0f172a',
+                              cursor: 'pointer',
+                              outline: 'none'
+                            }}
+                          >
+                            <option value="h1">H1</option>
+                            <option value="h2">H2</option>
+                            <option value="h3">H3</option>
+                            <option value="h4">H4</option>
+                            <option value="h5">H5</option>
+                            <option value="h6">H6</option>
+                          </select>
+                        </div>
+                        {/* Color Picker */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Color</span>
+                          <div
+                            style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '6px',
+                              backgroundColor: companyCaptionColor,
+                              border: '1px solid #cbd5e1',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => document.getElementById('gs-color-picker-caption')?.click()}
+                          />
+                          <input
+                            id="gs-color-picker-caption"
+                            type="color"
+                            value={companyCaptionColor}
+                            onChange={(e) => setCompanyCaptionColor(e.target.value)}
+                            style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+                          />
+                        </div>
+                        {/* Toggle */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
+                          <AppleToggle checked={showCompanyCaption} onChange={setShowCompanyCaption} />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -832,7 +882,7 @@ export function GlobalSettingsWorkspace({
             <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
                 <div className="gs-config-card gs-card-blue">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
@@ -854,7 +904,7 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   {/* Tabs: Text vs Image */}
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '0' }}>
                     <button
                       type="button"
                       onClick={() => setFooterPoweredByType('text')}
@@ -1019,7 +1069,7 @@ export function GlobalSettingsWorkspace({
                 <div className="gs-config-card gs-card-green">
                   
                   {/* Row 1: Footer Visibility */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <div style={{
                         width: '36px',
@@ -1033,15 +1083,15 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Eye size={18} />
                       </div>
-                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700 }}>Footer Visibility</label>
+                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>Footer Visibility <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></label>
                     </div>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
 
-                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '12px 0' }} />
+                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '4px 0' }} />
 
                   {/* Row 2: Copyright Text */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0' }}>
                     <div style={{
                       width: '36px',
                       height: '36px',
@@ -1086,7 +1136,7 @@ export function GlobalSettingsWorkspace({
                     </div>
                   </div>
 
-                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '12px 0' }} />
+                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '4px 0' }} />
 
                   {/* Row 3: Add Footer Link */}
                   <div style={{ 
@@ -1165,10 +1215,10 @@ export function GlobalSettingsWorkspace({
                         onChange={e => setLinkText(e.target.value)}
                         style={{
                           flex: 1,
-                          padding: '6px 10px',
-                          borderRadius: '6px',
+                          padding: '12px',
+                          borderRadius: '10px',
                           border: '1px solid #cbd5e1',
-                          fontSize: '12px',
+                          fontSize: '14px',
                           color: '#0f172a',
                           backgroundColor: '#ffffff',
                           outline: 'none',
@@ -1182,10 +1232,10 @@ export function GlobalSettingsWorkspace({
                         onChange={e => setLinkUrl(e.target.value)}
                         style={{
                           flex: 1.5,
-                          padding: '6px 10px',
-                          borderRadius: '6px',
+                          padding: '12px',
+                          borderRadius: '10px',
                           border: '1px solid #cbd5e1',
-                          fontSize: '12px',
+                          fontSize: '14px',
                           color: '#0f172a',
                           backgroundColor: '#ffffff',
                           outline: 'none',
@@ -1264,7 +1314,7 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Link size={18} />
                       </div>
-                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700 }}>Footer Links</label>
+                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>Footer Links <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></label>
                     </div>
                     <div style={{ fontSize: '12px', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {footerLinks.map((link, idx) => (
@@ -1301,7 +1351,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <LayoutPanelLeft size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Behavior</span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Behavior <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1445,141 +1495,7 @@ export function GlobalSettingsWorkspace({
             </div>
           )}
 
-          {/* Security Config Panel */}
-          {activeTab === 'security' && (
-            <div className="gs-tab-content-container">
-              <div className="gs-cards-2x2">
-                <div className="gs-config-card gs-card-blue">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '10px',
-                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Lock size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Login Page</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <input 
-                      type="text" 
-                      value={defaultEmail} 
-                      onChange={e => setDefaultEmail(e.target.value)} 
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    />
-                    <input 
-                      type="password" 
-                      value={defaultPassword} 
-                      onChange={e => setDefaultPassword(e.target.value)} 
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
-                    />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                      <span style={{ fontSize: '11.5px', color: '#475569' }}>Show "Remember Me"</span>
-                      <AppleToggle checked={rememberMe} onChange={setRememberMe} />
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '11.5px', color: '#475569' }}>Enable SSO</span>
-                      <AppleToggle checked={enableSSO} onChange={setEnableSSO} />
-                    </div>
-                  </div>
-                </div>
 
-                <div className="gs-config-card gs-card-green">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '10px',
-                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <Shield size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Password Policy</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', color: '#475569' }}>
-                      <span>Minimum Length: {minPasswordLength}</span>
-                    </div>
-                    <input 
-                      type="range" 
-                      min="8" 
-                      max="20" 
-                      value={minPasswordLength} 
-                      onChange={e => setMinPasswordLength(Number(e.target.value))} 
-                      style={{ width: '100%', cursor: 'pointer' }}
-                    />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '11px', color: '#475569' }}>Require Uppercase</span>
-                      <AppleToggle checked={reqUppercase} onChange={setReqUppercase} />
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '11px', color: '#475569' }}>Require Lowercase</span>
-                      <AppleToggle checked={reqLowercase} onChange={setReqLowercase} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="gs-config-card gs-card-red">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '10px',
-                      backgroundColor: 'rgba(37, 99, 235, 0.14)',
-                      color: '#2563eb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <ShieldCheck size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Security</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        Show Strength Meter
-                        <span title="Displays a visual indicator of password strength during account creation and password changes." style={{ display: 'inline-flex', alignItems: 'center' }}>
-                          <Info size={12} style={{ opacity: 0.6, cursor: 'help' }} />
-                        </span>
-                      </span>
-                      <AppleToggle checked={showStrengthMeter} onChange={setShowStrengthMeter} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="gs-config-card gs-card-orange">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '10px',
-                      backgroundColor: 'rgba(37, 99, 235, 0.12)',
-                      color: '#2563eb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <RotateCcw size={18} />
-                    </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Password Reset</span>
-                  </div>
-                  <span style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>
-                    Password reset functionality is managed through your authentication provider. Configure email templates and reset link expiration in the authentication settings.
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Customer Profile Config Panel */}
           {activeTab === 'profile' && (
@@ -1600,7 +1516,7 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Users size={18} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Customer Identity</span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Identity <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
                     </div>
                     <AppleToggle checked={showCustomerProfile} onChange={setShowCustomerProfile} />
                   </div>
@@ -1610,7 +1526,16 @@ export function GlobalSettingsWorkspace({
                       value={customerName} 
                       onChange={e => setCustomerName(e.target.value)} 
                       placeholder="Customer Name"
-                      style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', color: '#0f172a', backgroundColor: '#ffffff' }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '12px', 
+                        borderRadius: '10px', 
+                        border: '1px solid #cbd5e1', 
+                        fontSize: '14px', 
+                        outline: 'none', 
+                        color: '#0f172a', 
+                        backgroundColor: '#ffffff' 
+                      }}
                     />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
                       <span style={{ fontSize: '11px', color: '#475569' }}>Text Color matches theme</span>
@@ -1634,7 +1559,7 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Palette size={18} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Customer Logo</span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Logo <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
                     </div>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
                   </div>

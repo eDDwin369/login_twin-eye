@@ -170,7 +170,13 @@ export function Sidebar({
         className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''} ${isEditing ? 'editing-focus' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        style={{ cursor: 'default' }}
+        onClick={() => {
+          if (isSidebarCollapsed) {
+            setCollapsed(false);
+            setIsLocked(true);
+          }
+        }}
+        style={{ cursor: isSidebarCollapsed ? 'pointer' : 'default' }}
       >
         {isSidebarCollapsed && (
           <div

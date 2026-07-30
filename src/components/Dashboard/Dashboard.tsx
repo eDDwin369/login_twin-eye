@@ -124,7 +124,11 @@ export function Dashboard({
       companyCaption: 'Digital Twin Solutions',
       showCompanyCaption: false,
       textColor: '#000000',
-      textColorApply: 'both'
+      textColorApply: 'both',
+      companyNameColor: '#000000',
+      companyCaptionColor: '#64748b',
+      companyNameStyle: 'h1',
+      companyCaptionStyle: 'h3'
     };
   });
 
@@ -342,16 +346,16 @@ export function Dashboard({
           {/* Left column */}
           <div>Ready</div>
 
-          {/* Center column — powered-by image */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Center column */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <span>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</span>
             {footerPoweredByType === 'image' && footerPoweredByImage ? (
               <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
             ) : null}
           </div>
 
-          {/* Right column — copyright, links, powered-by text */}
+          {/* Right column — links, powered-by text */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-            <span>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</span>
             {footerLinks.map((linkStr, idx) => {
               const match = linkStr.match(/^(.*?)\s*\((.*?)\)$/);
               const label = match ? match[1] : linkStr;

@@ -96,7 +96,6 @@ export function TemplateWelcome({ onNavigate: _onNavigate }: TemplateWelcomeProp
       {/* What's already built */}
       <div className="tw-feature-box">
         <div className="tw-feature-header">
-          <Info size={18} className="tw-feature-icon" />
           <h2>What's already built</h2>
         </div>
         
