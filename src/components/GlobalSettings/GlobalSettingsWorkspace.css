@@ -324,3 +324,12 @@
   background-color: #e0e8f7 !important;
   border-color: #b8c9eb !important;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
