@@ -83,7 +83,7 @@ export function ReportsPage() {
                     fontWeight: 600,
                     fontSize: '13px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.05s',
                     whiteSpace: 'nowrap'
                   }}
                 >
@@ -123,7 +123,7 @@ export function ReportsPage() {
                   backgroundColor: '#ffffff',
                   color: 'var(--text-main, #0f172a)',
                   outline: 'none',
-                  transition: 'border-color 0.2s'
+                  transition: 'border-color 0.05s'
                 }}
                 onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
                 onBlur={(e) => e.target.style.borderColor = 'var(--border-light)'}
@@ -158,7 +158,7 @@ export function ReportsPage() {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.05s ease'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#cbd5e1';
@@ -255,7 +255,7 @@ export function ReportsPage() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '6px',
-                        transition: 'all 0.15s ease'
+                        transition: 'all 0.05s ease'
                       }}
                       onMouseEnter={(e) => {
                         if (report.status === 'Completed') {

@@ -187,7 +187,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               padding: '4px 12px', 
               borderRadius: '20px',
               height: '34px',
-              transition: 'all 0.25s ease'
+              transition: 'all 0.05s ease'
             }}
           >
             <Search size={16} style={{ color: '#64748b', flexShrink: 0 }} />
@@ -552,7 +552,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.05s ease'
               }}
               onMouseEnter={(e) => {
                 if (currentPage !== 1) e.currentTarget.style.backgroundColor = '#f1f5f9';
@@ -575,7 +575,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.05s ease'
               }}
               onMouseEnter={(e) => {
                 if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = '#f1f5f9';

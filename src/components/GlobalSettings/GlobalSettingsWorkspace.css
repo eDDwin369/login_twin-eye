@@ -27,7 +27,7 @@
 .gs-modal {
   width: 1024px;
   max-width: 95vw;
-  height: 680px;
+  height: 560px;
   max-height: 90vh;
   background: #ffffff;
   border-radius: 16px;
@@ -90,7 +90,7 @@
   background: transparent;
   color: #475569;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.05s ease;
 }
 
 .gs-icon-btn:hover {
@@ -122,7 +122,7 @@
   gap: 8px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 
 .gs-tab-btn:hover {
@@ -137,8 +137,10 @@
 /* Modal Content area */
 .gs-content-body {
   flex: 1;
-  background: #f8fafc;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  background: #F8FAFC;
   display: flex;
   flex-direction: column;
   scrollbar-width: none;
@@ -155,8 +157,8 @@
 /* Card layout wrapper */
 .gs-card-grid {
   display: flex;
-  gap: 24px;
-  padding: 24px 32px;
+  gap: 16px;
+  padding: 16px 24px;
   flex: 1;
 }
 
@@ -164,13 +166,13 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  padding: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 16px;
-
-
+  height: 286px;
 }
 
 .gs-card-header {
@@ -214,7 +216,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 
 .gs-btn-reset:hover {
@@ -235,7 +237,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 
 .gs-btn-cancel:hover {
@@ -253,7 +255,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 
 .gs-btn-save:hover {

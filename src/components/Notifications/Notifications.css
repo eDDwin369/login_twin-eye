@@ -107,7 +107,7 @@
   border-radius: 8px;
   background: #FFFFFF;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.05s;
   text-decoration: none;
   color: inherit;
   width: 100%;
@@ -328,7 +328,7 @@
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all 0.05s;
   display: flex;
   align-items: center;
   height: 100%;
@@ -500,7 +500,7 @@
   justify-content: center;
   padding: 6px;
   border-radius: 50%;
-  transition: all 0.15s ease;
+  transition: all 0.05s ease;
 }
 
 .new-header-action-btn:hover {
@@ -544,7 +544,7 @@
   color: #5f6368;
   padding: 0 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
   display: flex;
   align-items: center;
   height: 100%;
@@ -579,7 +579,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: background-color 0.05s;
 }
 
 .new-mark-all-read-icon-btn:hover {
@@ -601,7 +601,7 @@
   padding: 16px 20px;
   border-bottom: 1px solid #f8fafc;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.05s ease;
   background: #ffffff;
   text-align: left;
 }
@@ -706,7 +706,7 @@
   padding: 6px 18px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.05s ease;
 }
 
 .notification-action-decline-btn:hover {
@@ -723,7 +723,7 @@
   padding: 6px 18px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.05s ease;
 }
 
 .notification-action-accept-btn:hover {
@@ -740,7 +740,7 @@
   padding: 10px 14px;
   margin-top: 10px;
   gap: 12px;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.05s ease;
 }
 
 .notification-attachment-box:hover {
@@ -791,7 +791,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: all 0.05s ease;
 }
 
 .attachment-file-download-btn:hover {

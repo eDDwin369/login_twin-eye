@@ -48,7 +48,7 @@ export function NotificationsTab() {
           backgroundColor: checked ? '#22c55e' : '#cbd5e1',
           border: 'none',
           cursor: disabled ? 'not-allowed' : 'pointer',
-          transition: 'background-color 0.2s ease',
+          transition: 'background-color 0.05s ease',
           padding: 0,
           opacity: disabled ? 0.8 : 1,
           display: 'flex',
@@ -66,7 +66,7 @@ export function NotificationsTab() {
             borderRadius: '50%',
             backgroundColor: '#ffffff',
             boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
-            transition: 'left 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         />
       </button>
@@ -101,7 +101,7 @@ export function NotificationsTab() {
             padding: '20px 24px',
             borderBottom: isEmailExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -136,7 +136,7 @@ export function NotificationsTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isEmailExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -158,7 +158,7 @@ export function NotificationsTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'all 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
           <div 
@@ -220,7 +220,7 @@ export function NotificationsTab() {
             padding: '20px 24px',
             borderBottom: isInAppExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -255,7 +255,7 @@ export function NotificationsTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isInAppExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -277,7 +277,7 @@ export function NotificationsTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'all 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
           <div style={{ position: 'absolute', left: '42px', top: '0px', bottom: '36px', width: '1px', backgroundColor: '#e2e8f0' }} />

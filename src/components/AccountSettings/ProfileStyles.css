@@ -29,7 +29,7 @@
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 8px -1px rgba(0, 0, 0, 0.02);
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.05s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -121,7 +121,7 @@
 }
 
 .progress-ring-circle {
-  transition: stroke-dashoffset 0.35s;
+  transition: stroke-dashoffset 0.05s;
   transform-origin: 50% 50%;
 }
 
@@ -158,7 +158,7 @@
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
   outline: none;
   padding: 0;
 }
@@ -187,7 +187,7 @@
   border: 1px solid rgba(0, 0, 0, 0.02);
   z-index: 15;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.05s;
   font-family: inherit;
   user-select: none;
 }
@@ -213,7 +213,7 @@
   box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.1));
   z-index: 250;
   opacity: 0;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.05s, transform 0.05s;
   text-align: left;
 }
 
@@ -391,7 +391,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.05s;
   align-self: center;
   font-family: inherit;
   outline: none;
@@ -558,7 +558,7 @@
   font-size: 14px;
   background: var(--bg-card, #ffffff);
   color: var(--text-main, #0f172a);
-  transition: all 0.2s;
+  transition: all 0.05s;
   font-family: inherit;
 }
 
@@ -608,7 +608,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.05s;
   font-family: inherit;
 }
 
@@ -630,7 +630,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.05s;
   font-family: inherit;
 }
 
@@ -696,7 +696,7 @@
   cursor: pointer;
   background: transparent;
   border: none;
-  transition: all 0.2s;
+  transition: all 0.05s;
   width: 100%;
   text-align: left;
 }
@@ -772,7 +772,7 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.05s;
   width: 100%;
 }
 
@@ -856,7 +856,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
+  transition: all 0.05s;
 }
 
 .security-refresh-btn:hover {
@@ -892,7 +892,7 @@
   padding: 16px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  transition: all 0.2s;
+  transition: all 0.05s;
 }
 
 .security-device-row:hover {
@@ -973,7 +973,7 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.05s;
 }
 
 .security-signout-btn:hover {
@@ -990,7 +990,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.05s;
 }
 
 .security-more-btn:hover {
@@ -1062,7 +1062,7 @@
   text-decoration: none;
   margin-top: 16px;
   width: fit-content;
-  transition: color 0.15s ease;
+  transition: color 0.05s ease;
 }
 
 .security-card-link-bottom:hover {

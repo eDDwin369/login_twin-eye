@@ -38,7 +38,7 @@ export function PreferencesTab() {
           backgroundColor: checked ? '#22c55e' : '#cbd5e1',
           border: 'none',
           cursor: disabled ? 'not-allowed' : 'pointer',
-          transition: 'background-color 0.2s ease',
+          transition: 'background-color 0.05s ease',
           padding: 0,
           opacity: disabled ? 0.8 : 1,
           display: 'flex',
@@ -56,7 +56,7 @@ export function PreferencesTab() {
             borderRadius: '50%',
             backgroundColor: '#ffffff',
             boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
-            transition: 'left 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         />
       </button>
@@ -106,7 +106,7 @@ export function PreferencesTab() {
             padding: '20px 24px',
             borderBottom: '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -149,7 +149,7 @@ export function PreferencesTab() {
             padding: '20px 24px',
             borderBottom: isCookiesExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -184,7 +184,7 @@ export function PreferencesTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isCookiesExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -206,7 +206,7 @@ export function PreferencesTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
-            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+            transition: 'max-height 0.05s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.05s ease-out, padding 0.05s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.05s ease'
           }}
         >
           {/* Vertical connector line */}
@@ -441,7 +441,7 @@ export function PreferencesTab() {
             padding: '20px 24px',
             borderBottom: '1px solid #f1f5f9',
             textDecoration: 'none',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -485,7 +485,7 @@ export function PreferencesTab() {
             padding: '20px 24px',
             borderBottom: '1px solid #f1f5f9',
             textDecoration: 'none',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -527,7 +527,7 @@ export function PreferencesTab() {
             justifyContent: 'space-between',
             padding: '20px 24px',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -573,7 +573,7 @@ export function PreferencesTab() {
               fontSize: '13px', 
               fontWeight: 600,
               cursor: 'pointer',
-              transition: 'background-color 0.15s ease'
+              transition: 'background-color 0.05s ease'
             }}
           >
             Delete your account

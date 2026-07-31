@@ -9,7 +9,7 @@ interface ImageCropperModalProps {
 }
 
 export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: ImageCropperModalProps) {
-  const [zoomLevel, setZoomLevel] = useState(50); // 10 to 100
+  const [zoomLevel, setZoomLevel] = useState(0); // -100 to 100
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -20,7 +20,7 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
   // Reset state when a new image is loaded
   useEffect(() => {
     if (isOpen) {
-      setZoomLevel(50);
+      setZoomLevel(0);
       setPosition({ x: 0, y: 0 });
     }
   }, [isOpen, imageUrl]);
@@ -61,8 +61,8 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Scale factor based on zoom slider (10 to 100) -> mapping to 0.5 to 2.5 roughly
-    const scale = 0.5 + (zoomLevel / 100) * 2;
+    // Scale factor based on zoom slider (-100 to 100) -> 0.25x to 4x
+    const scale = Math.pow(2, zoomLevel / 50);
     
     // Original image intrinsic dimensions
     const imgWidth = imageRef.current.naturalWidth;
@@ -96,6 +96,7 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
     const drawX = offsetX - cropBoxX - cropWidth / 2;
     const drawY = offsetY - cropBoxY - cropHeight / 2;
     
+    ctx.clearRect(-cropWidth, -cropHeight, cropWidth * 2, cropHeight * 2);
     ctx.drawImage(
       imageRef.current,
       drawX,
@@ -147,7 +148,10 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
           style={{
             width: '100%',
             height: '220px',
-            backgroundColor: '#1e293b',
+            backgroundColor: '#ffffff',
+            backgroundImage: 'linear-gradient(45deg, #f1f5f9 25%, transparent 25%), linear-gradient(-45deg, #f1f5f9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f1f5f9 75%), linear-gradient(-45deg, transparent 75%, #f1f5f9 75%)',
+            backgroundSize: '20px 20px',
+            backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
             borderRadius: '12px',
             position: 'relative',
             overflow: 'hidden',
@@ -170,9 +174,9 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
               maxWidth: '100%',
               maxHeight: '100%',
               objectFit: 'contain',
-              transform: `scale(${0.5 + (zoomLevel / 100) * 2}) translate(${position.x / (0.5 + (zoomLevel / 100) * 2)}px, ${position.y / (0.5 + (zoomLevel / 100) * 2)}px)`,
+              transform: `scale(${Math.pow(2, zoomLevel / 50)}) translate(${position.x / Math.pow(2, zoomLevel / 50)}px, ${position.y / Math.pow(2, zoomLevel / 50)}px)`,
               transformOrigin: 'center center',
-              transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+              transition: isDragging ? 'none' : 'transform 0.05s ease-out',
               pointerEvents: 'auto'
             }} 
           />
@@ -196,7 +200,7 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
           <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Zoom</span>
           <input 
             type="range" 
-            min="10" 
+            min="-100" 
             max="100" 
             value={zoomLevel} 
             onChange={(e) => setZoomLevel(Number(e.target.value))}

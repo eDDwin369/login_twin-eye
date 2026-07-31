@@ -53,7 +53,7 @@ export function MainContent() {
                 backgroundColor: 'var(--primary-light)',
                 height: `${height}%`,
                 borderRadius: '4px 4px 0 0',
-                transition: 'height 1s ease-out'
+                transition: 'height 0.05s ease-out'
               }}>
                 <div style={{
                   backgroundColor: 'var(--primary)',

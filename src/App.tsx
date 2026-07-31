@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, XCircle, KeyRound, Check, Info } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, XCircle, KeyRound, Check, Info, Headset } from 'lucide-react';
 import './index.css';
 import logo from './assets/logo.png';
 import gmailBg from './assets/gmail-bg.jpg';
@@ -332,7 +332,7 @@ function App() {
             transform: 'scale(1.25) translateZ(0)',
             backfaceVisibility: 'hidden',
             imageRendering: '-webkit-optimize-contrast',
-            transition: 'transform 0.3s ease',
+            transition: 'transform 0.05s ease',
           }} 
           onMouseOver={(e) => {
             e.currentTarget.style.transform = 'scale(1.28) translateZ(0)';
@@ -457,20 +457,28 @@ function App() {
                       />
                       <span style={{ marginLeft: '6px' }}>Remember me</span>
                     </label>
-                    <a
-                      href="#"
-                      onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
-                      style={{
-                        fontSize: '0.78rem',
-                        color: 'var(--text-secondary)',
-                        textDecoration: 'none',
-                        transition: 'color 0.2s'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                    >
-                      Forgot password?
-                    </a>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <a
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
+                        style={{
+                          fontSize: '0.78rem',
+                          color: 'var(--text-secondary)',
+                          textDecoration: 'none',
+                          transition: 'color 0.05s'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                        onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                      >
+                        Forgot password?
+                      </a>
+                      <div 
+                        title="Please contact admin@oomnieye.com" 
+                        style={{ display: 'flex', alignItems: 'center', cursor: 'help', color: 'var(--text-secondary)' }}
+                      >
+                        <Headset size={14} />
+                      </div>
+                    </div>
                   </div>
                   <button type="submit" className="submit-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     Sign in <ArrowRight size={18} />
@@ -507,7 +515,7 @@ function App() {
                         fontSize: '0.78rem',
                         color: 'var(--text-secondary)',
                         textDecoration: 'none',
-                        transition: 'color 0.2s'
+                        transition: 'color 0.05s'
                       }}
                       onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                       onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
@@ -583,7 +591,7 @@ function App() {
                       fontSize: '0.78rem',
                       color: 'var(--text-secondary)',
                       textDecoration: 'none',
-                      transition: 'color 0.2s'
+                      transition: 'color 0.05s'
                     }}
                     onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                     onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
@@ -673,7 +681,7 @@ function App() {
                         gap: '6px', 
                         fontSize: '0.78rem',
                         color: newPassword === confirmPassword ? 'var(--success, #10b981)' : 'var(--error, #ef4444)',
-                        transition: 'color 0.2s'
+                        transition: 'color 0.05s'
                       }}>
                         {newPassword === confirmPassword ? (
                           <>
@@ -704,7 +712,7 @@ function App() {
                         fontSize: '0.78rem',
                         color: 'var(--text-secondary)',
                         textDecoration: 'none',
-                        transition: 'color 0.2s'
+                        transition: 'color 0.05s'
                       }}
                       onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                       onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}

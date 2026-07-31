@@ -235,7 +235,7 @@ export function ProfileTab({
                     justifyContent: 'center',
                     color: 'white',
                     opacity: isAvatarHovered ? 1 : 0,
-                    transition: 'opacity 0.2s ease',
+                    transition: 'opacity 0.05s ease',
                   }}>
                     <Camera size={26} />
                   </div>
@@ -432,7 +432,7 @@ export function ProfileTab({
                     justifyContent: 'center',
                     color: 'white',
                     opacity: isAvatarHovered ? 1 : 0,
-                    transition: 'opacity 0.2s ease',
+                    transition: 'opacity 0.05s ease',
                   }}>
                     <Camera size={26} />
                   </div>

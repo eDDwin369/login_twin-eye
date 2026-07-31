@@ -145,7 +145,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         border: 'none',
         textAlign: 'left',
         cursor: 'pointer',
-        transition: 'background-color 0.15s ease',
+        transition: 'background-color 0.05s ease',
         fontFamily: 'inherit',
         position: 'relative'
       }}

@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.05s ease;
 }
 
 .preview-login-brand {
@@ -98,7 +98,7 @@
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.02em;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.05s ease;
   margin-top: 8px;
 }
 

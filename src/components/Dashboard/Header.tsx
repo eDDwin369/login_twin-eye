@@ -26,6 +26,8 @@ interface HeaderProps {
   isEditing?: boolean;
   showCustomerProfile?: boolean;
   customerName?: string;
+  customerNameStyle?: string;
+  customerNameColor?: string;
   customerColorFollow?: boolean;
   showCustomerLogo?: boolean;
   customerLogo?: string;
@@ -43,6 +45,8 @@ export function Header({
   isEditing = false,
   showCustomerProfile = false,
   customerName = 'Default Customer',
+  customerNameStyle = 'h1',
+  customerNameColor = '#1e293b',
   customerColorFollow = true,
   showCustomerLogo = false,
   customerLogo = ''
@@ -232,8 +236,8 @@ export function Header({
             {/* Text/Font in Center */}
             <span style={{ 
               fontWeight: 700, 
-              fontSize: '1.15rem', 
-              color: (customerColorFollow && headerConfig) ? (headerConfig.companyNameColor || headerConfig.textColor) : 'var(--text-main)', 
+              fontSize: getFontSize(customerNameStyle), 
+              color: customerColorFollow ? (headerConfig?.textColor || 'var(--text-main)') : customerNameColor, 
               letterSpacing: '0.02em' 
             }}>
               {customerName}
@@ -302,7 +306,7 @@ export function Header({
                 style={{
                   transformOrigin: '12px 12px',
                   transform: `rotate(${PRESET_THEMES.findIndex(t => t.id === currentTheme) * 60}deg)`,
-                  transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                  transition: 'transform 0.05s cubic-bezier(0.34, 1.56, 0.64, 1)'
                 }}
               />
             </svg>
@@ -323,7 +327,7 @@ export function Header({
               fontFamily: 'system-ui, -apple-system, sans-serif',
               textAlign: isHolding ? 'center' : 'left',
               pointerEvents: 'none',
-              transition: 'width 0.15s ease, padding 0.15s ease'
+              transition: 'width 0.05s ease, padding 0.05s ease'
             }}>
               {isHolding ? (
                 <div style={{ fontWeight: 600, fontSize: '11.5px', color: '#e2e8f0' }}>
@@ -419,7 +423,7 @@ export function Header({
               fontWeight: '600',
               fontSize: '18px',
               cursor: 'pointer',
-              transition: 'transform 0.2s',
+              transition: 'transform 0.05s',
               userSelect: 'none',
               flexShrink: 0,
               overflow: 'hidden',
@@ -507,7 +511,7 @@ export function Header({
                     justifyContent: 'center',
                     color: '#ffffff',
                     opacity: isAvatarHovered ? 1 : 0,
-                    transition: 'opacity 0.2s ease',
+                    transition: 'opacity 0.05s ease',
                     borderRadius: '50%'
                   }}>
                     <Camera size={14} />

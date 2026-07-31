@@ -12,7 +12,7 @@
   border-radius: var(--radius-lg);
   background: #FFFFFF;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 
 .ts-accordion-item:hover {
@@ -55,7 +55,7 @@
 
 .ts-accordion-icon {
   color: var(--text-muted);
-  transition: transform 0.2s ease;
+  transition: transform 0.05s ease;
 }
 
 .ts-accordion-item.expanded .ts-accordion-icon {
@@ -90,7 +90,7 @@
   font-size: 14px;
   color: var(--text-main);
   background: white;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 .ts-input-field:focus {
   border-color: var(--primary);
@@ -113,7 +113,7 @@
   font-weight: 600;
   color: var(--text-main);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
   text-align: center;
 }
 .ts-segment-btn:hover {
@@ -136,7 +136,7 @@
   align-items: center;
   gap: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 .ts-logo-tile:hover {
   border-color: var(--border-hover);
@@ -261,7 +261,7 @@
   font-weight: 700;
   color: var(--text-main);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 .ts-font-btn:hover {
   background: var(--bg-dashboard);
@@ -285,7 +285,7 @@
   cursor: pointer;
   margin-top: 8px;
   color: var(--text-secondary);
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 .ts-upload-box:hover {
   border-color: var(--primary);
@@ -360,7 +360,7 @@
   border-radius: 12px;
   position: relative;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 .ts-toggle.active {
   background: var(--primary-light, #93C5FD);
@@ -374,7 +374,7 @@
   top: 2px;
   left: 2px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: all 0.2s ease;
+  transition: all 0.05s ease;
 }
 .ts-toggle.active .ts-toggle-thumb {
   left: 22px;

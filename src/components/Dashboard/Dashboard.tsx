@@ -91,6 +91,12 @@ export function Dashboard({
   const [customerName, setCustomerName] = useState(() => {
     return localStorage.getItem('gs_customerName') || 'Default Customer';
   });
+  const [customerNameStyle, setCustomerNameStyle] = useState(() => {
+    return localStorage.getItem('gs_customerNameStyle') || 'h1';
+  });
+  const [customerNameColor, setCustomerNameColor] = useState(() => {
+    return localStorage.getItem('gs_customerNameColor') || '#1e293b';
+  });
   const [customerColorFollow, setCustomerColorFollow] = useState(() => {
     const saved = localStorage.getItem('gs_customerColorFollow');
     return saved !== null ? JSON.parse(saved) : true;
@@ -223,7 +229,7 @@ export function Dashboard({
       }}
     >
       <Header 
-        notifications={notifications}
+          notifications={notifications}
         onMarkAllRead={handleMarkAllRead}
         onNotificationClick={handleNotificationClick}
         onViewAllClick={() => handleSetCurrentView('notifications')}
@@ -234,6 +240,8 @@ export function Dashboard({
         isEditing={isGlobalSettingsOpen && (activeSettingsTab === 'header' || activeSettingsTab === 'profile')}
         showCustomerProfile={showCustomerProfile}
         customerName={customerName}
+        customerNameStyle={customerNameStyle}
+        customerNameColor={customerNameColor}
         customerColorFollow={customerColorFollow}
         showCustomerLogo={showCustomerLogo}
         customerLogo={customerLogo}
@@ -260,7 +268,7 @@ export function Dashboard({
             className="dashboard-content-scrollable"
             style={{
               paddingLeft: headerLeftPadding,
-              transition: 'padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'padding-left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             {isThemeStudioOpen ? (
@@ -340,7 +348,7 @@ export function Dashboard({
             position: 'relative',
             zIndex: (isGlobalSettingsOpen && activeSettingsTab === 'footer') ? 10000 : 40,
             boxShadow: (isGlobalSettingsOpen && activeSettingsTab === 'footer') ? '0 -4px 24px rgba(37, 99, 235, 0.15), 0 0 0 2px rgba(37, 99, 235, 0.5)' : 'none',
-            transition: 'box-shadow 0.3s ease, z-index 0.3s ease'
+            transition: 'box-shadow 0.05s ease, z-index 0.05s ease'
           }}
         >
           {/* Left column */}
@@ -349,13 +357,6 @@ export function Dashboard({
           {/* Center column */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
             <span>{copyrightText.replace('{year}', new Date().getFullYear().toString())}</span>
-            {footerPoweredByType === 'image' && footerPoweredByImage ? (
-              <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
-            ) : null}
-          </div>
-
-          {/* Right column — links, powered-by text */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
             {footerLinks.map((linkStr, idx) => {
               const match = linkStr.match(/^(.*?)\s*\((.*?)\)$/);
               const label = match ? match[1] : linkStr;
@@ -380,6 +381,16 @@ export function Dashboard({
                 </span>
               );
             })}
+            {footerPoweredByType === 'image' && footerPoweredByImage ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
+                <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>|</span>
+                <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
+              </span>
+            ) : null}
+          </div>
+
+          {/* Right column — powered-by text */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
             {footerPoweredByType === 'text' && resolvedFooterPoweredByText ? (
               <span>{resolvedFooterPoweredByText}</span>
             ) : null}
@@ -417,6 +428,8 @@ export function Dashboard({
             setCustomerColorFollow(data.customerColorFollow);
             setShowCustomerLogo(data.showCustomerLogo);
             setCustomerLogo(data.customerLogo);
+            if (data.customerNameStyle) setCustomerNameStyle(data.customerNameStyle);
+            if (data.customerNameColor) setCustomerNameColor(data.customerNameColor);
           }}
         />
       )}

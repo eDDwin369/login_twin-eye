@@ -99,7 +99,7 @@ export function NotificationsPage({
           gap: '20px',
           width: itemsPerPage === 20 ? '96%' : '100%',
           maxWidth: itemsPerPage === 20 ? '96vw' : '100%',
-          transition: 'all 0.3s ease'
+          transition: 'all 0.05s ease'
         }}
       >
         
@@ -122,7 +122,7 @@ export function NotificationsPage({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  transition: 'background-color 0.2s'
+                  transition: 'background-color 0.05s'
                 }}
               >
                 <MailOpen size={18} />
@@ -141,7 +141,7 @@ export function NotificationsPage({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  transition: 'background-color 0.2s'
+                  transition: 'background-color 0.05s'
                 }}
               >
                 <Trash2 size={18} />
@@ -237,7 +237,7 @@ export function NotificationsPage({
                         fontSize: '13px',
                         fontWeight: 500,
                         cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.15s ease'
+                        transition: 'all 0.05s ease'
                       }}
                       onMouseEnter={(e) => {
                         if (currentPage !== 1) e.currentTarget.style.backgroundColor = '#f8fafc';
@@ -263,7 +263,7 @@ export function NotificationsPage({
                           fontSize: '13px',
                           fontWeight: 600,
                           cursor: 'pointer',
-                          transition: 'all 0.15s ease'
+                          transition: 'all 0.05s ease'
                         }}
                       >
                         {pageNum}
@@ -282,7 +282,7 @@ export function NotificationsPage({
                         fontSize: '13px',
                         fontWeight: 500,
                         cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.15s ease'
+                        transition: 'all 0.05s ease'
                       }}
                       onMouseEnter={(e) => {
                         if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = '#f8fafc';

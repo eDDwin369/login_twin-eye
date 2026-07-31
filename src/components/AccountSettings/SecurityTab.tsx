@@ -151,7 +151,7 @@ export function SecurityTab() {
             padding: '20px 24px',
             borderBottom: isSessionsExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -186,7 +186,7 @@ export function SecurityTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isSessionsExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -208,7 +208,7 @@ export function SecurityTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
-            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+            transition: 'max-height 0.05s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.05s ease-out, padding 0.05s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.05s ease'
           }}
         >
           {/* Vertical connector line */}
@@ -298,7 +298,7 @@ export function SecurityTab() {
                       fontSize: '11px',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      transition: 'all 0.15s ease'
+                      transition: 'all 0.05s ease'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = '#ef4444';
@@ -329,7 +329,7 @@ export function SecurityTab() {
             padding: '20px 24px',
             borderBottom: isHistoryExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -364,7 +364,7 @@ export function SecurityTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isHistoryExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -386,7 +386,7 @@ export function SecurityTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '14px',
-            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+            transition: 'max-height 0.05s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.05s ease-out, padding 0.05s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.05s ease'
           }}
         >
           {/* Vertical connector line */}
@@ -458,7 +458,7 @@ export function SecurityTab() {
             padding: '20px 24px',
             borderBottom: isPasswordExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -493,7 +493,7 @@ export function SecurityTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isPasswordExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -515,7 +515,7 @@ export function SecurityTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '14px',
-            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+            transition: 'max-height 0.05s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.05s ease-out, padding 0.05s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.05s ease'
           }}
         >
           {/* Vertical connector line */}
@@ -614,7 +614,7 @@ export function SecurityTab() {
                 cursor: 'pointer',
                 width: 'fit-content',
                 marginTop: '6px',
-                transition: 'background-color 0.15s ease'
+                transition: 'background-color 0.05s ease'
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
@@ -634,7 +634,7 @@ export function SecurityTab() {
             padding: '20px 24px',
             borderBottom: is2faExpanded ? 'none' : '1px solid #f1f5f9',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -669,7 +669,7 @@ export function SecurityTab() {
             style={{ 
               color: '#94a3b8', 
               transform: is2faExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -691,7 +691,7 @@ export function SecurityTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '14px',
-            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.3s ease'
+            transition: 'max-height 0.05s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.05s ease-out, padding 0.05s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.05s ease'
           }}
         >
           {/* Vertical connector line */}
@@ -737,7 +737,7 @@ export function SecurityTab() {
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.05s ease'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#2563eb';
@@ -764,7 +764,7 @@ export function SecurityTab() {
             justifyContent: 'space-between',
             padding: '20px 24px',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease'
+            transition: 'background-color 0.05s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
@@ -799,7 +799,7 @@ export function SecurityTab() {
             style={{ 
               color: '#94a3b8', 
               transform: isApiExpanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.05s ease'
             }} 
           />
         </div>
@@ -820,7 +820,7 @@ export function SecurityTab() {
             display: 'flex',
             flexDirection: 'column',
             gap: '14px',
-            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'max-height 0.05s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.05s ease-out, padding 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
           {/* Vertical connector line */}
@@ -866,7 +866,7 @@ export function SecurityTab() {
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'background-color 0.15s ease'
+                transition: 'background-color 0.05s ease'
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b45309'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d97706'}

@@ -167,7 +167,7 @@ export function Sidebar({
 
       <aside
         ref={sidebarRef}
-        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''} ${isEditing ? 'editing-focus' : ''}`}
+        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar || isEditing ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''} ${isEditing ? 'editing-focus' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={() => {
@@ -187,7 +187,7 @@ export function Sidebar({
               justifyContent: 'center',
               padding: '0',
               alignItems: 'center',
-              transition: 'all 0.25s ease',
+              transition: 'all 0.05s ease',
               borderBottom: '1px solid var(--border-light, #e2e8f0)'
             }}
           >
@@ -207,7 +207,7 @@ export function Sidebar({
                   justifyContent: 'center',
                   cursor: 'pointer',
                   color: isLogoHovered ? '#1a73e8' : '#64748b',
-                  transition: 'all 0.15s ease'
+                  transition: 'all 0.05s ease'
                 }}
                 onMouseEnter={() => setIsLogoHovered(true)}
                 onMouseLeave={() => setIsLogoHovered(false)}
@@ -254,7 +254,7 @@ export function Sidebar({
                     color: isLocked ? '#2563eb' : '#94a3b8',
                     padding: '4px',
                     borderRadius: '4px',
-                    transition: 'all 0.15s ease'
+                    transition: 'all 0.05s ease'
                   }}
                   className="sidebar-toggle"
                 >
@@ -284,7 +284,7 @@ export function Sidebar({
                     color: '#94a3b8',
                     padding: '4px',
                     borderRadius: '4px',
-                    transition: 'all 0.15s ease'
+                    transition: 'all 0.05s ease'
                   }}
                 >
                   <PanelLeftClose size={14} />

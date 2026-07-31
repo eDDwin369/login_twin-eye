@@ -646,7 +646,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                 backgroundPosition: '0 0, 10px 10px',
                 backgroundSize: '20px 20px',
                 transform: `scale(${zoomLevel / 50})`,
-                transition: 'transform 0.1s ease-out'
+                transition: 'transform 0.05s ease-out'
               }}>
                 <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600 }}>IMAGE</span>
               </div>
