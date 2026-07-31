@@ -599,7 +599,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Image size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Logo Settings <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Logo Settings <span title="Configure the primary logo displayed in the top-left corner" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
                   </div>
 
                   {/* Logo Drag Box Preview Area */}
@@ -685,7 +685,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Type size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Branding Texts</span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Branding Texts <span title="Configure the text displayed in the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1077,7 +1077,7 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Eye size={18} />
                       </div>
-                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>Footer Visibility <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></label>
+                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>Footer Visibility <span title="Toggle whether the footer bar is visible" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></label>
                     </div>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
@@ -1331,7 +1331,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <LayoutPanelLeft size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Behavior <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Behavior <span title="Configure how the sidebar behaves" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1474,7 +1474,7 @@ export function GlobalSettingsWorkspace({
                     }}>
                       <Image size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Logo <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Logo <span title="Configure the customer logo displayed in the center of the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
                   </div>
 
                   {/* Logo Drag Box Preview Area */}
@@ -1561,7 +1561,7 @@ export function GlobalSettingsWorkspace({
                       }}>
                         <Type size={18} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Profile Visibility <Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Profile Visibility <span title="Toggle whether the customer profile is visible in the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
                     </div>
                     <AppleToggle checked={showCustomerProfile} onChange={setShowCustomerProfile} />
                   </div>
