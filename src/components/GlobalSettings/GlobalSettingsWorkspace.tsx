@@ -633,13 +633,16 @@ export function GlobalSettingsWorkspace({
                     />
 
                     {/* Uploaded image preview */}
-                    {logo && logo !== logoDefault && (
+                    {logo && (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <img src={logo} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
                           <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
                         </div>
-                        <button type="button" onClick={() => setLogo(logoDefault)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <button type="button" onClick={() => {
+                          setLogo(logoDefault);
+                          if (fileInputRef.current) fileInputRef.current.value = '';
+                        }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <X size={18} color="#94a3b8" />
                         </button>
                       </div>
@@ -1018,7 +1021,10 @@ export function GlobalSettingsWorkspace({
                             <img src={footerPoweredByImage} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
                             <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
                           </div>
-                          <button type="button" onClick={() => setFooterPoweredByImage('')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <button type="button" onClick={() => {
+                            setFooterPoweredByImage('');
+                            if (footerFileInputRef.current) footerFileInputRef.current.value = '';
+                          }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <X size={18} color="#94a3b8" />
                           </button>
                         </div>
@@ -1476,13 +1482,16 @@ export function GlobalSettingsWorkspace({
                     />
 
                     {/* Uploaded image preview */}
-                    {customerLogo && customerLogo !== logoDefault && (
+                    {customerLogo && (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <img src={customerLogo} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
                           <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
                         </div>
-                        <button type="button" onClick={() => setCustomerLogo(logoDefault)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <button type="button" onClick={() => {
+                          setCustomerLogo(logoDefault);
+                          if (customerLogoInputRef.current) customerLogoInputRef.current.value = '';
+                        }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <X size={18} color="#94a3b8" />
                         </button>
                       </div>
