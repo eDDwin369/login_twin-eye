@@ -5,7 +5,7 @@ import {
   RotateCcw, Info, Plus, Check, Star, Type, Image
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
-import logoDefault from '../../assets/logo.png';
+
 import { ImageCropperModal } from './ImageCropperModal';
 
 interface GlobalSettingsWorkspaceProps {
