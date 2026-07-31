@@ -182,7 +182,7 @@ export function Header({
           cursor: 'pointer'
         }}
       >
-        {(!headerConfig || headerConfig.showLogo) && (
+        {(!headerConfig || headerConfig.showLogo) && headerConfig?.logo !== '' && (
           <img
             src={headerConfig?.logo || logo}
             alt="OmniEye Logo"
@@ -197,7 +197,9 @@ export function Header({
                 fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
                 lineHeight: '1.2',
                 color: headerConfig?.companyNameColor || 
-                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name') ? headerConfig.textColor : 'var(--text-main)')
+                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name') ? headerConfig.textColor : 'var(--text-main)'),
+                textTransform: 'none',
+                letterSpacing: 'normal'
               }}
             >
               {headerConfig?.companyName || 'OomniEye'}
@@ -206,7 +208,8 @@ export function Header({
           {(!headerConfig || headerConfig.showCompanyCaption) && (
             <div
               style={{
-                fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.65rem'),
+                fontWeight: '600',
+                fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.75rem'),
                 lineHeight: '1.2',
                 color: headerConfig?.companyCaptionColor || 
                   (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption') ? headerConfig.textColor : 'var(--text-muted, #64748b)'),
@@ -225,9 +228,9 @@ export function Header({
         {showCustomerProfile && (
           <>
             {/* Logo in Center */}
-            {showCustomerLogo && (
+            {showCustomerLogo && customerLogo && (
               <img
-                src={customerLogo || logo}
+                src={customerLogo}
                 alt="Customer Logo"
                 style={{ height: '64px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
               />

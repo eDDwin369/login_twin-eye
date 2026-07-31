@@ -640,7 +640,7 @@ export function GlobalSettingsWorkspace({
                           <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
                         </div>
                         <button type="button" onClick={() => {
-                          setLogo(logoDefault);
+                          setLogo('');
                           if (fileInputRef.current) fileInputRef.current.value = '';
                         }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <X size={18} color="#94a3b8" />
@@ -1489,7 +1489,7 @@ export function GlobalSettingsWorkspace({
                           <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
                         </div>
                         <button type="button" onClick={() => {
-                          setCustomerLogo(logoDefault);
+                          setCustomerLogo('');
                           if (customerLogoInputRef.current) customerLogoInputRef.current.value = '';
                         }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <X size={18} color="#94a3b8" />
