@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, FileText, Download } from 'lucide-react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
@@ -60,6 +60,25 @@ export function Dashboard({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>(mockNotifications);
   const [selectedFullNotification, setSelectedFullNotification] = useState<NotificationItem | null>(null);
+
+  // Auto display-scaling: shrink the whole shell to fit smaller screens (like
+  // Windows display scaling) so the layout never triggers a vertical scrollbar.
+  // The layout is designed for a ~1920px baseline; anything narrower is zoomed
+  // down proportionally, never up. Consumed by --app-scale in Dashboard.css.
+  useEffect(() => {
+    const BASE_WIDTH = 1920;
+    const MIN_SCALE = 0.6;
+    const applyScale = () => {
+      const scale = Math.min(1, Math.max(MIN_SCALE, window.innerWidth / BASE_WIDTH));
+      document.documentElement.style.setProperty('--app-scale', String(scale));
+    };
+    applyScale();
+    window.addEventListener('resize', applyScale);
+    return () => {
+      window.removeEventListener('resize', applyScale);
+      document.documentElement.style.removeProperty('--app-scale');
+    };
+  }, []);
 
   const [editProfileOnLoad, setEditProfileOnLoad] = useState(false);
   const [footerVisible, setFooterVisible] = useState(() => {
@@ -162,7 +181,13 @@ export function Dashboard({
       return;
     }
 
-    if (view === currentView && !options) {
+    // Navigating anywhere else must close the Theme Studio side rail, otherwise
+    // it stays open (and its sidebar item stays highlighted) on top of the new view.
+    if (isThemeStudioOpen) {
+      setIsThemeStudioOpen(false);
+    }
+
+    if (view === currentView && !options && !isThemeStudioOpen) {
       return;
     }
 

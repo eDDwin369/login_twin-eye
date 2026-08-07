@@ -6,7 +6,7 @@ import {
 
 export function PreferencesTab() {
   // Accordion state
-  const [isCookiesExpanded, setIsCookiesExpanded] = useState(true);
+  const [isCookiesExpanded, setIsCookiesExpanded] = useState(false);
   
   // Interactive values
   const [language, setLanguage] = useState('en');
@@ -86,16 +86,8 @@ export function PreferencesTab() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '40px' }}>
-      <div 
-        style={{
-          background: '#ffffff',
-          borderRadius: '16px',
-          border: '1px solid #f1f5f9',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-          overflow: 'hidden'
-        }}
-      >
+    <div className="settings-cards-grid">
+      <div className="settings-card">
         {/* ROW 1: Export Personal Data */}
         <div 
           onClick={handleExportData}
@@ -139,6 +131,8 @@ export function PreferencesTab() {
           <ChevronRight size={18} style={{ color: '#94a3b8' }} />
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 2: Cookie Preference ACCORDION HEADER */}
         <div 
           onClick={() => setIsCookiesExpanded(!isCookiesExpanded)}
@@ -306,6 +300,8 @@ export function PreferencesTab() {
           </div>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 3: Language */}
         <div 
           style={{
@@ -368,6 +364,8 @@ export function PreferencesTab() {
           </div>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 4: Timezone */}
         <div 
           style={{
@@ -430,6 +428,8 @@ export function PreferencesTab() {
           </div>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 5: Privacy Policy */}
         <a 
           href="#privacy"
@@ -474,6 +474,8 @@ export function PreferencesTab() {
           <ChevronRight size={18} style={{ color: '#94a3b8' }} />
         </a>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 6: Terms of service */}
         <a 
           href="#terms"
@@ -518,6 +520,8 @@ export function PreferencesTab() {
           <ChevronRight size={18} style={{ color: '#94a3b8' }} />
         </a>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 7: Delete your account */}
         <div 
           onClick={handleDeleteAccount}

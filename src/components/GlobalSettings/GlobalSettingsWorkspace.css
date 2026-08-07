@@ -1,9 +1,12 @@
 .gs-overlay {
   position: fixed;
+  /* Use inset instead of 100vw/100vh so the overlay still covers the full
+     screen when the app shell is display-scaled via `zoom` (viewport units
+     resolve against the unscaled viewport and would under-cover). */
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  right: 0;
+  bottom: 0;
   background: rgba(15, 23, 42, 0.4);
   z-index: 9999;
   display: flex;

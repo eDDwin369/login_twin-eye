@@ -27,6 +27,14 @@ export function AccountSettings({
     if (initialTab) setActiveTab(initialTab);
   }, [initialTab]);
 
+  // An "Edit Profile" request (e.g. from the header menu) must force the Profile
+  // tab so ProfileTab mounts and can enter edit mode — otherwise the request is
+  // silently ignored while another settings tab is active. editProfileOnLoad is
+  // reset to false by ProfileTab once consumed, so this fires on each request.
+  useEffect(() => {
+    if (editProfileOnLoad) setActiveTab('profile');
+  }, [editProfileOnLoad]);
+
   const handleTabChange = (tab: string) => {
     if (tab !== activeTab && hasUnsavedChanges) {
       if (!window.confirm("You have unsaved changes. Are you sure you want to discard them?")) {

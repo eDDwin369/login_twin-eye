@@ -336,7 +336,10 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               <div 
                 key={item.id} 
                 className={`new-notification-item-row ${!item.isRead ? 'unread' : ''}`}
-                onClick={() => {
+                onClick={(e) => {
+                  // Keep row clicks from reaching the container-level handler
+                  // (which closes the detail box), so a row can open/switch it.
+                  e.stopPropagation();
                   if (expandedNotificationId === item.id) {
                     setExpandedNotificationId(null);
                   } else {
@@ -613,10 +616,15 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
             }}
             onClick={() => setIsModalMode(false)}
           >
-            <div 
-              className="new-notification-dropdown" 
+            <div
+              className="new-notification-dropdown"
               ref={dropdownRef}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                // Keep clicks from closing the modal backdrop, but do close the
+                // open detail box when clicking anywhere outside it.
+                e.stopPropagation();
+                setExpandedNotificationId(null);
+              }}
               style={{
                 position: 'relative',
                 width: '800px',
@@ -640,9 +648,10 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
         )
       )}
       {!isModalMode && (
-        <div 
-          className="new-notification-dropdown" 
+        <div
+          className="new-notification-dropdown"
           ref={dropdownRef}
+          onClick={() => setExpandedNotificationId(null)}
           style={{
             height: itemsPerPage === 10 ? 'calc(100vh - 120px)' : '520px',
             display: 'flex',

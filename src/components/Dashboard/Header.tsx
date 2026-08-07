@@ -59,6 +59,10 @@ export function Header({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const [currentTheme, setCurrentTheme] = useState<string>('corporate-blue');
+  // Monotonic rotation (degrees) for the orbiting dot so cycling always spins
+  // forward — deriving it from index * 60 made the dot spin backwards when the
+  // theme index wrapped from the last preset back to the first.
+  const [dotRotation, setDotRotation] = useState(0);
   const [showThemeTooltip, setShowThemeTooltip] = useState(false);
   const [themeToast, setThemeToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false });
   const longPressTimerRef = useRef<any>(null);
@@ -69,6 +73,8 @@ export function Header({
   useEffect(() => {
     const active = document.documentElement.getAttribute('data-theme') || 'corporate-blue';
     setCurrentTheme(active);
+    const activeIndex = PRESET_THEMES.findIndex(t => t.id === active);
+    setDotRotation((activeIndex < 0 ? 0 : activeIndex) * 60);
     return () => {
       if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
@@ -80,6 +86,8 @@ export function Header({
     const nextTheme = PRESET_THEMES[nextIndex];
     document.documentElement.setAttribute('data-theme', nextTheme.id);
     setCurrentTheme(nextTheme.id);
+    // Always advance the dot forward by one step (never snap backwards on wrap).
+    setDotRotation(prev => prev + 60);
   };
 
   const handleMouseDownButton = () => {
@@ -294,7 +302,9 @@ export function Header({
                   style={{
                     transformOrigin: '12px 12px',
                     transform: 'rotate(-90deg)',
-                    animation: 'circular-hold 1s linear forwards',
+                    /* Match the 500ms long-press threshold so the ring fills
+                       exactly as the light/dark switch fires (was 1s). */
+                    animation: 'circular-hold 0.5s linear forwards',
                     filter: 'drop-shadow(0 0 3px #a855f7) drop-shadow(0 0 1px #3b82f6)'
                   }}
                 />
@@ -308,8 +318,8 @@ export function Header({
                 stroke="#ef4444"
                 style={{
                   transformOrigin: '12px 12px',
-                  transform: `rotate(${PRESET_THEMES.findIndex(t => t.id === currentTheme) * 60}deg)`,
-                  transition: 'transform 0.05s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                  transform: `rotate(${dotRotation}deg)`,
+                  transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)'
                 }}
               />
             </svg>

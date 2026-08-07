@@ -22,7 +22,7 @@ export function NotificationsTab() {
   });
 
   // Accordion states
-  const [isEmailExpanded, setIsEmailExpanded] = useState(true);
+  const [isEmailExpanded, setIsEmailExpanded] = useState(false);
   const [isInAppExpanded, setIsInAppExpanded] = useState(false);
 
   const handleDropdownLimitChange = (val: string) => {
@@ -74,16 +74,8 @@ export function NotificationsTab() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '40px' }}>
-      <div 
-        style={{
-          background: '#ffffff',
-          borderRadius: '16px',
-          border: '1px solid #f1f5f9',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-          overflow: 'hidden'
-        }}
-      >
+    <div className="settings-cards-grid">
+      <div className="settings-card">
         {/* ROW 1: Email Notifications (Accordion) */}
         <div 
           onClick={() => {
@@ -203,6 +195,8 @@ export function NotificationsTab() {
           </div>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 2: In-App & Push Notifications (Accordion) */}
         <div 
           onClick={() => {
@@ -313,6 +307,8 @@ export function NotificationsTab() {
           </div>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 3: Digest Frequency */}
         <div 
           style={{
@@ -370,6 +366,8 @@ export function NotificationsTab() {
           </select>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 4: Notification Sound */}
         <div 
           style={{
@@ -409,6 +407,8 @@ export function NotificationsTab() {
           <AppleToggle checked={soundEnabled} onChange={setSoundEnabled} />
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 5: Dropdown View Limit */}
         <div 
           style={{

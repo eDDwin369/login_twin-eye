@@ -1069,3 +1069,51 @@
   color: #453ec9;
   text-decoration: underline;
 }
+
+/* ============================================================
+   Consistent card-grid layout for the settings tabs
+   (Security & Sessions, Preferences & Privacy, Notification)
+   so they match the Profile tab's multi-column card design.
+   Each former accordion/list row becomes its own card here.
+   ============================================================ */
+.settings-cards-grid {
+  /* CSS multi-column for masonry-style tight packing: cards flow to fill
+     columns by height instead of aligning to a shared grid row, so shorter
+     cards don't leave a gap next to a taller (expanded) neighbour. */
+  column-count: 2;
+  column-gap: 24px;
+  width: 100%;
+  padding-bottom: 40px;
+  animation: dashboardFadeIn 0.3s ease-out;
+}
+
+@media (max-width: 1024px) {
+  .settings-cards-grid {
+    column-count: 1;
+  }
+}
+
+.settings-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 8px -1px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  transition: border-color 0.05s ease, box-shadow 0.05s ease;
+  /* Keep each card whole within a column and provide vertical rhythm
+     (column-gap only handles the horizontal spacing). */
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  margin-bottom: 24px;
+}
+
+.settings-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.04), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+}
+
+/* Each row is now a standalone card, so drop the legacy inter-row
+   dividers that were drawn as bottom borders on the header/body rows. */
+.settings-card > * {
+  border-bottom: none !important;
+}

@@ -121,8 +121,15 @@
 .dashboard-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
+  /* Uniform "display scaling" (like Windows display settings): the whole shell
+     is zoomed by --app-scale (computed from viewport width in JS). We counter
+     the zoom by sizing the wrapper to 100/scale so it still fills the viewport
+     exactly — this shrinks the layout to fit smaller screens instead of showing
+     a vertical scrollbar. `zoom` is used rather than `transform: scale` so that
+     position: fixed dropdowns, modals and tooltips keep working. */
+  zoom: var(--app-scale, 1);
+  height: calc(100vh / var(--app-scale, 1));
+  width: calc(100vw / var(--app-scale, 1));
   background-color: var(--bg-dashboard);
   color: var(--text-main);
   font-family: 'Roboto', sans-serif;
@@ -133,7 +140,7 @@
   display: flex;
   flex: 1;
   min-height: 0;
-  width: 100vw;
+  width: 100%;
   position: relative;
 }
 

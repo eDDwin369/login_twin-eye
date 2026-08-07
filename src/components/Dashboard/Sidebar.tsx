@@ -4,7 +4,6 @@ import {
   Grid,
   Store,
   BarChart2,
-  FlaskConical,
   Palette,
   UserCircle,
   PanelLeftClose,
@@ -51,6 +50,10 @@ export function Sidebar({
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   // Hovered item for tooltip in collapsed state
   const [hoveredItem, setHoveredItem] = useState<{ label: string; y: number } | null>(null);
+  // Single source of truth for which nav item is highlighted. Several items
+  // map to the same `currentView` (e.g. both report items use 'reports'), so a
+  // dedicated id prevents more than one item from appearing selected at once.
+  const [activeItemId, setActiveItemId] = useState<string | null>('overview');
 
   const hideTimeoutRef = useRef<any>(null);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -68,6 +71,27 @@ export function Sidebar({
       setHoveredItem(null);
     }
   }, [collapsed]);
+
+  // Keep the highlighted item in sync when navigation happens outside the
+  // sidebar (or when Theme Studio is toggled). Theme Studio always wins while
+  // open; otherwise the current view maps to a single item. For 'reports' —
+  // which is shared by two items — we preserve whichever report item is already
+  // selected so clicking one never highlights the other.
+  useEffect(() => {
+    if (isThemeStudioOpen) {
+      setActiveItemId('theme-studio');
+      return;
+    }
+    if (currentView === 'reports') {
+      setActiveItemId('report-builder');
+    } else if (currentView === 'overview') {
+      setActiveItemId('overview');
+    } else if (currentView === 'account') {
+      setActiveItemId('account');
+    } else {
+      setActiveItemId(null);
+    }
+  }, [currentView, isThemeStudioOpen]);
 
   // Collapse and hide sidebar when clicking outside in unpinned state
   useEffect(() => {
@@ -119,8 +143,17 @@ export function Sidebar({
     setHoveredItem(null);
   };
 
-  const handleNavItemClick = (view: string | null, e: React.MouseEvent) => {
+  const handleNavItemClick = (view: string | null, e: React.MouseEvent, itemId?: string) => {
     e.preventDefault();
+    // Don't let the click bubble to the <aside> onClick, which expands AND pins
+    // the sidebar when collapsed. Selecting a menu item must not override the
+    // user's auto-hide (unpinned) preference.
+    e.stopPropagation();
+    // Set the highlight immediately so it's unambiguous even when two items
+    // share the same view (e.g. Report Builder vs Testing Reports).
+    if (itemId) {
+      setActiveItemId(itemId);
+    }
     if (view) {
       setCurrentView(view);
     }
@@ -228,8 +261,8 @@ export function Sidebar({
         >
           <a
             href="#"
-            className={`nav-item ${currentView === 'overview' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('overview', e)}
+            className={`nav-item ${activeItemId === 'overview' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('overview', e, 'overview')}
             style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}
             onMouseEnter={(e) => handleItemMouseEnter("Dashboard", e)}
             onMouseLeave={handleItemMouseLeave}
@@ -318,32 +351,22 @@ export function Sidebar({
 
           <a
             href="#reports"
-            className={`nav-item ${currentView === 'reports' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('reports', e)}
+            className={`nav-item ${activeItemId === 'report-builder' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('reports', e, 'report-builder')}
             onMouseEnter={(e) => handleItemMouseEnter("Report Builder", e)}
             onMouseLeave={handleItemMouseLeave}
           >
             <BarChart2 size={20} className="nav-icon" color="#8b5cf6" />
             <span className="nav-label">Report Builder</span>
           </a>
-          <a
-            href="#reports"
-            className={`nav-item ${currentView === 'reports' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('reports', e)}
-            onMouseEnter={(e) => handleItemMouseEnter("Testing Reports", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <FlaskConical size={20} className="nav-icon" color="#ec4899" />
-            <span className="nav-label">Testing Reports</span>
-          </a>
 
           <div className="nav-section-title">SYSTEM</div>
           <div className="nav-divider"></div>
 
           <a
-            href="#theme-studio"
-            className={`nav-item ${isThemeStudioOpen ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('theme-studio', e)}
+            href="#"
+            className="nav-item"
+            onClick={(e) => handleNavItemClick(null, e)}
             onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
             onMouseLeave={handleItemMouseLeave}
           >
@@ -352,8 +375,8 @@ export function Sidebar({
           </a>
           <a
             href="#"
-            className={`nav-item ${currentView === 'account' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('account', e)}
+            className={`nav-item ${activeItemId === 'account' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('account', e, 'account')}
             onMouseEnter={(e) => handleItemMouseEnter("Account Settings", e)}
             onMouseLeave={handleItemMouseLeave}
           >

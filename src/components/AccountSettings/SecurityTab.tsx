@@ -6,7 +6,7 @@ import {
 
 export function SecurityTab() {
   // Accordion active state (single state to ensure only one is open at a time)
-  const [activeAccordion, setActiveAccordion] = useState<string | null>('sessions');
+  const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
 
   const handleToggleAccordion = (key: string) => {
     setActiveAccordion(prev => prev === key ? null : key);
@@ -131,16 +131,8 @@ export function SecurityTab() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '40px' }}>
-      <div 
-        style={{
-          background: '#ffffff',
-          borderRadius: '16px',
-          border: '1px solid #f1f5f9',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-          overflow: 'hidden'
-        }}
-      >
+    <div className="settings-cards-grid">
+      <div className="settings-card">
         {/* ROW 1: Active Sessions Accordion Header */}
         <div 
           onClick={() => handleToggleAccordion('sessions')}
@@ -319,6 +311,8 @@ export function SecurityTab() {
           })}
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 2: Login History Accordion Header */}
         <div 
           onClick={() => handleToggleAccordion('history')}
@@ -448,6 +442,8 @@ export function SecurityTab() {
           ))}
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 3: Password Settings Accordion Header */}
         <div 
           onClick={() => handleToggleAccordion('password')}
@@ -624,6 +620,8 @@ export function SecurityTab() {
           </form>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 4: Two-Factor Authentication Accordion Header */}
         <div 
           onClick={() => handleToggleAccordion('2fa')}
@@ -755,6 +753,8 @@ export function SecurityTab() {
           </div>
         </div>
 
+      </div>
+      <div className="settings-card">
         {/* ROW 5: API Tokens Accordion Header */}
         <div 
           onClick={() => handleToggleAccordion('api')}
