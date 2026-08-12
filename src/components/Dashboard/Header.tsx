@@ -177,8 +177,26 @@ export function Header({
     }
   };
 
+  const getHeaderContrastColor = (bgColor?: string) => {
+    if (!bgColor) return undefined;
+    const hex = bgColor.replace('#', '');
+    if (hex.length !== 6) return undefined;
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.55 ? '#0f172a' : '#ffffff';
+  };
+
   return (
-    <header className={`dash-header ${isEditing ? 'editing-focus' : ''}`}>
+    <header 
+      className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
+      style={{
+        backgroundColor: headerConfig?.headerBgColor || '#ffffff',
+        color: getHeaderContrastColor(headerConfig?.headerBgColor) || '#0f172a',
+        transition: 'all 0.2s ease'
+      }}
+    >
       <div
         className="header-left"
         onClick={() => onNavigate && onNavigate('overview')}
@@ -204,8 +222,7 @@ export function Header({
                 fontWeight: 'bold',
                 fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
                 lineHeight: '1.2',
-                color: headerConfig?.companyNameColor || 
-                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name') ? headerConfig.textColor : 'var(--text-main)'),
+                color: headerConfig?.companyNameColor || getHeaderContrastColor(headerConfig?.headerBgColor) || '#0f172a',
                 textTransform: 'none',
                 letterSpacing: 'normal'
               }}
@@ -368,8 +385,9 @@ export function Header({
         </div>
         <button 
           className="header-icon-btn" 
-          title="Settings" 
-          onClick={() => {
+          title="Global Settings" 
+          onClick={(e) => {
+            e.stopPropagation();
             setShowNotifications(false);
             setShowProfileMenu(false);
             if (onSettingsClick) onSettingsClick();
@@ -377,6 +395,7 @@ export function Header({
         >
           <Settings size={18} />
         </button>
+
         <div className="header-bell-wrapper">
           <button
             className="header-icon-btn"

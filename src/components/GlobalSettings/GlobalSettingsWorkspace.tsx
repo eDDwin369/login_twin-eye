@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Settings, Eye, Download, Upload, X, MoreVertical,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  RotateCcw, Info, Plus, Check, Star, Type, Image
+  RotateCcw, Info, Plus, Check, Star, Type, Image, Palette
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
@@ -23,6 +23,7 @@ interface GlobalSettingsWorkspaceProps {
     companyCaptionColor?: string;
     companyNameStyle?: string;
     companyCaptionStyle?: string;
+    headerBgColor?: string;
   };
   onSaveConfig: (config: any) => void;
   sidebarAutoHide: boolean;
@@ -122,8 +123,9 @@ export function GlobalSettingsWorkspace({
   const [showCompanyName, setShowCompanyName] = useState(headerConfig.showCompanyName);
   const [companyCaption, setCompanyCaption] = useState(headerConfig.companyCaption);
   const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption);
-  const [textColor, setTextColor] = useState(headerConfig.textColor);
-  const [textColorApply, setTextColorApply] = useState<any>(headerConfig.textColorApply);
+  const [textColor, setTextColor] = useState(headerConfig.textColor || '#000000');
+  const [textColorApply, setTextColorApply] = useState<any>(headerConfig.textColorApply || 'both');
+  const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || '');
   const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
   const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#64748b');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
@@ -193,12 +195,13 @@ export function GlobalSettingsWorkspace({
       showCompanyCaption,
       textColor,
       textColorApply,
-      companyNameColor,
+      companyNameColor: textColor || companyNameColor,
       companyCaptionColor,
       companyNameStyle,
-      companyCaptionStyle
+      companyCaptionStyle,
+      headerBgColor
     });
-  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle]);
+  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle, headerBgColor]);
 
   // Sync Footer config in real-time
   useEffect(() => {
@@ -331,17 +334,12 @@ export function GlobalSettingsWorkspace({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const footerFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync form states with props if they change
+  // Sync activeTab with parent component to highlight active section
   useEffect(() => {
-    setLogo(headerConfig.logo);
-    setShowLogo(headerConfig.showLogo);
-    setCompanyName(headerConfig.companyName);
-    setShowCompanyName(headerConfig.showCompanyName);
-    setCompanyCaption(headerConfig.companyCaption);
-    setShowCompanyCaption(headerConfig.showCompanyCaption);
-    setTextColor(headerConfig.textColor);
-    setTextColorApply(headerConfig.textColorApply);
-  }, [headerConfig]);
+    if (onTabChange) {
+      onTabChange(activeTab);
+    }
+  }, [activeTab, onTabChange]);
 
   // Handle Logo file upload
   const handleFooterImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -649,13 +647,46 @@ export function GlobalSettingsWorkspace({
                     )}
                   </div>
 
-                  {/* Show Logo toggle at the bottom */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Eye size={16} style={{ color: '#475569' }} />
-                      <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>Show Logo</span>
+                  {/* Header Color & Show Logo controls at the bottom */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '10px' }}>
+                    {/* Header Color Option */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Palette size={16} style={{ color: '#475569' }} />
+                        <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>Header Color</span>
+                      </div>
+                      <div style={{ position: 'relative' }}>
+                        <div
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '6px',
+                            backgroundColor: headerBgColor || '#ffffff',
+                            border: '1px solid #cbd5e1',
+                            cursor: 'pointer',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                          }}
+                          onClick={() => document.getElementById('gs-color-picker-header-bg')?.click()}
+                          title="Choose Header Background Color"
+                        />
+                        <input
+                          id="gs-color-picker-header-bg"
+                          type="color"
+                          value={headerBgColor || '#ffffff'}
+                          onChange={(e) => setHeaderBgColor(e.target.value)}
+                          style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
+                        />
+                      </div>
                     </div>
-                    <AppleToggle checked={showLogo} onChange={setShowLogo} />
+
+                    {/* Show Logo toggle */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Eye size={16} style={{ color: '#475569' }} />
+                        <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>Show Logo</span>
+                      </div>
+                      <AppleToggle checked={showLogo} onChange={setShowLogo} />
+                    </div>
                   </div>
                 </div>
 

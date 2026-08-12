@@ -153,7 +153,8 @@ export function Dashboard({
       companyNameColor: '#000000',
       companyCaptionColor: '#64748b',
       companyNameStyle: 'h1',
-      companyCaptionStyle: 'h3'
+      companyCaptionStyle: 'h3',
+      headerBgColor: '#ffffff'
     };
   });
 
@@ -314,7 +315,13 @@ export function Dashboard({
             ) : (
               <div className={`dashboard-container ${currentView === 'overview' ? 'no-padding' : ''}`}>
                 {currentView === 'overview' ? (
-                  <TemplateWelcome onNavigate={handleSetCurrentView} />
+                  <TemplateWelcome 
+                    onNavigate={handleSetCurrentView} 
+                    onSettingsClick={() => {
+                      setActiveSettingsTab('header');
+                      setIsGlobalSettingsOpen(true);
+                    }}
+                  />
                 ) : currentView === 'notifications' ? (
                   <NotificationsPage 
                     notifications={notifications}
