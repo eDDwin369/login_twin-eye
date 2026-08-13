@@ -214,8 +214,8 @@ export function Header({
     <header 
       className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
       style={{
-        background: headerConfig?.headerBgColor || '#ffffff',
-        color: getHeaderContrastColor(headerConfig?.headerBgColor) || '#0f172a',
+        background: headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)',
+        color: getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') || '#ffffff',
         borderBottom: `1px solid ${getHeaderBorderColor(headerConfig?.headerBgColor)}`,
         transition: 'all 0.2s ease'
       }}
@@ -245,7 +245,7 @@ export function Header({
                 fontWeight: 'bold',
                 fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
                 lineHeight: '1.2',
-                color: headerConfig?.companyNameColor || getHeaderContrastColor(headerConfig?.headerBgColor) || '#0f172a',
+                color: headerConfig?.companyNameColor || getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') || '#ffffff',
                 textTransform: 'none',
                 letterSpacing: 'normal'
               }}
@@ -253,14 +253,14 @@ export function Header({
               {headerConfig?.companyName || 'OomniEye'}
             </div>
           )}
-          {(!headerConfig || headerConfig.showCompanyCaption) && (
+          {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
             <div
               style={{
                 fontWeight: '600',
                 fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.75rem'),
                 lineHeight: '1.2',
                 color: headerConfig?.companyCaptionColor || 
-                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption') ? headerConfig.textColor : 'var(--text-muted, #64748b)'),
+                  (getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') === '#ffffff' ? 'rgba(255, 255, 255, 0.65)' : 'var(--text-muted, #64748b)'),
                 marginTop: '2px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'

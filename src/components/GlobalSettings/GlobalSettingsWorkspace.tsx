@@ -58,6 +58,7 @@ const PRESET_SOLIDS = [
 ];
 
 const PRESET_GRADIENTS = [
+  { name: 'Black Dark Blue', value: 'linear-gradient(135deg, #000000, #011446)' },
   { name: 'Midnight Blue', value: 'linear-gradient(135deg, #0f172a, #1e3a8a)' },
   { name: 'Deep Violet', value: 'linear-gradient(135deg, #2e1065, #7c3aed)' },
   { name: 'Ocean Teal', value: 'linear-gradient(135deg, #064e3b, #0d9488)' },
@@ -138,20 +139,22 @@ export function GlobalSettingsWorkspace({
   const [companyName, setCompanyName] = useState(headerConfig.companyName);
   const [showCompanyName, setShowCompanyName] = useState(headerConfig.showCompanyName);
   const [companyCaption, setCompanyCaption] = useState(headerConfig.companyCaption);
-  const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption);
-  const [textColor, setTextColor] = useState(headerConfig.textColor || '#000000');
+  const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption !== undefined ? headerConfig.showCompanyCaption : true);
+  const [textColor, setTextColor] = useState(headerConfig.textColor || '#ffffff');
   const [textColorApply, setTextColorApply] = useState<any>(headerConfig.textColorApply || 'both');
-  const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || '');
-  const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
-  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#64748b');
+  const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || 'linear-gradient(135deg, #000000, #011446)');
+  const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || '#ffffff');
+  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || 'rgba(255, 255, 255, 0.65)');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
   const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
 
   // Header Color & Gradient Popover State
   const [showColorPopover, setShowColorPopover] = useState(false);
-  const [colorPickerMode, setColorPickerMode] = useState<'solid' | 'gradient'>('solid');
-  const [gradStop1, setGradStop1] = useState('#0f172a');
-  const [gradStop2, setGradStop2] = useState('#1e3a8a');
+  const [colorPickerMode, setColorPickerMode] = useState<'solid' | 'gradient'>(() => {
+    return (headerConfig.headerBgColor && headerConfig.headerBgColor.includes('gradient')) ? 'gradient' : 'solid';
+  });
+  const [gradStop1, setGradStop1] = useState('#000000');
+  const [gradStop2, setGradStop2] = useState('#011446');
   const [gradAngle, setGradAngle] = useState('135deg');
   const colorPopoverRef = useRef<HTMLDivElement>(null);
 
@@ -172,7 +175,7 @@ export function GlobalSettingsWorkspace({
   // Footer Config States
   const [footerVisible, setFooterVisible] = useState(() => {
     const saved = localStorage.getItem('gs_footerVisible');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [copyrightText, setCopyrightText] = useState(() => {
     return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
@@ -233,7 +236,7 @@ export function GlobalSettingsWorkspace({
       showCompanyCaption,
       textColor,
       textColorApply,
-      companyNameColor: textColor || companyNameColor,
+      companyNameColor,
       companyCaptionColor,
       companyNameStyle,
       companyCaptionStyle,
@@ -418,13 +421,15 @@ export function GlobalSettingsWorkspace({
       setCompanyName('OomniEye');
       setShowCompanyName(true);
       setCompanyCaption('Digital Twin Solutions');
-      setShowCompanyCaption(false);
-      setTextColor('#000000');
+      setShowCompanyCaption(true);
+      setTextColor('#ffffff');
       setTextColorApply('both');
-      setCompanyNameColor('#000000');
-      setCompanyCaptionColor('#64748b');
+      setCompanyNameColor('#ffffff');
+      setCompanyCaptionColor('rgba(255, 255, 255, 0.65)');
       setCompanyNameStyle('h1');
       setCompanyCaptionStyle('h3');
+      setHeaderBgColor('linear-gradient(135deg, #000000, #011446)');
+      setFooterVisible(false);
       setFooterPoweredByType('text');
       setFooterPoweredByText('Powered by OomniEye Digital Solutions');
       setFooterPoweredByImage('');
@@ -481,6 +486,7 @@ export function GlobalSettingsWorkspace({
       companyCaptionColor,
       companyNameStyle,
       companyCaptionStyle,
+      headerBgColor,
       autoHideSidebar,
       startExpanded
     });
@@ -499,7 +505,10 @@ export function GlobalSettingsWorkspace({
       textColor,
       textColorApply,
       companyNameColor,
-      companyCaptionColor
+      companyCaptionColor,
+      companyNameStyle,
+      companyCaptionStyle,
+      headerBgColor
     };
     const blob = new Blob([JSON.stringify(configToExport, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -535,6 +544,7 @@ export function GlobalSettingsWorkspace({
               if (imported.companyCaptionColor !== undefined) setCompanyCaptionColor(imported.companyCaptionColor);
               if (imported.companyNameStyle !== undefined) setCompanyNameStyle(imported.companyNameStyle);
               if (imported.companyCaptionStyle !== undefined) setCompanyCaptionStyle(imported.companyCaptionStyle);
+              if (imported.headerBgColor !== undefined) setHeaderBgColor(imported.headerBgColor);
               alert("Settings imported successfully. Click Save Settings to apply.");
             } else {
               alert("Invalid backup configuration file format.");

@@ -83,7 +83,7 @@ export function Dashboard({
   const [editProfileOnLoad, setEditProfileOnLoad] = useState(false);
   const [footerVisible, setFooterVisible] = useState(() => {
     const saved = localStorage.getItem('gs_footerVisible');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [copyrightText, setCopyrightText] = useState(() => {
     return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
@@ -147,14 +147,14 @@ export function Dashboard({
       companyName: 'OomniEye',
       showCompanyName: true,
       companyCaption: 'Digital Twin Solutions',
-      showCompanyCaption: false,
-      textColor: '#000000',
+      showCompanyCaption: true,
+      textColor: '#ffffff',
       textColorApply: 'both',
-      companyNameColor: '#000000',
-      companyCaptionColor: '#64748b',
+      companyNameColor: '#ffffff',
+      companyCaptionColor: 'rgba(255, 255, 255, 0.65)',
       companyNameStyle: 'h1',
       companyCaptionStyle: 'h3',
-      headerBgColor: '#ffffff'
+      headerBgColor: 'linear-gradient(135deg, #000000, #011446)'
     };
   });
 
