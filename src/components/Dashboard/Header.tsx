@@ -276,9 +276,9 @@ export function Header({
         {showCustomerProfile && (
           <>
             {/* Logo in Center */}
-            {showCustomerLogo && customerLogo && (
+            {showCustomerLogo && (customerLogo || logo) && (
               <img
-                src={customerLogo}
+                src={customerLogo || logo}
                 alt="Customer Logo"
                 style={{ height: '64px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
               />
@@ -288,10 +288,10 @@ export function Header({
             <span style={{ 
               fontWeight: 700, 
               fontSize: getFontSize(customerNameStyle), 
-              color: customerColorFollow ? (headerConfig?.textColor || 'var(--text-main)') : customerNameColor, 
+              color: customerColorFollow ? (headerConfig?.companyNameColor || headerConfig?.textColor || '#ffffff') : customerNameColor, 
               letterSpacing: '0.02em' 
             }}>
-              {customerName}
+              {customerName || 'OomniEye'}
             </span>
           </>
         )}
