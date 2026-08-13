@@ -285,16 +285,16 @@ export function GlobalSettingsWorkspace({
   // Customer Profile Config States
   const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerProfile');
-    return saved !== null ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'Default Customer';
+    return localStorage.getItem('gs_customerName') || 'OomniEye';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
   });
   const [customerNameColor, setCustomerNameColor] = useState(() => {
-    return localStorage.getItem('gs_customerNameColor') || '#1e293b';
+    return localStorage.getItem('gs_customerNameColor') || '#ffffff';
   });
 
   const [customerColorFollow, setCustomerColorFollow] = useState(() => {
@@ -303,7 +303,7 @@ export function GlobalSettingsWorkspace({
   });
   const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerLogo');
-    return saved !== null ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerLogo, setCustomerLogo] = useState(() => {
     return localStorage.getItem('gs_customerLogo') || '';

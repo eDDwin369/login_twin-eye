@@ -231,7 +231,7 @@ export function Header({
           cursor: 'pointer'
         }}
       >
-        {(!headerConfig || headerConfig.showLogo) && headerConfig?.logo !== '' && (
+        {(!headerConfig || headerConfig.showLogo !== false) && (
           <img
             src={headerConfig?.logo || logo}
             alt="OmniEye Logo"
