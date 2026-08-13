@@ -179,6 +179,22 @@ export function Header({
 
   const getHeaderContrastColor = (bgColor?: string) => {
     if (!bgColor) return undefined;
+    if (bgColor.includes('gradient')) {
+      const hexes = bgColor.match(/#[0-9a-fA-F]{6}/g);
+      if (hexes && hexes.length > 0) {
+        let totalLum = 0;
+        hexes.forEach(h => {
+          const hex = h.replace('#', '');
+          const r = parseInt(hex.substring(0, 2), 16);
+          const g = parseInt(hex.substring(2, 4), 16);
+          const b = parseInt(hex.substring(4, 6), 16);
+          totalLum += (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        });
+        const avgLum = totalLum / hexes.length;
+        return avgLum > 0.55 ? '#0f172a' : '#ffffff';
+      }
+      return '#ffffff';
+    }
     const hex = bgColor.replace('#', '');
     if (hex.length !== 6) return undefined;
     const r = parseInt(hex.substring(0, 2), 16);
@@ -188,12 +204,19 @@ export function Header({
     return luminance > 0.55 ? '#0f172a' : '#ffffff';
   };
 
+  const getHeaderBorderColor = (bgColor?: string) => {
+    if (!bgColor || bgColor.toLowerCase() === '#ffffff') return 'var(--border-light, #e2e8f0)';
+    const contrast = getHeaderContrastColor(bgColor);
+    return contrast === '#ffffff' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)';
+  };
+
   return (
     <header 
       className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
       style={{
-        backgroundColor: headerConfig?.headerBgColor || '#ffffff',
+        background: headerConfig?.headerBgColor || '#ffffff',
         color: getHeaderContrastColor(headerConfig?.headerBgColor) || '#0f172a',
+        borderBottom: `1px solid ${getHeaderBorderColor(headerConfig?.headerBgColor)}`,
         transition: 'all 0.2s ease'
       }}
     >

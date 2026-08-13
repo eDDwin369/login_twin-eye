@@ -52,6 +52,22 @@ interface GlobalSettingsWorkspaceProps {
 
 type TabId = 'header' | 'footer' | 'sidebar' | 'profile';
 
+const PRESET_SOLIDS = [
+  '#ffffff', '#0f172a', '#1e3a8a', '#2563eb',
+  '#065f46', '#7c3aed', '#831843', '#475569'
+];
+
+const PRESET_GRADIENTS = [
+  { name: 'Midnight Blue', value: 'linear-gradient(135deg, #0f172a, #1e3a8a)' },
+  { name: 'Deep Violet', value: 'linear-gradient(135deg, #2e1065, #7c3aed)' },
+  { name: 'Ocean Teal', value: 'linear-gradient(135deg, #064e3b, #0d9488)' },
+  { name: 'Sunset Rose', value: 'linear-gradient(135deg, #831843, #db2777)' },
+  { name: 'Dark Charcoal', value: 'linear-gradient(135deg, #18181b, #3f3f46)' },
+  { name: 'Royal Ember', value: 'linear-gradient(135deg, #450a0a, #dc2626)' },
+  { name: 'Emerald Wave', value: 'linear-gradient(135deg, #022c22, #10b981)' },
+  { name: 'Cosmic Indigo', value: 'linear-gradient(135deg, #1e1b4b, #6366f1)' }
+];
+
 // Apple-style toggle switch
 const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
   return (
@@ -130,6 +146,28 @@ export function GlobalSettingsWorkspace({
   const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#64748b');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
   const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
+
+  // Header Color & Gradient Popover State
+  const [showColorPopover, setShowColorPopover] = useState(false);
+  const [colorPickerMode, setColorPickerMode] = useState<'solid' | 'gradient'>('solid');
+  const [gradStop1, setGradStop1] = useState('#0f172a');
+  const [gradStop2, setGradStop2] = useState('#1e3a8a');
+  const [gradAngle, setGradAngle] = useState('135deg');
+  const colorPopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (colorPopoverRef.current && !colorPopoverRef.current.contains(e.target as Node)) {
+        setShowColorPopover(false);
+      }
+    };
+    if (showColorPopover) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showColorPopover]);
 
   // Footer Config States
   const [footerVisible, setFooterVisible] = useState(() => {
@@ -650,32 +688,214 @@ export function GlobalSettingsWorkspace({
                   {/* Header Color & Show Logo controls at the bottom */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '10px' }}>
                     {/* Header Color Option */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Palette size={16} style={{ color: '#475569' }} />
                         <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>Header Color</span>
                       </div>
-                      <div style={{ position: 'relative' }}>
+                      <div style={{ position: 'relative' }} ref={colorPopoverRef}>
                         <div
                           style={{
                             width: '28px',
                             height: '28px',
                             borderRadius: '6px',
-                            backgroundColor: headerBgColor || '#ffffff',
+                            background: headerBgColor || '#ffffff',
                             border: '1px solid #cbd5e1',
                             cursor: 'pointer',
                             boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                           }}
-                          onClick={() => document.getElementById('gs-color-picker-header-bg')?.click()}
-                          title="Choose Header Background Color"
+                          onClick={() => setShowColorPopover(!showColorPopover)}
+                          title="Choose Header Background Color or Gradient"
                         />
-                        <input
-                          id="gs-color-picker-header-bg"
-                          type="color"
-                          value={headerBgColor || '#ffffff'}
-                          onChange={(e) => setHeaderBgColor(e.target.value)}
-                          style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
-                        />
+
+                        {/* Floating Popover for Color & Gradient (does NOT alter card dimensions) */}
+                        {showColorPopover && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              bottom: 'calc(100% + 8px)',
+                              right: '0',
+                              width: '270px',
+                              backgroundColor: '#ffffff',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '12px',
+                              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.18)',
+                              padding: '12px',
+                              zIndex: 9999,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '10px',
+                              fontFamily: 'system-ui, -apple-system, sans-serif'
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {/* Header Title & Close */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>
+                                Header Background
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setShowColorPopover(false)}
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
+                              >
+                                <X size={14} color="#64748b" />
+                              </button>
+                            </div>
+
+                            {/* Mode Switcher: Solid vs Gradient */}
+                            <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '8px', padding: '2px' }}>
+                              <button
+                                type="button"
+                                onClick={() => setColorPickerMode('solid')}
+                                style={{
+                                  flex: 1,
+                                  padding: '5px 0',
+                                  fontSize: '11.5px',
+                                  fontWeight: 600,
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  backgroundColor: colorPickerMode === 'solid' ? '#ffffff' : 'transparent',
+                                  color: colorPickerMode === 'solid' ? '#2563eb' : '#64748b',
+                                  boxShadow: colorPickerMode === 'solid' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                  transition: 'all 0.15s ease'
+                                }}
+                              >
+                                Solid Color
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setColorPickerMode('gradient')}
+                                style={{
+                                  flex: 1,
+                                  padding: '5px 0',
+                                  fontSize: '11.5px',
+                                  fontWeight: 600,
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  backgroundColor: colorPickerMode === 'gradient' ? '#ffffff' : 'transparent',
+                                  color: colorPickerMode === 'gradient' ? '#2563eb' : '#64748b',
+                                  boxShadow: colorPickerMode === 'gradient' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                  transition: 'all 0.15s ease'
+                                }}
+                              >
+                                Gradient
+                              </button>
+                            </div>
+
+                            {colorPickerMode === 'solid' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {/* Custom Solid Color Picker */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                  <span style={{ fontSize: '11.5px', color: '#475569', fontWeight: 500 }}>Custom Color</span>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#64748b' }}>
+                                      {headerBgColor && !headerBgColor.includes('gradient') ? headerBgColor : '#ffffff'}
+                                    </span>
+                                    <input
+                                      type="color"
+                                      value={headerBgColor && !headerBgColor.includes('gradient') ? headerBgColor : '#ffffff'}
+                                      onChange={(e) => setHeaderBgColor(e.target.value)}
+                                      style={{ width: '26px', height: '26px', border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'none' }}
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Preset Solid Colors */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  <span style={{ fontSize: '10.5px', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Presets</span>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                                    {PRESET_SOLIDS.map((c) => (
+                                      <div
+                                        key={c}
+                                        onClick={() => setHeaderBgColor(c)}
+                                        style={{
+                                          height: '26px',
+                                          borderRadius: '6px',
+                                          backgroundColor: c,
+                                          border: headerBgColor === c ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                                          cursor: 'pointer',
+                                          boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                                        }}
+                                        title={c}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {/* Preset Gradients Grid */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  <span style={{ fontSize: '10.5px', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Preset Gradients</span>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                                    {PRESET_GRADIENTS.map((g) => (
+                                      <div
+                                        key={g.name}
+                                        onClick={() => setHeaderBgColor(g.value)}
+                                        style={{
+                                          height: '26px',
+                                          borderRadius: '6px',
+                                          background: g.value,
+                                          border: headerBgColor === g.value ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                                          cursor: 'pointer',
+                                          boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                                        }}
+                                        title={g.name}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Custom Gradient Builder */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                  <span style={{ fontSize: '11px', color: '#334155', fontWeight: 600 }}>Custom Gradient</span>
+                                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <span style={{ fontSize: '10px', color: '#64748b' }}>Start</span>
+                                      <input
+                                        type="color"
+                                        value={gradStop1}
+                                        onChange={(e) => {
+                                          setGradStop1(e.target.value);
+                                          setHeaderBgColor(`linear-gradient(${gradAngle}, ${e.target.value}, ${gradStop2})`);
+                                        }}
+                                        style={{ width: '22px', height: '22px', border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'none' }}
+                                      />
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <span style={{ fontSize: '10px', color: '#64748b' }}>End</span>
+                                      <input
+                                        type="color"
+                                        value={gradStop2}
+                                        onChange={(e) => {
+                                          setGradStop2(e.target.value);
+                                          setHeaderBgColor(`linear-gradient(${gradAngle}, ${gradStop1}, ${e.target.value})`);
+                                        }}
+                                        style={{ width: '22px', height: '22px', border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'none' }}
+                                      />
+                                    </div>
+                                    <select
+                                      value={gradAngle}
+                                      onChange={(e) => {
+                                        setGradAngle(e.target.value);
+                                        setHeaderBgColor(`linear-gradient(${e.target.value}, ${gradStop1}, ${gradStop2})`);
+                                      }}
+                                      style={{ fontSize: '10.5px', padding: '2px 4px', borderRadius: '4px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#1e293b' }}
+                                    >
+                                      <option value="90deg">90° →</option>
+                                      <option value="135deg">135° ↘</option>
+                                      <option value="180deg">180° ↓</option>
+                                      <option value="45deg">45° ↗</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
 
