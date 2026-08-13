@@ -434,7 +434,7 @@ export function GlobalSettingsWorkspace({
       setFooterPoweredByText('Powered by OomniEye Digital Solutions');
       setFooterPoweredByImage('');
       setStartExpanded(false);
-      setAutoHideSidebar(false);
+      setAutoHideSidebar(true);
       setExpandedWidth(260);
       setCollapsedWidth(68);
       setShowIcons(true);
