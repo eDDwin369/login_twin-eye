@@ -638,14 +638,14 @@ export function GlobalSettingsWorkspace({
                     <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Logo Settings <span title="Configure the primary logo displayed in the top-left corner" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: logo ? '8px' : '12px', flex: 1 }}>
                     {/* Dashed upload area */}
                     <div 
                       onClick={() => fileInputRef.current?.click()}
                       style={{ 
                         border: '1px dashed #94a3b8', 
-                        borderRadius: '12px', 
-                        padding: '20px', 
+                        borderRadius: '10px', 
+                        padding: logo ? '10px 14px' : '16px 20px', 
                         display: 'flex', 
                         justifyContent: 'center', 
                         alignItems: 'center',
@@ -670,23 +670,23 @@ export function GlobalSettingsWorkspace({
 
                     {/* Uploaded image preview */}
                     {logo && (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <img src={logo} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
-                          <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '10px', padding: '8px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <img src={logo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '4px' }} />
+                          <span style={{ fontSize: '12.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
                         </div>
                         <button type="button" onClick={() => {
                           setLogo('');
                           if (fileInputRef.current) fileInputRef.current.value = '';
                         }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <X size={18} color="#94a3b8" />
+                          <X size={16} color="#94a3b8" />
                         </button>
                       </div>
                     )}
                   </div>
 
                   {/* Header Color & Show Logo controls at the bottom */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '8px' }}>
                     {/* Header Color Option */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
