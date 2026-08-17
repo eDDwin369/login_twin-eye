@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import {
-  Settings, Eye, Download, Upload, X, MoreVertical,
+  Download, Upload, X, MoreVertical,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  RotateCcw, Info, Plus, Check, Star, Type, Image, Palette, Ban, Save
+  RotateCcw, Type, Image, Ban, Save
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
@@ -51,23 +51,6 @@ interface GlobalSettingsWorkspaceProps {
 }
 
 type TabId = 'header' | 'footer' | 'sidebar' | 'profile';
-
-const PRESET_SOLIDS = [
-  '#ffffff', '#0f172a', '#1e3a8a', '#2563eb',
-  '#065f46', '#7c3aed', '#831843', '#475569'
-];
-
-const PRESET_GRADIENTS = [
-  { name: 'Black Dark Blue', value: 'linear-gradient(135deg, #000000, #011446)' },
-  { name: 'Midnight Blue', value: 'linear-gradient(135deg, #0f172a, #1e3a8a)' },
-  { name: 'Deep Violet', value: 'linear-gradient(135deg, #2e1065, #7c3aed)' },
-  { name: 'Ocean Teal', value: 'linear-gradient(135deg, #064e3b, #0d9488)' },
-  { name: 'Sunset Rose', value: 'linear-gradient(135deg, #831843, #db2777)' },
-  { name: 'Dark Charcoal', value: 'linear-gradient(135deg, #18181b, #3f3f46)' },
-  { name: 'Royal Ember', value: 'linear-gradient(135deg, #450a0a, #dc2626)' },
-  { name: 'Emerald Wave', value: 'linear-gradient(135deg, #022c22, #10b981)' },
-  { name: 'Cosmic Indigo', value: 'linear-gradient(135deg, #1e1b4b, #6366f1)' }
-];
 
 // Apple-style toggle switch (Matching User Screenshot 1:1)
 const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
@@ -151,11 +134,11 @@ export function GlobalSettingsWorkspace({
 
   // Header Color & Gradient Popover State
   const [showColorPopover, setShowColorPopover] = useState(false);
-  const [colorPickerMode, setColorPickerMode] = useState<'solid' | 'gradient'>(() => {
+  const [bgType, setBgType] = useState<'solid' | 'gradient'>(() => {
     return (headerConfig.headerBgColor && headerConfig.headerBgColor.includes('gradient')) ? 'gradient' : 'solid';
   });
-  const [gradStop1, setGradStop1] = useState('#000000');
-  const [gradStop2, setGradStop2] = useState('#011446');
+  const [gradColor1, setGradColor1] = useState('#000000');
+  const [gradColor2, setGradColor2] = useState('#011446');
   const [gradAngle, setGradAngle] = useState('135deg');
   const colorPopoverRef = useRef<HTMLDivElement>(null);
 
@@ -195,7 +178,7 @@ export function GlobalSettingsWorkspace({
   const [footerPoweredByImage, setFooterPoweredByImage] = useState(() => {
     return localStorage.getItem('gs_footerPoweredByImage') || '';
   });
-  const [footerLinks, setFooterLinks] = useState<string[]>(() => {
+  const [footerLinks] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('gs_footerLinks');
       return saved ? JSON.parse(saved) : [];
@@ -203,15 +186,18 @@ export function GlobalSettingsWorkspace({
       return [];
     }
   });
-  const [linkText, setLinkText] = useState('');
-  const [linkUrl, setLinkUrl] = useState('');
-  const [isAddingLink, setIsAddingLink] = useState(false);
+  const [, setIsAddingLink] = useState(false);
 
   // Sidebar Config States
   const [startExpanded, setStartExpanded] = useState(() => {
     const saved = localStorage.getItem('gs_startExpanded');
     return saved !== null ? JSON.parse(saved) : false;
   });
+
+  const [isHoveringExpanded] = useState(false);
+  const [isDraggingExpanded] = useState(false);
+  const [isHoveringCollapsed] = useState(false);
+  const [isDraggingCollapsed] = useState(false);
   const [autoHideSidebar, setAutoHideSidebar] = useState(sidebarAutoHide);
   const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
   const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
@@ -349,10 +335,7 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : 5;
   });
 
-  const [isHoveringExpanded, setIsHoveringExpanded] = useState(false);
-  const [isDraggingExpanded, setIsDraggingExpanded] = useState(false);
-  const [isHoveringCollapsed, setIsHoveringCollapsed] = useState(false);
-  const [isDraggingCollapsed, setIsDraggingCollapsed] = useState(false);
+
 
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 

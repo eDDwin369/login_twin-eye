@@ -9,8 +9,7 @@ import {
   Minimize2,
   Volume2,
   VolumeX,
-  Settings,
-  RotateCcw
+  Settings
 } from 'lucide-react';
 import './Dashboard.css';
 

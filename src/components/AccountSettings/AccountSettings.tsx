@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
-  ChevronDown, ChevronUp, Pencil, Check, X, Shield, Key, 
-  Trash2, Globe, Cookie, Bell, Lock, Laptop, Monitor, Smartphone, 
-  AlertTriangle, ExternalLink, RefreshCw, LogOut, CheckCircle2, User, Camera
+  ChevronDown, ChevronUp, Pencil, Check, X, Shield, 
+  Laptop, Monitor, Smartphone, 
+  AlertTriangle, CheckCircle2, Camera
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
