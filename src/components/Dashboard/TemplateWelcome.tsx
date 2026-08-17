@@ -6,7 +6,11 @@ import {
   ChevronLeft, 
   ChevronRight,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Volume2,
+  VolumeX,
+  Settings,
+  RotateCcw
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -58,6 +62,59 @@ export function TemplateWelcome({
   const [videoProgress, setVideoProgress] = useState<number>(35);
   const [isAutoPlaying] = useState<boolean>(true);
   const [isVideoExpanded, setIsVideoExpanded] = useState<boolean>(false);
+  const [isClosingCinema, setIsClosingCinema] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(80);
+  const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<string>('1.0x');
+
+  // Exact YouTube Controls States from Screenshot
+  const [isAutoplay, setIsAutoplay] = useState<boolean>(true);
+  const [showSubtitles, setShowSubtitles] = useState<boolean>(true);
+  const [isMiniplayer, setIsMiniplayer] = useState<boolean>(false);
+
+  const handleOpenCinema = () => {
+    setIsVideoExpanded(true);
+    // Request native browser fullscreen if supported so it covers tabs & browser header
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  };
+
+  const handleCloseCinema = () => {
+    if (isClosingCinema) return;
+    setIsClosingCinema(true);
+    setTimeout(() => {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+      setIsVideoExpanded(false);
+      setIsClosingCinema(false);
+    }, 350);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isVideoExpanded) {
+        handleCloseCinema();
+      }
+    };
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement && isVideoExpanded && !isClosingCinema) {
+        setIsClosingCinema(true);
+        setTimeout(() => {
+          setIsVideoExpanded(false);
+          setIsClosingCinema(false);
+        }, 350);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [isVideoExpanded, isClosingCinema]);
 
   // Ambient Particle Canvas Ref for Version 2
   const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -147,14 +204,14 @@ export function TemplateWelcome({
     };
     window.addEventListener('resize', handleResize);
 
-    const numParticles = 160;
+    const numParticles = 45;
     const particles = Array.from({ length: numParticles }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 2 + 0.8,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      alpha: Math.random() * 0.5 + 0.2
+      radius: Math.random() * 1.2 + 0.4,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      alpha: Math.random() * 0.25 + 0.08
     }));
 
     let step = 0;
@@ -173,7 +230,7 @@ export function TemplateWelcome({
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * 0.6})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * 0.25})`;
         ctx.fill();
       });
 
@@ -239,7 +296,7 @@ export function TemplateWelcome({
         </div>
 
         <div className="v2-ice-card">
-          <div className={`v6-ventures-body ${isVideoExpanded ? 'v2-card-expanded-video' : ''}`}>
+          <div className="v6-ventures-body">
             {/* Left Column: Venture Titles */}
             <div className="v6-ventures-left">
               {/* Prefix line above */}
@@ -292,23 +349,7 @@ export function TemplateWelcome({
                   {/* Dark Vignette Overlay */}
                   <div className="v5-video-overlay-gradient" />
 
-                  {/* Top Video Header Tag & Expand Toggle */}
-                  <div className="v5-video-top-bar">
-                    <div className="v5-video-tag">
-                      <span className={`v5-live-dot ${isPlayingVideo ? 'playing' : ''}`} />
-                      <span className="v5-tag-text">{isPlayingVideo ? 'PLAYING DEMO' : 'PAUSED'}</span>
-                    </div>
-                    <div className="v5-video-top-right-group">
-                      <span className="v5-hd-badge">1080P HD</span>
-                      <button 
-                        className="v5-expand-toggle-btn"
-                        onClick={() => setIsVideoExpanded(!isVideoExpanded)}
-                        title={isVideoExpanded ? "Compress Video" : "Expand Video"}
-                      >
-                        {isVideoExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                      </button>
-                    </div>
-                  </div>
+
 
                   {/* Center Glass Play/Pause Button */}
                   <button 
@@ -319,16 +360,12 @@ export function TemplateWelcome({
                     {isPlayingVideo ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: 3 }} />}
                   </button>
 
-                  {/* Bottom Controls Bar & Red Progress Track */}
-                  <div className="v5-video-controls-bottom">
-                    <div className="v5-video-time">
-                      <span>{`00:${Math.floor((videoProgress / 100) * 45).toString().padStart(2, '0')}`} / 00:45</span>
-                    </div>
-
-                    {/* Small Red Progress Bar showing when video will end */}
+                  {/* YouTube Style Media Controls Bar */}
+                  <div className="v5-yt-controls-container">
+                    {/* YouTube Red Scrubber Track */}
                     <div 
-                      className="v5-red-progress-track"
-                      title="Click to scrub video position"
+                      className="v5-yt-progress-area"
+                      title="Click to scrub"
                       onClick={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
                         const clickX = e.clientX - rect.left;
@@ -336,11 +373,123 @@ export function TemplateWelcome({
                         setVideoProgress(newPct);
                       }}
                     >
-                      <div 
-                        className="v5-red-progress-fill" 
-                        style={{ width: `${videoProgress}%` }}
-                      >
-                        <div className="v5-red-scrub-handle" />
+                      <div className="v5-yt-progress-bg">
+                        <div className="v5-yt-progress-fill" style={{ width: `${videoProgress}%` }}>
+                          <div className="v5-yt-scrub-handle" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* YouTube Controls Row */}
+                    <div className="v5-yt-controls-row">
+                      {/* Left Controls Group (Play, Volume, Time 0:21 / 0:45) */}
+                      <div className="v5-yt-left-group">
+                        <button 
+                          className="v5-yt-btn"
+                          onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+                          title={isPlayingVideo ? "Pause (k)" : "Play (k)"}
+                        >
+                          {isPlayingVideo ? <Pause size={19} fill="currentColor" /> : <Play size={19} fill="currentColor" style={{ marginLeft: 2 }} />}
+                        </button>
+
+                        <div className="v5-yt-volume-group">
+                          <button 
+                            className="v5-yt-btn"
+                            onClick={() => setIsMuted(!isMuted)}
+                            title={isMuted ? "Unmute (m)" : "Mute (m)"}
+                          >
+                            {isMuted || volume === 0 ? <VolumeX size={19} /> : <Volume2 size={19} />}
+                          </button>
+                          <input 
+                            type="range" 
+                            min="0" 
+                            max="100" 
+                            value={isMuted ? 0 : volume}
+                            onChange={(e) => {
+                              setVolume(Number(e.target.value));
+                              if (Number(e.target.value) > 0) setIsMuted(false);
+                            }}
+                            className="v5-yt-volume-slider"
+                            title="Volume"
+                          />
+                        </div>
+
+                        <div className="v5-yt-time">
+                          <span>{`0:${Math.floor((videoProgress / 100) * 45).toString().padStart(2, '0')} / 0:45`}</span>
+                        </div>
+                      </div>
+
+                      {/* Right Controls Group (Autoplay, CC, Gear + Red HD Badge, Miniplayer, Expand) */}
+                      <div className="v5-yt-right-group">
+                        {/* Autoplay Switch Toggle */}
+                        <button 
+                          className={`v5-yt-autoplay-btn ${isAutoplay ? 'active' : ''}`}
+                          onClick={() => setIsAutoplay(!isAutoplay)}
+                          title={isAutoplay ? "Autoplay is on" : "Autoplay is off"}
+                        >
+                          <div className="v5-yt-autoplay-track">
+                            <div className="v5-yt-autoplay-thumb">
+                              <Play size={8} fill="currentColor" />
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Subtitles / CC Button */}
+                        <button 
+                          className={`v5-yt-cc-btn ${showSubtitles ? 'active' : ''}`}
+                          onClick={() => setShowSubtitles(!showSubtitles)}
+                          title="Subtitles/closed captions (c)"
+                        >
+                          <span>CC</span>
+                        </button>
+
+                        {/* Settings Gear with Red HD Quality Badge */}
+                        <div style={{ position: 'relative' }}>
+                          <button 
+                            className="v5-yt-btn v5-yt-gear-btn"
+                            onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                            title="Settings"
+                          >
+                            <Settings size={18} style={{ transform: showSettingsMenu ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                            <span className="v5-yt-hd-red-badge">HD</span>
+                          </button>
+
+                          {showSettingsMenu && (
+                            <div className="v5-yt-settings-popup">
+                              <div className="v5-yt-settings-header">Speed: {playbackSpeed}</div>
+                              {['0.5x', '1.0x', '1.5x', '2.0x'].map((speed) => (
+                                <button
+                                  key={speed}
+                                  className={`v5-yt-settings-item ${playbackSpeed === speed ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setPlaybackSpeed(speed);
+                                    setShowSettingsMenu(false);
+                                  }}
+                                >
+                                  {speed} {playbackSpeed === speed ? '✓' : ''}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Miniplayer / Embed Layout Button */}
+                        <button 
+                          className="v5-yt-cc-btn v5-yt-embed-btn"
+                          onClick={() => setIsMiniplayer(!isMiniplayer)}
+                          title="Miniplayer (i)"
+                        >
+                          <span style={{ fontSize: 10, letterSpacing: -1, fontWeight: 700 }}>&lt;/&gt;</span>
+                        </button>
+
+                        {/* Fullscreen / Expand Toggle */}
+                        <button 
+                          className="v5-yt-btn v5-yt-expand-btn"
+                          onClick={handleOpenCinema}
+                          title="Fullscreen (f)"
+                        >
+                          <Maximize2 size={19} />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -380,6 +529,185 @@ export function TemplateWelcome({
         </div>
       </div>
     </div>
+
+    {/* Cinema 16:9 Lightbox Modal Portal when expanded */}
+    {isVideoExpanded && createPortal(
+      <div 
+        className={`v5-cinema-overlay-backdrop ${isClosingCinema ? 'v5-cinema-closing' : ''}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) handleCloseCinema();
+        }}
+      >
+        <div className="v5-cinema-video-frame">
+          {/* Intro Animated Text Overlay */}
+          <div className="v2-intro-animated-text-stage" aria-hidden="true">
+            <div className="v2-sonar-ring ring-1" />
+            <div className="v2-sonar-ring ring-2" />
+            <div className="v2-sonar-ring ring-3" />
+            
+            <div key={introTextIndex} className="v2-intro-text-anim-item">
+              {introPhrases[introTextIndex]}
+            </div>
+          </div>
+
+          <img 
+            src={venturesData[activeVentureIndex].image} 
+            alt={venturesData[activeVentureIndex].title}
+            className="v5-video-poster v5-anim-fade-img"
+            key={venturesData[activeVentureIndex].id}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/assets/venture_appliance.png';
+            }}
+          />
+
+          <div className="v5-video-overlay-gradient" />
+
+
+
+          {/* Center Play/Pause Glass Button */}
+          <button 
+            className="v5-center-play-btn"
+            onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+            title={isPlayingVideo ? "Pause" : "Play"}
+          >
+            {isPlayingVideo ? <Pause size={28} /> : <Play size={28} style={{ marginLeft: 3 }} />}
+          </button>
+
+          {/* YouTube Media Controls Bar */}
+          <div className="v5-yt-controls-container">
+            <div 
+              className="v5-yt-progress-area"
+              title="Click to scrub"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const newPct = Math.min(100, Math.max(0, (clickX / rect.width) * 100));
+                setVideoProgress(newPct);
+              }}
+            >
+              <div className="v5-yt-progress-bg">
+                <div className="v5-yt-progress-fill" style={{ width: `${videoProgress}%` }}>
+                  <div className="v5-yt-scrub-handle" />
+                </div>
+              </div>
+            </div>
+
+            <div className="v5-yt-controls-row">
+              {/* Left Controls Group (Play, Volume, Time 0:21 / 0:45) */}
+              <div className="v5-yt-left-group">
+                <button 
+                  className="v5-yt-btn"
+                  onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+                  title={isPlayingVideo ? "Pause (k)" : "Play (k)"}
+                >
+                  {isPlayingVideo ? <Pause size={19} fill="currentColor" /> : <Play size={19} fill="currentColor" style={{ marginLeft: 2 }} />}
+                </button>
+
+                <div className="v5-yt-volume-group">
+                  <button 
+                    className="v5-yt-btn"
+                    onClick={() => setIsMuted(!isMuted)}
+                    title={isMuted ? "Unmute (m)" : "Mute (m)"}
+                  >
+                    {isMuted || volume === 0 ? <VolumeX size={19} /> : <Volume2 size={19} />}
+                  </button>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={isMuted ? 0 : volume}
+                    onChange={(e) => {
+                      setVolume(Number(e.target.value));
+                      if (Number(e.target.value) > 0) setIsMuted(false);
+                    }}
+                    className="v5-yt-volume-slider"
+                    title="Volume"
+                  />
+                </div>
+
+                <div className="v5-yt-time">
+                  <span>{`0:${Math.floor((videoProgress / 100) * 45).toString().padStart(2, '0')} / 0:45`}</span>
+                </div>
+              </div>
+
+              {/* Right Controls Group (Autoplay, CC, Gear + Red HD Badge, Miniplayer, Expand) */}
+              <div className="v5-yt-right-group">
+                {/* Autoplay Switch Toggle */}
+                <button 
+                  className={`v5-yt-autoplay-btn ${isAutoplay ? 'active' : ''}`}
+                  onClick={() => setIsAutoplay(!isAutoplay)}
+                  title={isAutoplay ? "Autoplay is on" : "Autoplay is off"}
+                >
+                  <div className="v5-yt-autoplay-track">
+                    <div className="v5-yt-autoplay-thumb">
+                      <Play size={8} fill="currentColor" />
+                    </div>
+                  </div>
+                </button>
+
+                {/* Subtitles / CC Button */}
+                <button 
+                  className={`v5-yt-cc-btn ${showSubtitles ? 'active' : ''}`}
+                  onClick={() => setShowSubtitles(!showSubtitles)}
+                  title="Subtitles/closed captions (c)"
+                >
+                  <span>CC</span>
+                </button>
+
+                {/* Settings Gear with Red HD Quality Badge */}
+                <div style={{ position: 'relative' }}>
+                  <button 
+                    className="v5-yt-btn v5-yt-gear-btn"
+                    onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                    title="Settings"
+                  >
+                    <Settings size={18} style={{ transform: showSettingsMenu ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                    <span className="v5-yt-hd-red-badge">HD</span>
+                  </button>
+
+                  {showSettingsMenu && (
+                    <div className="v5-yt-settings-popup">
+                      <div className="v5-yt-settings-header">Speed: {playbackSpeed}</div>
+                      {['0.5x', '1.0x', '1.5x', '2.0x'].map((speed) => (
+                        <button
+                          key={speed}
+                          className={`v5-yt-settings-item ${playbackSpeed === speed ? 'active' : ''}`}
+                          onClick={() => {
+                            setPlaybackSpeed(speed);
+                            setShowSettingsMenu(false);
+                          }}
+                        >
+                          {speed} {playbackSpeed === speed ? '✓' : ''}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Miniplayer / Embed Layout Button */}
+                <button 
+                  className="v5-yt-cc-btn v5-yt-embed-btn"
+                  onClick={() => setIsMiniplayer(!isMiniplayer)}
+                  title="Miniplayer (i)"
+                >
+                  <span style={{ fontSize: 10, letterSpacing: -1, fontWeight: 700 }}>&lt;/&gt;</span>
+                </button>
+
+                {/* Fullscreen / Expand Toggle */}
+                <button 
+                  className="v5-yt-btn v5-yt-expand-btn"
+                  onClick={handleCloseCinema}
+                  title="Exit Fullscreen"
+                >
+                  <Minimize2 size={19} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
     </>
   );
 }

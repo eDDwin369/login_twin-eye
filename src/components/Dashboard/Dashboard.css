@@ -4923,15 +4923,16 @@
 .v5-video-player-container {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 896px;
 }
 
 .v5-video-screen {
   width: 100%;
-  height: 290px;
+  aspect-ratio: 16 / 9;
+  height: auto;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: none;
   background: #090a0c;
   position: relative;
   display: flex;
@@ -4955,13 +4956,13 @@
 
 .v5-video-top-bar {
   position: absolute;
-  top: 14px;
-  left: 16px;
-  right: 16px;
+  top: 20px;
+  left: 24px;
+  right: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 5;
+  z-index: 15;
 }
 
 .v5-video-tag {
@@ -5374,14 +5375,13 @@ html:has(.v2-active-content),
   color: #ffffff !important;
   width: 100% !important;
   height: calc(100vh - 75px) !important;
-  padding: 0 44px !important;
+  padding: 0 32px !important;
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   position: relative !important;
-  overflow: hidden !important;
 }
 
 .v2-ice-full-container {
@@ -5394,7 +5394,6 @@ html:has(.v2-active-content),
   justify-content: center;
   padding: 0;
   margin: 0 !important;
-  overflow: hidden !important;
   position: relative;
 }
 
@@ -5402,7 +5401,7 @@ html:has(.v2-active-content),
 .v6-dashboard-title {
   font-size: 34px !important;
   font-weight: 300 !important;
-  color: #0f172a !important;
+  color: #ffffff !important;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -5410,7 +5409,7 @@ html:has(.v2-active-content),
 .dash-breadcrumb-text {
   font-size: 28px;
   font-weight: 300;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .breadcrumb-muted {
@@ -5629,7 +5628,7 @@ html:has(.mode-v7),
 .particle-orb {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.35;
+  opacity: 0.12;
   filter: blur(1.5px);
   animation: floatDust 14s infinite ease-in-out;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(59, 130, 246, 0.5) 60%, rgba(59, 130, 246, 0) 100%);
@@ -5749,22 +5748,22 @@ html:has(.mode-v7),
 
 .v2-ice-card {
   width: 100%;
-  border: 1px solid #ffffff;
-  border-radius: 32px;
-  height: 510px !important;
-  min-height: 510px !important;
-  max-height: 510px !important;
-  padding: 44px 60px;
-  background: #ffffff !important;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  color: #1e293b;
+  max-width: 1480px;
+  border: none !important;
+  border-radius: 0;
+  min-height: 510px;
+  padding: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff;
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  margin: auto !important;
   box-sizing: border-box !important;
-  overflow: hidden !important;
 }
 
 /* Expand Video Toggle Button in Header */
@@ -5799,23 +5798,30 @@ html:has(.mode-v7),
 }
 
 .mode-v2 .v6-ventures-body {
-  grid-template-columns: 1fr 560px !important;
-  gap: 52px !important;
+  grid-template-columns: minmax(320px, 1fr) 896px !important;
+  gap: 48px !important;
   width: 100% !important;
+  max-width: 1480px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: auto !important;
+  box-sizing: border-box !important;
   transition: grid-template-columns 0.6s cubic-bezier(0.16, 1, 0.3, 1), gap 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .mode-v2 .v5-video-player-container {
-  max-width: 560px !important;
+  max-width: 896px !important;
   width: 100% !important;
   transition: max-width 0.6s cubic-bezier(0.16, 1, 0.3, 1), width 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .mode-v2 .v5-video-screen {
-  height: 350px !important;
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  height: auto !important;
   border-radius: 24px !important;
-  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.4) !important;
-  transition: border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: none !important;
+  transition: border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), aspect-ratio 0.6s ease !important;
 }
 
 .mode-v2 .v6-ventures-left {
@@ -5826,56 +5832,407 @@ html:has(.mode-v7),
   height: 100% !important;
   margin-top: auto !important;
   margin-bottom: auto !important;
-  padding-left: 52px !important;
+  padding-left: 24px !important;
+  box-sizing: border-box !important;
   transform-origin: left center;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), padding-left 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Expanded Video State: Horizontal expansion only, white card height stays 100% constant */
-.mode-v2 .v6-ventures-body.v2-card-expanded-video {
-  grid-template-columns: 270px 1fr !important;
-  gap: 24px !important;
+/* Inline White Card remains clean & stable during video expansion */
+
+/* YouTube Style Controls Bar */
+.v5-yt-controls-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.45) 70%, transparent 100%);
+  padding: 0 16px 10px 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
-.mode-v2 .v6-ventures-body.v2-card-expanded-video .v6-ventures-left {
-  transform: scale(0.82) !important;
-  opacity: 0.85 !important;
-  padding-left: 20px !important;
+.v5-yt-progress-area {
+  position: relative;
+  width: 100%;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
-.mode-v2 .v6-ventures-body.v2-card-expanded-video .v5-video-player-container {
-  max-width: 100% !important;
+.v5-yt-progress-bg {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  position: relative;
+  transition: height 0.15s ease;
 }
 
-.mode-v2 .v6-ventures-body.v2-card-expanded-video .v5-video-screen {
-  height: 350px !important;
-  border-radius: 24px !important;
-  box-shadow: 0 32px 75px rgba(0, 0, 0, 0.5) !important;
+.v5-yt-progress-area:hover .v5-yt-progress-bg {
+  height: 5px;
 }
 
-.v2-active-brand .v2-ice-card {
-  background: #ffffff !important;
-  border-color: #ffffff !important;
+.v5-yt-progress-fill {
+  height: 100%;
+  background: #ff0000;
+  border-radius: 2px;
+  position: relative;
 }
 
-.v2-active-appearance .v2-ice-card {
-  background: #ffffff !important;
-  border-color: #ffffff !important;
+.v5-yt-scrub-handle {
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 13px;
+  height: 13px;
+  background: #ff0000;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
 }
 
+.v5-yt-progress-area:hover .v5-yt-scrub-handle {
+  transform: translateY(-50%) scale(1);
+}
+
+.v5-yt-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+}
+
+.v5-yt-left-group,
+.v5-yt-right-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.v5-yt-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.88;
+  transition: all 0.15s ease;
+}
+
+.v5-yt-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.08);
+}
+
+.v5-yt-volume-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.v5-yt-volume-slider {
+  width: 55px;
+  height: 3px;
+  accent-color: #ffffff;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+
+.v5-yt-volume-slider:hover {
+  opacity: 1;
+}
+
+.v5-yt-time {
+  font-family: -apple-system, BlinkMacSystemFont, "Roboto", Arial, sans-serif;
+  font-size: 12.5px;
+  color: #f1f5f9;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-left: 6px;
+}
+
+/* Exact YouTube Autoplay Switch Toggle from Screenshot */
+.v5-yt-autoplay-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.v5-yt-autoplay-track {
+  width: 32px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.v5-yt-autoplay-btn.active .v5-yt-autoplay-track {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.v5-yt-autoplay-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #090a0c;
+  color: #ffffff;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.v5-yt-autoplay-btn.active .v5-yt-autoplay-thumb {
+  transform: translateX(14px);
+  background: #090a0c;
+}
+
+/* Exact YouTube Subtitles CC & Embed Box from Screenshot */
+.v5-yt-cc-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.v5-yt-cc-btn span {
+  font-family: -apple-system, BlinkMacSystemFont, "Roboto", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 3px;
+  padding: 1px 3px;
+  line-height: 1;
+}
+
+.v5-yt-cc-btn:hover {
+  color: #ffffff;
+}
+
+.v5-yt-cc-btn:hover span {
+  border-color: #ffffff;
+}
+
+.v5-yt-cc-btn.active span {
+  border-color: #ff0000;
+  background: #ff0000;
+  color: #ffffff;
+}
+
+/* Exact YouTube Gear Icon with Red Quality Badge from Screenshot */
+.v5-yt-gear-btn {
+  position: relative !important;
+}
+
+.v5-yt-hd-red-badge {
+  position: absolute;
+  top: 0px;
+  right: -2px;
+  background: #ff0000;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Roboto", Arial, sans-serif;
+  font-size: 7.5px;
+  font-weight: 800;
+  padding: 1px 2px;
+  border-radius: 2px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.v5-yt-settings-popup {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background: rgba(20, 20, 24, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 6px;
+  width: 130px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  z-index: 30;
+}
+
+.v5-yt-settings-header {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.v5-yt-settings-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 11.5px;
+  padding: 5px 8px;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.v5-yt-settings-item:hover,
+.v5-yt-settings-item.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Cinema 16:9 Lightbox Portal Overlay */
+.v5-cinema-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  animation: v5CinemaFadeIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, backdrop-filter;
+}
+
+.v5-cinema-overlay-backdrop.v5-cinema-closing {
+  animation: v5CinemaFadeOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes v5CinemaFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+
+  to {
+    opacity: 1;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+}
+
+@keyframes v5CinemaFadeOut {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
+.v5-cinema-video-frame {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: v5FrameScaleIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.v5-cinema-closing .v5-cinema-video-frame {
+  animation: v5FrameScaleOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes v5FrameScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes v5FrameScaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+.v5-cinema-top-bar {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 25;
+}
+
+.v2-active-brand .v2-ice-card,
+.v2-active-appearance .v2-ice-card,
 .v2-active-content .v2-ice-card {
-  background: #ffffff !important;
-  border-color: #ffffff !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .v2-prefix-line {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-size: 32px;
+  font-size: 44px;
   white-space: nowrap !important;
-  font-weight: 200;
-  color: #475569;
-  margin-bottom: 10px;
-  letter-spacing: -0.025em;
+  font-weight: 100 !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
   line-height: 1.15;
   transform: translateY(-8px);
   -webkit-font-smoothing: antialiased !important;
@@ -5884,13 +6241,13 @@ html:has(.mode-v7),
 
 .v2-highlight-item {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-size: 25px;
-  font-weight: 100;
-  color: #94a3b8;
-  opacity: 0.6;
+  font-size: 34px;
+  font-weight: 100 !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  opacity: 0.5;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
   user-select: none;
   line-height: 1.25;
   display: flex;
@@ -5901,9 +6258,9 @@ html:has(.mode-v7),
 .v2-highlight-item .v2-text-span {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   display: inline-block;
-  color: #94a3b8;
-  font-weight: 200;
-  letter-spacing: -0.025em;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 100 !important;
+  letter-spacing: 0.01em;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
@@ -5914,12 +6271,12 @@ html:has(.mode-v7),
 }
 
 .v2-highlight-item:hover .v2-text-span {
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.8);
   transform: translateX(4px);
 }
 
 .v2-highlight-item.active {
-  font-size: 50px;
+  font-size: 68px;
   font-weight: 700;
   opacity: 1;
   transform: translateX(0);
@@ -5938,38 +6295,43 @@ html:has(.mode-v7),
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-brand {
-  background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 45%, #0f172a 100%) !important;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 55%, #93c5fd 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.45));
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-appearance {
-  background: linear-gradient(90deg, #a855f7 0%, #7e22ce 55%, #3b0764 100%) !important;
+  background: linear-gradient(90deg, #c084fc 0%, #a855f7 55%, #e879f9 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.45));
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-content {
-  background: linear-gradient(90deg, #06b6d4 0%, #0e7490 55%, #042f2e 100%) !important;
+  background: linear-gradient(90deg, #22d3ee 0%, #06b6d4 55%, #67e8f9 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.45));
 }
 
 /* Version 2 Carousel Controls Visibility Overrides for Light Background */
 .mode-v2 .v5-nav-btn {
-  background: rgba(0, 0, 0, 0.08) !important;
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  color: #0f172a !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .mode-v2 .v5-nav-btn:hover {
-  background: rgba(0, 0, 0, 0.16) !important;
-  border-color: rgba(0, 0, 0, 0.35) !important;
-  color: #000000 !important;
-  transform: scale(1.08) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
+  transform: scale(1.12) !important;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.35) !important;
 }
 
 .mode-v2 .v5-carousel-dots .v5-dot {
@@ -6204,4 +6566,121 @@ html:has(.mode-v7),
   letter-spacing: 0.08em;
   text-transform: uppercase;
   z-index: 102;
+}
+
+/* ==================== COMPREHENSIVE RESPONSIVE BREAKPOINTS FOR MODE-V2 ==================== */
+
+/* 1. Large Laptops / Standard Desktops (1280px - 1599px) */
+@media (max-width: 1599px) and (min-width: 1280px) {
+  .mode-v2 .v6-ventures-body {
+    grid-template-columns: 1fr 720px !important;
+    gap: 44px !important;
+    max-width: 1240px !important;
+  }
+  .mode-v2 .v5-video-player-container {
+    max-width: 720px !important;
+  }
+  .v2-prefix-line {
+    font-size: 38px !important;
+  }
+  .v2-highlight-item.active {
+    font-size: 58px !important;
+  }
+  .v2-highlight-item {
+    font-size: 30px !important;
+  }
+}
+
+/* 2. Compact Laptops / MacBooks / Small Desktop Monitors (1024px - 1279px) */
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .mode-v2 .v6-ventures-body {
+    grid-template-columns: 1fr 580px !important;
+    gap: 32px !important;
+    max-width: 100% !important;
+  }
+  .mode-v2 .v5-video-player-container {
+    max-width: 580px !important;
+  }
+  .v2-prefix-line {
+    font-size: 32px !important;
+  }
+  .v2-highlight-item.active {
+    font-size: 48px !important;
+  }
+  .v2-highlight-item {
+    font-size: 26px !important;
+  }
+}
+
+/* 3. Tablets / iPad / Vertical Monitors (< 1024px) */
+@media (max-width: 1023px) {
+  .mode-v2 {
+    height: auto !important;
+    min-height: calc(100vh - 75px) !important;
+    padding: 32px 24px !important;
+    overflow-y: auto !important;
+  }
+  .mode-v2 .dash-top-header-row {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin-bottom: 24px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .mode-v2 .v6-ventures-body {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+    text-align: center !important;
+    justify-items: center !important;
+    max-width: 720px !important;
+  }
+  .mode-v2 .v6-ventures-left {
+    align-items: center !important;
+    padding-left: 0 !important;
+    text-align: center !important;
+  }
+  .v6-highlight-list {
+    align-items: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .mode-v2 .v5-video-player-container {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .v2-prefix-line {
+    font-size: 28px !important;
+  }
+  .v2-highlight-item.active {
+    font-size: 42px !important;
+  }
+  .v2-highlight-item {
+    font-size: 22px !important;
+  }
+}
+
+/* 4. Mobile Phones (< 640px) */
+@media (max-width: 639px) {
+  .mode-v2 {
+    padding: 20px 16px !important;
+  }
+  .v2-prefix-line {
+    font-size: 24px !important;
+  }
+  .v2-highlight-item.active {
+    font-size: 34px !important;
+  }
+  .v2-highlight-item {
+    font-size: 19px !important;
+  }
+  .mode-v2 .v5-video-screen {
+    border-radius: 16px !important;
+  }
+  .v5-yt-time {
+    font-size: 10.5px !important;
+  }
+  .v5-yt-volume-slider {
+    width: 40px !important;
+  }
 }

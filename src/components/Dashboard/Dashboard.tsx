@@ -313,7 +313,7 @@ export function Dashboard({
                 setHasUnsavedChanges={setHasUnsavedChanges}
               />
             ) : (
-              <div className={`dashboard-container ${currentView === 'overview' ? 'no-padding' : ''}`}>
+              <div className={`dashboard-container ${['overview', 'account'].includes(currentView) ? 'no-padding' : ''}`}>
                 {currentView === 'overview' ? (
                   <TemplateWelcome 
                     onNavigate={handleSetCurrentView} 

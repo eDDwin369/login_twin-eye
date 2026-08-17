@@ -1,54 +1,147 @@
 .gs-overlay {
   position: fixed;
-  /* Use inset instead of 100vw/100vh so the overlay still covers the full
-     screen when the app shell is display-scaled via `zoom` (viewport units
-     resolve against the unscaled viewport and would under-cover). */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(10, 12, 18, 0.72);
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  animation: gsFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: gsFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes gsFadeIn {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
 }
 
-/* Modal Container */
-.gs-modal {
-  width: 1024px;
+/* Layout Wrapper containing Floating Left Dock + Main Window Card */
+.gs-workspace-layout {
+  display: flex;
+  align-items: center;
+  gap: 20px;
   max-width: 95vw;
-  height: 560px;
+}
+
+/* Floating Left Sidebar Dock (Frame 20 in User Mockup) */
+.gs-left-dock {
+  position: relative;
+  z-index: 100;
+  width: 64px;
+  background: rgba(75, 82, 98, 0.65);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 36px;
+  padding: 18px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  animation: gsDockIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes gsDockIn {
+  from {
+    transform: translateX(-16px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.gs-dock-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-dock-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.gs-dock-btn.active {
+  background: linear-gradient(135deg, #00f0ff 0%, #0066ff 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(0, 240, 255, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  transform: scale(1.06);
+}
+
+/* Floating Right Hover Label Tooltip (Pops Out On Top of Main Modal) */
+.gs-dock-tooltip {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 20, 30, 0.95);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 10px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  z-index: 99999;
+}
+
+.gs-dock-btn:hover .gs-dock-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(2px);
+}
+
+/* Blurred Grey Main Window Card (Frame 19 in User Mockup) */
+.gs-modal {
+  width: 900px;
+  max-width: 85vw;
+  height: 520px;
   max-height: 90vh;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+  background: rgba(85, 92, 108, 0.62);
+  backdrop-filter: blur(45px) saturate(180%);
+  -webkit-backdrop-filter: blur(45px) saturate(180%);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transform: scale(0.98) translateY(10px);
-  animation: gsModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: 'Roboto', -apple-system, sans-serif;
+  transform: scale(0.97) translateY(12px);
+  animation: gsModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Roboto", sans-serif;
+  color: #ffffff;
 }
 
 @keyframes gsModalIn {
   from {
-    transform: scale(0.98) translateY(10px);
+    transform: scale(0.97) translateY(12px);
     opacity: 0;
   }
-
   to {
     transform: scale(1) translateY(0);
     opacity: 1;
@@ -57,9 +150,9 @@
 
 /* Header */
 .gs-header {
-  background: #FFFFFF;
-  border-bottom: 1px solid #E2E8F0;
-  padding: 16px 32px;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 16px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -67,13 +160,15 @@
 }
 
 .gs-header-left h2 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  color: #0F172A;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 0;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .gs-header-right {
@@ -83,257 +178,370 @@
 }
 
 .gs-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: #475569;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
-  transition: all 0.05s ease;
+  backdrop-filter: blur(12px);
+  transition: all 0.15s ease;
 }
 
 .gs-icon-btn:hover {
-  background: #F1F5F9;
-  color: #0F172A;
-}
-
-/* Tabs list row */
-.gs-tabs-row {
-  display: flex;
-  gap: 24px;
-  padding: 0 32px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #ffffff;
-  flex-shrink: 0;
-}
-
-.gs-tab-btn {
-  background: transparent;
-  border: none;
-  padding: 14px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all 0.05s ease;
-}
-
-.gs-tab-btn:hover {
-  color: #0f172a;
-}
-
-.gs-tab-btn.active {
-  color: #2563eb;
-  border-bottom: 2px solid #2563eb;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
 }
 
 /* Modal Content area */
 .gs-content-body {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 24px;
-  background: #F8FAFC;
+  overflow: hidden !important;
+  padding: 16px 24px;
+  background: transparent;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   scrollbar-width: none;
-  /* Firefox */
   -ms-overflow-style: none;
-  /* IE and Edge */
 }
 
 .gs-content-body::-webkit-scrollbar {
   display: none;
-  /* Chrome, Safari and Opera */
 }
 
-/* Card layout wrapper */
-.gs-card-grid {
-  display: flex;
-  gap: 16px;
-  padding: 16px 24px;
-  flex: 1;
-}
-
-.gs-config-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+.gs-tab-content-container {
+  height: 100%;
+  overflow: hidden !important;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  height: 286px;
+  justify-content: center;
+}
+
+/* VisionOS 2 Inner Cards Container (Matching Frame 19 Inner Cards) */
+.gs-cards-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: 390px;
   box-sizing: border-box;
 }
 
-.gs-card-header {
-  margin-bottom: 10px;
+.gs-config-card {
+  height: 390px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  overflow: hidden !important;
+  background: #282a30 !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 24px !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.gs-card-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
+.gs-config-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
 }
 
-.gs-card-subtitle {
-  font-size: 12px;
-  color: #64748b;
-  margin: 4px 0 0 0;
-  line-height: 1.4;
+.gs-card-blue,
+.gs-card-green,
+.gs-card-teal,
+.gs-card-orange,
+.gs-card-red,
+.gs-card-tint-1,
+.gs-card-tint-2,
+.gs-card-tint-3 {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 
 /* Sticky Footer */
 .gs-footer {
-  background: #FFFFFF;
-  border-top: 1px solid #E2E8F0;
-  padding: 16px 32px;
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
 }
 
-.gs-btn-reset {
-  background: transparent;
-  color: #DC2626;
-  border: 1px solid transparent;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.05s ease;
-}
-
-.gs-btn-reset:hover {
-  background: #FEF2F2;
-}
-
-.gs-footer-right {
-  display: flex;
-  gap: 12px;
-}
-
 .gs-btn-cancel {
-  background: #ffffff;
-  color: #475569;
-  border: 1px solid #CBD5E1;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 12px 32px;
+  border-radius: 9999px;
+  font-size: 14.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.05s ease;
+  backdrop-filter: blur(12px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gs-btn-cancel:hover {
-  background: #F8FAFC;
-  color: #0F172A;
-  border-color: #94A3B8;
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .gs-btn-save {
-  background: #2563EB;
-  color: #FFFFFF;
-  border: 1px solid transparent;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  background: linear-gradient(135deg, #00f0ff 0%, #0066ff 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 9999px;
+  font-size: 14.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.05s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(0, 240, 255, 0.35);
 }
 
 .gs-btn-save:hover {
-  background: #1D4ED8;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(0, 240, 255, 0.48);
 }
 
-/* Rich Configuration Tab Layouts */
-.gs-tab-content-container {
-  padding: 24px 32px;
+/* VisionOS Dark Glass Dropzone & Input Overrides */
+.gs-iphone-dropzone {
+  border: 2px dashed rgba(255, 255, 255, 0.25) !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  padding: 14px 16px !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+}
+
+.gs-iphone-dropzone:hover {
+  border-color: #00f0ff !important;
+  background: rgba(0, 240, 255, 0.08) !important;
+}
+
+.gs-iphone-dropzone-title {
+  color: #ffffff !important;
+}
+
+.gs-iphone-dropzone-sub {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.gs-iphone-file-card {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.gs-iphone-file-name {
+  color: #ffffff !important;
+}
+
+.gs-iphone-file-meta {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.gs-iphone-file-thumb-box {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Form Controls Dark Glass Theme */
+.gs-modal input[type="text"]:not(.gs-underline-input),
+.gs-modal select {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 12px;
+}
+
+/* Explicit Single Underline Input Line Style (Matching User Request 1:1) */
+.gs-modal input[type="text"].gs-underline-input {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  font-size: 18px !important;
+  padding: 4px 0 10px 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important;
+}
+
+.gs-modal input[type="text"].gs-underline-input::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.gs-modal span,
+.gs-modal label {
+  color: #ffffff !important;
+}
+
+/* ==================== iPhone Style Upload Dropzone & Card (User Spec) ==================== */
+.gs-iphone-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 24px;
+  background: #ffffff;
+  padding: 22px 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: 100%;
-  overflow-y: auto;
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE and Edge */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
 }
 
-.gs-tab-content-container::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari and Opera */
+.gs-iphone-dropzone:hover {
+  border-color: #0066ff;
+  background: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 102, 255, 0.08);
 }
 
-.gs-tab-header {
-  margin-bottom: 8px;
+.gs-iphone-orb-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.gs-tab-title {
-  font-size: 16px;
+.gs-iphone-dropzone:hover .gs-iphone-orb-btn {
+  transform: scale(1.08);
+  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.gs-iphone-orb-icon {
+  color: #0066ff;
+  stroke-width: 2.2;
+}
+
+.gs-iphone-dropzone-title {
+  font-size: 14px;
   font-weight: 700;
-  color: #1e3a8a;
-  margin: 0;
+  color: #0f172a;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
 }
 
-.gs-tab-subtitle {
+.gs-iphone-dropzone-sub {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-weight: 400;
+  max-width: 270px;
+  line-height: 1.4;
+}
+
+/* iPhone Uploaded Item Card (Matching Screenshot Exactly) */
+.gs-iphone-file-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  transition: all 0.2s ease;
+}
+
+.gs-iphone-file-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gs-iphone-file-thumb-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #f0f7ff;
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.gs-iphone-file-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+}
+
+.gs-iphone-file-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gs-iphone-file-name {
   font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.gs-iphone-file-meta {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.gs-iphone-file-remove-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
   color: #64748b;
-  margin: 4px 0 16px 0;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-.gs-cards-2x2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+.gs-iphone-file-remove-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
 }
 
-/* Subtle Tinted Configuration Cards — single primary blue palette */
-.gs-card-blue,
-.gs-card-tint-1 {
-  background-color: #f0f4ff !important;
-  border-color: #dce5f5 !important;
+/* Active Progress Bar Line (Matching Screenshot) */
+.gs-iphone-progress-track {
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-.gs-card-green,
-.gs-card-tint-2 {
-  background-color: #e8eefb !important;
-  border-color: #c7d5f0 !important;
-}
-
-.gs-card-teal,
-.gs-card-orange,
-.gs-card-red,
-.gs-card-tint-3 {
-  background-color: #e0e8f7 !important;
-  border-color: #b8c9eb !important;
-}
-
-.no-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.gs-iphone-progress-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #0066ff 0%, #38bdf8 100%);
+  border-radius: 4px;
 }
