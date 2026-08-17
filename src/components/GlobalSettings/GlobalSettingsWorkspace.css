@@ -116,21 +116,21 @@
   transform: translateY(-50%) translateX(2px);
 }
 
-/* Blurred Grey Main Window Card (Frame 19 in User Mockup) */
+/* VisionOS 2 Royal Blue Window Card (Matching User Screenshot 1:1) */
 .gs-modal {
-  width: 900px;
-  max-width: 85vw;
-  height: 520px;
-  max-height: 90vh;
-  background: rgba(85, 92, 108, 0.62);
-  backdrop-filter: blur(45px) saturate(180%);
-  -webkit-backdrop-filter: blur(45px) saturate(180%);
-  border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  width: 880px !important;
+  height: 520px !important;
+  max-width: 95vw !important;
+  max-height: 95vh !important;
+  background: radial-gradient(circle at 50% 30%, #153e9a 0%, #0d276e 55%, #071540 100%) !important;
+  backdrop-filter: blur(50px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
+  border-radius: 36px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
   transform: scale(0.97) translateY(12px);
   animation: gsModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Roboto", sans-serif;
@@ -148,112 +148,242 @@
   }
 }
 
-/* Header */
+/* Modal Header Bar */
 .gs-header {
-  background: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 16px 28px;
+  height: 56px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
 }
 
-.gs-header-left h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #ffffff;
+.gs-title-group {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  gap: 12px;
 }
 
-.gs-header-right {
+.gs-title-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+/* Segmented Control Tabs (Matching VisionOS Pill) */
+.gs-segmented-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 20px;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 2px;
+}
+
+.gs-tab-btn {
+  padding: 6px 18px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gs-tab-btn:hover {
+  color: #ffffff;
+}
+
+.gs-tab-btn.active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Action Buttons (Top Right) */
+.gs-actions-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .gs-icon-btn {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   backdrop-filter: blur(12px);
   transition: all 0.15s ease;
 }
 
 .gs-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
 
-/* Modal Content area */
+/* Modal Content area - FIXED SIZE, NO SCROLL */
 .gs-content-body {
-  flex: 1;
+  flex: 1 !important;
   overflow: hidden !important;
-  padding: 16px 24px;
+  padding: 12px 32px 24px 32px !important;
   background: transparent;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.gs-content-body::-webkit-scrollbar {
-  display: none;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
 }
 
 .gs-tab-content-container {
-  height: 100%;
+  height: 100% !important;
   overflow: hidden !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* VisionOS 2 Inner Cards Container (Matching Frame 19 Inner Cards) */
-.gs-cards-2x2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  height: 390px;
-  box-sizing: border-box;
-}
-
-.gs-config-card {
-  height: 390px !important;
-  box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
-  gap: 16px !important;
-  overflow: hidden !important;
-  background: #282a30 !important;
-  backdrop-filter: blur(30px) !important;
-  -webkit-backdrop-filter: blur(30px) !important;
+}
+
+/* VisionOS 2 Inner Cards Container (Matching User Mockup 1:1) */
+.gs-cards-2x2 {
+  display: grid !important;
+  grid-template-columns: 380px 380px !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 350px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.gs-config-card {
+  width: 380px !important;
+  height: 350px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  overflow: visible !important;
+  background: #141518 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 24px !important;
-  padding: 20px 24px !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  border-radius: 28px !important;
+  padding: 22px 26px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .gs-config-card:hover {
   transform: translateY(-2px) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
 }
+
+/* Eye Icon Button Next to Headings */
+.gs-eye-preview-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-eye-preview-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+.gs-eye-preview-btn.active {
+  background: #2563eb;
+  border-color: #60a5fa;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.8);
+}
+
+/* Animated Glowing Spotlight Focus Box Overlay on Page Header */
+.gs-header-spotlight-box {
+  position: fixed !important;
+  z-index: 100010 !important;
+  border-radius: 12px;
+  border: 2.5px solid #60a5fa;
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.95), 0 0 0 5px rgba(96, 165, 250, 0.4), inset 0 0 20px rgba(59, 130, 246, 0.3);
+  pointer-events: none;
+  animation: gsSpotlightPulse 1.4s infinite ease-in-out;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gsSpotlightPulse {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.9), 0 0 0 3px rgba(96, 165, 250, 0.5), inset 0 0 15px rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(59, 130, 246, 1), 0 0 0 8px rgba(96, 165, 250, 0.8), inset 0 0 25px rgba(59, 130, 246, 0.5);
+    border-color: #93c5fd;
+  }
+}
+
+/* Floating Target Callout Arrow Overlay */
+.gs-target-pointer-overlay {
+  position: fixed !important;
+  z-index: 100011 !important;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-pointing-arrow-beam {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 8px 18px;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(29, 78, 216, 0.7);
+}
+
+.gs-arrow-icon {
+  font-size: 20px;
+  color: #60a5fa;
+  animation: arrowPointMotion 1.2s infinite ease-in-out;
+}
+
+@keyframes pointerArrowPulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes arrowPointMotion {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-3px, -3px);
+  }
+}
+
+
 
 .gs-card-blue,
 .gs-card-green,
@@ -544,4 +674,15 @@
   height: 100%;
   background: linear-gradient(90deg, #0066ff 0%, #38bdf8 100%);
   border-radius: 4px;
+}
+
+@keyframes gsToastSlideIn {
+  from {
+    transform: translate(-50%, -16px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
 }

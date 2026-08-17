@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, FileText, Download } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, FileText, Download, CheckCircle2 } from 'lucide-react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { TemplateWelcome } from './TemplateWelcome';
@@ -139,6 +139,16 @@ export function Dashboard({
   // Global settings modal state
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState<string>('');
+  const [globalToast, setGlobalToast] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
+  const globalToastTimeoutRef = useRef<any>(null);
+
+  const showGlobalToast = (message: string) => {
+    if (globalToastTimeoutRef.current) clearTimeout(globalToastTimeoutRef.current);
+    setGlobalToast({ visible: true, message });
+    globalToastTimeoutRef.current = setTimeout(() => {
+      setGlobalToast({ visible: false, message: '' });
+    }, 3500);
+  };
   const [headerConfig, setHeaderConfig] = useState(() => {
     const saved = localStorage.getItem('headerConfig');
     return saved ? JSON.parse(saved) : {
@@ -364,7 +374,7 @@ export function Dashboard({
           </div>
         </div>
       </div>
-      {footerVisible && (
+      {(footerVisible || (isGlobalSettingsOpen && activeSettingsTab === 'footer')) && (
         <footer 
           style={{
             height: '32px',
@@ -413,19 +423,18 @@ export function Dashboard({
                 </span>
               );
             })}
-            {footerPoweredByType === 'image' && footerPoweredByImage ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
-                <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>|</span>
-                <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
-              </span>
-            ) : null}
           </div>
 
-          {/* Right column — powered-by text */}
+          {/* Right column — powered-by text and image */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-            {footerPoweredByType === 'text' && resolvedFooterPoweredByText ? (
-              <span>{resolvedFooterPoweredByText}</span>
-            ) : null}
+            {footerPoweredByType === 'image' && footerPoweredByImage ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {resolvedFooterPoweredByText && <span>{resolvedFooterPoweredByText}</span>}
+                <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
+              </div>
+            ) : (
+              resolvedFooterPoweredByText ? <span>{resolvedFooterPoweredByText}</span> : null
+            )}
           </div>
         </footer>
       )}
@@ -463,6 +472,7 @@ export function Dashboard({
             if (data.customerNameStyle) setCustomerNameStyle(data.customerNameStyle);
             if (data.customerNameColor) setCustomerNameColor(data.customerNameColor);
           }}
+          onShowToast={showGlobalToast}
         />
       )}
 
@@ -609,6 +619,28 @@ export function Dashboard({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {globalToast.visible && (
+        <div 
+          className="theme-toggle-toast" 
+          style={{ 
+            background: 'linear-gradient(135deg, #091638 0%, #06102a 100%)', 
+            border: '1px solid rgba(59, 130, 246, 0.4)', 
+            color: '#ffffff', 
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(29, 78, 216, 0.3)',
+            borderRadius: '12px',
+            padding: '12px 22px',
+            fontSize: '14px',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}
+        >
+          <CheckCircle2 size={18} style={{ color: '#60a5fa', flexShrink: 0 }} />
+          <span>{globalToast.message}</span>
         </div>
       )}
     </div>

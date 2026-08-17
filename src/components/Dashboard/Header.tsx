@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Settings, X, Camera, User } from 'lucide-react';
+import { Bell, Settings, X, Camera, User, Maximize2, Minimize2 } from 'lucide-react';
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
 import type { NotificationItem } from '../Notifications/types';
 import logo from '../../assets/logo.png';
@@ -164,6 +164,31 @@ export function Header({
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  };
 
   const getFontSize = (style?: string, defaultSize: string = '1rem') => {
     switch (style) {
@@ -406,6 +431,15 @@ export function Header({
             </div>
           )}
         </div>
+
+        <button
+          className="header-icon-btn"
+          title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Mode"}
+          onClick={toggleFullscreen}
+        >
+          {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+        </button>
+
         <button 
           className="header-icon-btn" 
           title="Global Settings" 

@@ -78,6 +78,7 @@
   flex-direction: column;
   gap: 24px;
   height: 100%;
+  min-width: 0;
 }
 
 /* Card Container Base */
@@ -97,9 +98,11 @@
 /* Equal Height for Personal Info and Preferences cards */
 .figma-card-personal,
 .figma-card-preferences {
-  height: 275px;
-  min-height: 275px;
-  box-sizing: border-box;
+  height: 275px !important;
+  min-height: 275px !important;
+  max-height: 275px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 .figma-card-top-bar {
@@ -206,6 +209,10 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  height: 49px;
+  min-height: 49px;
+  max-height: 49px;
+  box-sizing: border-box;
 }
 
 .figma-user-name {
@@ -238,8 +245,10 @@
   text-align: center;
   padding: 0;
   outline: none;
-  box-sizing: border-box;
-  width: 100%;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 
 .figma-edit-name {
@@ -263,9 +272,14 @@
 /* Inputs Grid */
 .figma-inputs-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 1.3fr) 1fr 1fr;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 20px 24px;
   padding-right: 54px; /* Prevents underline inputs from intersecting bottom-right edit button */
+  height: 108px !important;
+  min-height: 108px !important;
+  max-height: 108px !important;
+  box-sizing: border-box !important;
+  min-width: 0;
 }
 
 @media (max-width: 900px) {
@@ -282,6 +296,7 @@
 .figma-input-field {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .figma-input-label {
@@ -311,9 +326,11 @@
   font-size: 14px;
   font-family: inherit;
   padding: 0 0 6px 0;
-  height: 28px;
-  box-sizing: border-box;
-  width: 100%;
+  height: 28px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
   outline: none;
   margin: 0;
 }
@@ -642,7 +659,11 @@
 .figma-card-security {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 574px !important;
+  min-height: 574px !important;
+  max-height: 574px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   flex: 1;
 }
 

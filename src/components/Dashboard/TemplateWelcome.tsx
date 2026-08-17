@@ -9,7 +9,8 @@ import {
   Minimize2,
   Volume2,
   VolumeX,
-  Settings
+  Settings,
+  CheckCircle2
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -72,6 +73,27 @@ export function TemplateWelcome({
   const [showSubtitles, setShowSubtitles] = useState<boolean>(true);
   const [isMiniplayer, setIsMiniplayer] = useState<boolean>(false);
 
+  // Completed Video Steps Tracking (Persisted in localStorage)
+  const [completedSteps, setCompletedSteps] = useState<{ [key: string]: boolean }>(() => {
+    try {
+      const saved = localStorage.getItem('twineye_completed_video_steps');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const markCurrentStepCompleted = () => {
+    const currentId = venturesData[activeVentureIndex]?.id;
+    if (!currentId) return;
+    setCompletedSteps(prev => {
+      if (prev[currentId]) return prev;
+      const updated = { ...prev, [currentId]: true };
+      localStorage.setItem('twineye_completed_video_steps', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const handleOpenCinema = () => {
     setIsVideoExpanded(true);
     // Request native browser fullscreen if supported so it covers tabs & browser header
@@ -83,6 +105,7 @@ export function TemplateWelcome({
   const handleCloseCinema = () => {
     if (isClosingCinema) return;
     setIsClosingCinema(true);
+    markCurrentStepCompleted();
     setTimeout(() => {
       if (document.fullscreenElement && document.exitFullscreen) {
         document.exitFullscreen().catch(() => {});
@@ -129,6 +152,9 @@ export function TemplateWelcome({
 
   const handleDismissIntro = () => {
     if (isIntroFadingOut) return;
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
     setIsIntroFadingOut(true);
     setTimeout(() => {
       setShowFullIntro(false);
@@ -139,6 +165,15 @@ export function TemplateWelcome({
     setShowFullIntro(true);
     setIntroPhase('welcome');
     setIsIntroFadingOut(false);
+
+    // Request native browser fullscreen on user interaction to cover browser tabs & header
+    const triggerNativeFullscreen = () => {
+      if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    };
+
+    window.addEventListener('click', triggerNativeFullscreen, { once: true });
 
     const timer1 = setTimeout(() => {
       setIntroPhase('omni');
@@ -153,6 +188,7 @@ export function TemplateWelcome({
     }, 4600);
 
     return () => {
+      window.removeEventListener('click', triggerNativeFullscreen);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
@@ -172,6 +208,9 @@ export function TemplateWelcome({
     if (isPlayingVideo) {
       timer = setInterval(() => {
         setVideoProgress(prev => {
+          if (prev >= 85) {
+            markCurrentStepCompleted();
+          }
           if (prev >= 100) {
             if (isAutoPlaying) {
               setActiveVentureIndex(current => (current >= venturesData.length - 1 ? 0 : current + 1));
@@ -183,7 +222,7 @@ export function TemplateWelcome({
       }, 450);
     }
     return () => clearInterval(timer);
-  }, [isPlayingVideo, isAutoPlaying, venturesData.length]);
+  }, [isPlayingVideo, isAutoPlaying, activeVentureIndex, venturesData]);
 
   // Canvas particle wave animation for Version 2 background
   useEffect(() => {
@@ -261,7 +300,7 @@ export function TemplateWelcome({
             {introPhase === 'welcome' ? 'Welcome to' : 'OomniEye'}
           </div>
 
-          <div className="v2-skip-intro-hint">Click anywhere to skip</div>
+          <div className="v2-skip-intro-hint">Click anywhere to enter full screen ⤢</div>
         </div>,
         document.body
       )}
@@ -305,17 +344,25 @@ export function TemplateWelcome({
 
               {/* Step highlights list below */}
               <div className="v6-highlight-list">
-                {venturesData.map((venture, idx) => (
-                  <div
-                    key={venture.id}
-                    className={`v2-highlight-item ${idx === activeVentureIndex ? 'active' : ''}`}
-                    onClick={() => setActiveVentureIndex(idx)}
-                  >
-                    <span className={`v2-text-span ${venture.gradientClass}`}>
-                      {venture.highlight}
-                    </span>
-                  </div>
-                ))}
+                {venturesData.map((venture, idx) => {
+                  const isCompleted = !!completedSteps[venture.id];
+                  return (
+                    <div
+                      key={venture.id}
+                      className={`v2-highlight-item ${idx === activeVentureIndex ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
+                      onClick={() => setActiveVentureIndex(idx)}
+                    >
+                      <span className={`v2-text-span ${venture.gradientClass}`}>
+                        {venture.highlight}
+                      </span>
+                      {isCompleted && (
+                        <span className="v2-completed-tick-badge" title="Video watching completed">
+                          <CheckCircle2 size={22} className="v2-completed-tick-icon" />
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
