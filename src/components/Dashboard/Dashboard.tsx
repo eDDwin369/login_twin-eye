@@ -114,7 +114,8 @@ export function Dashboard({
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
   });
   const [customerNameColor, setCustomerNameColor] = useState(() => {
-    return localStorage.getItem('gs_customerNameColor') || '#ffffff';
+    const saved = localStorage.getItem('gs_customerNameColor');
+    return (saved && saved !== '#1e293b') ? saved : '#ffffff';
   });
   const [customerColorFollow, setCustomerColorFollow] = useState(() => {
     const saved = localStorage.getItem('gs_customerColorFollow');
@@ -126,6 +127,19 @@ export function Dashboard({
   });
   const [customerLogo, setCustomerLogo] = useState(() => {
     return localStorage.getItem('gs_customerLogo') || '';
+  });
+  const [showCustomerCaption, setShowCustomerCaption] = useState(() => {
+    const saved = localStorage.getItem('gs_showCustomerCaption');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [customerCaption, setCustomerCaption] = useState(() => {
+    return localStorage.getItem('gs_customerCaption') || 'Digital Twin Solutions';
+  });
+  const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
+    return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
+  });
+  const [customerCaptionColor, setCustomerCaptionColor] = useState(() => {
+    return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
   });
   const [footerLinks, setFooterLinks] = useState<string[]>(() => {
     try {
@@ -281,6 +295,10 @@ export function Dashboard({
         customerColorFollow={customerColorFollow}
         showCustomerLogo={showCustomerLogo}
         customerLogo={customerLogo}
+        showCustomerCaption={showCustomerCaption}
+        customerCaption={customerCaption}
+        customerCaptionStyle={customerCaptionStyle}
+        customerCaptionColor={customerCaptionColor}
       />
       <div className="dashboard-body">
         <Sidebar 
@@ -471,6 +489,10 @@ export function Dashboard({
             setCustomerLogo(data.customerLogo);
             if (data.customerNameStyle) setCustomerNameStyle(data.customerNameStyle);
             if (data.customerNameColor) setCustomerNameColor(data.customerNameColor);
+            if (data.showCustomerCaption !== undefined) setShowCustomerCaption(data.showCustomerCaption);
+            if (data.customerCaption !== undefined) setCustomerCaption(data.customerCaption);
+            if (data.customerCaptionStyle) setCustomerCaptionStyle(data.customerCaptionStyle);
+            if (data.customerCaptionColor) setCustomerCaptionColor(data.customerCaptionColor);
           }}
           onShowToast={showGlobalToast}
         />

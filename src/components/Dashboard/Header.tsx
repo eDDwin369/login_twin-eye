@@ -31,6 +31,10 @@ interface HeaderProps {
   customerColorFollow?: boolean;
   showCustomerLogo?: boolean;
   customerLogo?: string;
+  showCustomerCaption?: boolean;
+  customerCaption?: string;
+  customerCaptionStyle?: string;
+  customerCaptionColor?: string;
 }
 
 export function Header({
@@ -43,13 +47,17 @@ export function Header({
   onSettingsClick,
   headerConfig,
   isEditing = false,
-  showCustomerProfile = false,
-  customerName = 'Default Customer',
+  showCustomerProfile = true,
+  customerName = 'OomniEye',
   customerNameStyle = 'h1',
-  customerNameColor = '#1e293b',
-  customerColorFollow = true,
+  customerNameColor = '#ffffff',
+  customerColorFollow = false,
   showCustomerLogo = false,
-  customerLogo = ''
+  customerLogo = '',
+  showCustomerCaption = true,
+  customerCaption = 'Digital Twin Solutions',
+  customerCaptionStyle = 'h3',
+  customerCaptionColor = 'rgba(255, 255, 255, 0.65)'
 }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -310,14 +318,30 @@ export function Header({
             )}
 
             {/* Text/Font in Center */}
-            <span style={{ 
-              fontWeight: 700, 
-              fontSize: getFontSize(customerNameStyle), 
-              color: customerColorFollow ? (headerConfig?.companyNameColor || headerConfig?.textColor || '#ffffff') : customerNameColor, 
-              letterSpacing: '0.02em' 
-            }}>
-              {customerName || 'OomniEye'}
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ 
+                fontWeight: 700, 
+                fontSize: getFontSize(customerNameStyle, '1.05rem'), 
+                color: (!customerColorFollow && customerNameColor && customerNameColor !== '#1e293b' && customerNameColor !== 'transparent') ? customerNameColor : '#ffffff', 
+                letterSpacing: '0.02em',
+                lineHeight: '1.2' 
+              }}>
+                {customerName || 'OomniEye'}
+              </span>
+              {showCustomerCaption && (
+                <span style={{
+                  fontWeight: 500,
+                  fontSize: getFontSize(customerCaptionStyle, '0.75rem'),
+                  color: (customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : 'rgba(255, 255, 255, 0.65)',
+                  letterSpacing: '0.04em',
+                  lineHeight: '1.2',
+                  marginTop: '2px',
+                  textTransform: 'uppercase'
+                }}>
+                  {customerCaption || 'Digital Twin Solutions'}
+                </span>
+              )}
+            </div>
           </>
         )}
       </div>

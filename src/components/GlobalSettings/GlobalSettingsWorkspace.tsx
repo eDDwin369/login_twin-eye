@@ -47,6 +47,10 @@ interface GlobalSettingsWorkspaceProps {
     customerLogo: string;
     customerNameStyle?: string;
     customerNameColor?: string;
+    showCustomerCaption?: boolean;
+    customerCaption?: string;
+    customerCaptionStyle?: string;
+    customerCaptionColor?: string;
   }) => void;
   onShowToast?: (message: string) => void;
 }
@@ -396,10 +400,14 @@ export function GlobalSettingsWorkspace({
         showCustomerLogo,
         customerLogo,
         customerNameStyle,
-        customerNameColor
+        customerNameColor,
+        showCustomerCaption,
+        customerCaption,
+        customerCaptionStyle,
+        customerCaptionColor
       });
     }
-  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, onSyncCustomerProfile]);
+  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor, onSyncCustomerProfile]);
 
   // Equal height is now enforced via CSS (.gs-config-card height: 286px) to maintain a perfectly static layout.
   // Notifications Config States

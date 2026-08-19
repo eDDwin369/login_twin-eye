@@ -4,7 +4,7 @@
   width: 100%;
   min-height: 100%;
   flex: 1;
-  background: radial-gradient(circle at 85% 15%, #0d2256 0%, #071336 45%, #04091a 100%);
+  background: linear-gradient(90deg, #000000 0%, #03205F 100%);
   background-size: cover;
   background-attachment: fixed;
   padding: 24px 32px 60px 32px;
@@ -25,6 +25,7 @@
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -83,7 +84,7 @@
 
 /* Card Container Base */
 .figma-card {
-  background: linear-gradient(145deg, rgba(12, 28, 68, 0.88) 0%, rgba(6, 16, 42, 0.95) 100%);
+  background: linear-gradient(135deg, #000104 0%, #03205F 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 24px 28px;
@@ -274,7 +275,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 20px 24px;
-  padding-right: 54px; /* Prevents underline inputs from intersecting bottom-right edit button */
+  padding-right: 54px;
+  /* Prevents underline inputs from intersecting bottom-right edit button */
   height: 108px !important;
   min-height: 108px !important;
   max-height: 108px !important;
@@ -601,6 +603,7 @@
     opacity: 0;
     transform: translateY(-6px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -729,6 +732,7 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -883,7 +887,8 @@
 }
 
 .figma-main-toggle.on {
-  background: #7c3aed; /* Purple/Violet toggle switch matching Figma */
+  background: #7c3aed;
+  /* Purple/Violet toggle switch matching Figma */
 }
 
 .figma-main-toggle.off {
